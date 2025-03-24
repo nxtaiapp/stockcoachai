@@ -23,11 +23,11 @@ const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
     <div
       ref={messageRef}
       className={cn(
-        "message-container",
-        message.isAI ? "ai-message" : "user-message"
+        "px-4 py-6 md:px-6 border-b border-border",
+        message.isAI ? "bg-secondary/20" : "bg-background"
       )}
     >
-      <div className="flex gap-3">
+      <div className="flex gap-4 max-w-3xl mx-auto">
         {message.isAI ? (
           <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
             <BarChart3 className="h-5 w-5 text-primary" />
@@ -39,11 +39,11 @@ const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
             </span>
           </div>
         )}
-        <div className="flex-1">
+        <div className="flex-1 space-y-2">
           <div className="text-sm font-medium">
             {message.isAI ? "StockCoach AI" : "You"}
           </div>
-          <div className="mt-1 text-foreground">{message.content}</div>
+          <div className="text-foreground whitespace-pre-wrap">{message.content}</div>
         </div>
       </div>
     </div>
