@@ -42,12 +42,18 @@ const SignUp = () => {
       return;
     }
 
+    // Validate password strength
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long");
+      return;
+    }
+
     try {
       setIsLoading(true);
       await signUp(email, password, name, experience);
-      // Navigate is handled in the AuthContext after successful sign-up
-    } catch (err) {
-      setError("An error occurred during registration. Please try again.");
+      // Navigation is handled in the AuthContext after successful sign-up
+    } catch (err: any) {
+      setError(err.message || "An error occurred during registration. Please try again.");
       setIsLoading(false);
     }
   };
