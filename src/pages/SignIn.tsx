@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import { BarChart3, ArrowRight } from "lucide-react";
+import { BarChart3, ArrowRight, AlertCircle } from "lucide-react";
 
 const SignIn = () => {
   const { signIn } = useAuth();
@@ -23,10 +23,27 @@ const SignIn = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [supabaseConfigured, setSupabaseConfigured] = useState(true);
+
+  useEffect(() => {
+    // Check if Supabase is configured
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      setSupabaseConfigured(false);
+      setError("Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.");
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    
+    if (!supabaseConfigured) {
+      setError("Supabase is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY environment variables.");
+      return;
+    }
     
     if (!email || !password) {
       setError("Please fill in all fields");
@@ -61,8 +78,24 @@ const SignIn = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {!supabaseConfigured && (
+              <div className="mb-6 p-4 rounded-md bg-destructive/10 text-destructive flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h3 className="font-medium">Configuration Error</h3>
+                  <p className="text-sm mt-1">
+                    Supabase is not configured. Please set the following environment variables:
+                  </p>
+                  <ul className="text-sm mt-2 list-disc list-inside">
+                    <li>VITE_SUPABASE_URL</li>
+                    <li>VITE_SUPABASE_ANON_KEY</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-4">
-              {error && (
+              {error && supabaseConfigured && (
                 <div className="p-3 text-sm text-destructive bg-destructive/10 rounded-md">
                   {error}
                 </div>
@@ -77,6 +110,7 @@ const SignIn = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  disabled={!supabaseConfigured}
                 />
               </div>
               
@@ -97,13 +131,14 @@ const SignIn = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={!supabaseConfigured}
                 />
               </div>
               
               <Button 
                 type="submit" 
                 className="w-full flex items-center gap-2" 
-                disabled={isLoading}
+                disabled={isLoading || !supabaseConfigured}
               >
                 Sign In
                 {isLoading ? (
