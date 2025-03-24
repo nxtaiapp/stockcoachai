@@ -1,7 +1,7 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { toast } from "sonner";
+import { supabase } from '@/integrations/supabase/client';
 
 export interface Message {
   id: string;
@@ -23,19 +23,17 @@ interface ChatContextType {
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const { user, supabase } = useAuth();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [n8nWebhookUrl, setN8nWebhookUrl] = useState<string>(() => {
     return localStorage.getItem('n8n_webhook_url') || '';
   });
 
-  // Save webhook URL to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('n8n_webhook_url', n8nWebhookUrl);
   }, [n8nWebhookUrl]);
 
-  // Load messages from Supabase when component mounts and user is authenticated
   useEffect(() => {
     if (!user) return;
     
@@ -43,7 +41,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       try {
         setLoading(true);
         
-        // Get messages from Supabase
         const { data, error } = await supabase
           .from('chat_messages')
           .select('*')
@@ -53,7 +50,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         if (error) throw error;
         
         if (data.length > 0) {
-          // Transform Supabase data to our Message format
           const formattedMessages = data.map(msg => ({
             id: msg.id,
             senderId: msg.sender_id,
@@ -64,7 +60,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           
           setMessages(formattedMessages);
         } else {
-          // Add a welcome message for new users
           const welcomeMessage: Message = {
             id: Math.random().toString(36).substring(2, 9),
             senderId: 'ai',
@@ -75,7 +70,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           
           setMessages([welcomeMessage]);
           
-          // Store welcome message in Supabase
           await supabase.from('chat_messages').insert({
             id: welcomeMessage.id,
             user_id: user.id,
@@ -94,7 +88,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     };
     
     fetchMessages();
-  }, [user, supabase]);
+  }, [user]);
 
   const sendMessage = async (content: string) => {
     if (!user) return;
@@ -102,7 +96,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       
-      // Create user message
       const userMessage: Message = {
         id: Math.random().toString(36).substring(2, 9),
         senderId: user.id,
@@ -111,10 +104,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         isAI: false
       };
       
-      // Add message to local state
       setMessages(prev => [...prev, userMessage]);
       
-      // Store message in Supabase
       await supabase.from('chat_messages').insert({
         id: userMessage.id,
         user_id: user.id,
@@ -125,7 +116,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       });
       
       if (!n8nWebhookUrl) {
-        // Fallback to mock response if no webhook URL is provided
         setTimeout(async () => {
           const mockResponses = [
             "That's a great question about trading. The key is to always manage your risk and never invest more than you can afford to lose.",
@@ -148,10 +138,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             isAI: true
           };
           
-          // Add AI message to local state
           setMessages(prev => [...prev, aiMessage]);
           
-          // Store AI message in Supabase
           await supabase.from('chat_messages').insert({
             id: aiMessage.id,
             user_id: user.id,
@@ -167,7 +155,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         return;
       }
       
-      // Send message to n8n webhook
       try {
         const response = await fetch(n8nWebhookUrl, {
           method: 'POST',
@@ -187,7 +174,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         
-        // Try to parse the response
         try {
           const data = await response.json();
           
@@ -199,10 +185,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             isAI: true
           };
           
-          // Add AI message to local state
           setMessages(prev => [...prev, aiMessage]);
           
-          // Store AI message in Supabase
           await supabase.from('chat_messages').insert({
             id: aiMessage.id,
             user_id: user.id,
@@ -213,7 +197,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           });
           
         } catch (e) {
-          // If response is not JSON or doesn't have expected format
           const aiMessage: Message = {
             id: Math.random().toString(36).substring(2, 9),
             senderId: 'ai',
@@ -222,10 +205,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             isAI: true
           };
           
-          // Add AI message to local state
           setMessages(prev => [...prev, aiMessage]);
           
-          // Store AI message in Supabase
           await supabase.from('chat_messages').insert({
             id: aiMessage.id,
             user_id: user.id,
@@ -246,10 +227,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           isAI: true
         };
         
-        // Add AI message to local state
         setMessages(prev => [...prev, aiMessage]);
         
-        // Store AI message in Supabase
         await supabase.from('chat_messages').insert({
           id: aiMessage.id,
           user_id: user.id,
@@ -275,7 +254,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     if (!user) return;
     
     try {
-      // Delete all messages for this user from Supabase
       const { error } = await supabase
         .from('chat_messages')
         .delete()
@@ -283,7 +261,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       
       if (error) throw error;
       
-      // Clear local messages state
       setMessages([]);
       toast.success("Chat history cleared successfully");
     } catch (error) {

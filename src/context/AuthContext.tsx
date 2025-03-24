@@ -3,46 +3,9 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 
-// Initialize Supabase client
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-// Create a dummy client if credentials are missing (for development/testing)
-let supabase: SupabaseClient;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Supabase URL or Anon Key is missing. Using mock client for development.');
-  // Create a mock client for development that won't cause runtime errors
-  supabase = {
-    auth: {
-      getSession: () => Promise.resolve({ data: { session: null } }),
-      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
-      signUp: () => Promise.reject(new Error('Supabase credentials not configured')),
-      signInWithPassword: () => Promise.reject(new Error('Supabase credentials not configured')),
-      signOut: () => Promise.reject(new Error('Supabase credentials not configured')),
-    },
-    from: () => ({
-      select: () => ({
-        eq: () => ({
-          single: () => Promise.resolve({ data: null }),
-          order: () => Promise.resolve({ data: [] }),
-        }),
-        order: () => Promise.resolve({ data: [] }),
-      }),
-      insert: () => Promise.reject(new Error('Supabase credentials not configured')),
-      update: () => ({
-        eq: () => Promise.reject(new Error('Supabase credentials not configured')),
-      }),
-      delete: () => ({
-        eq: () => Promise.reject(new Error('Supabase credentials not configured')),
-      }),
-    }),
-  } as unknown as SupabaseClient;
-} else {
-  // Create the real Supabase client when credentials are available
-  supabase = createClient(supabaseUrl, supabaseAnonKey);
-}
+// No need to initialize with environment variables since we're using the client from @/integrations/supabase/client
 
 interface User {
   id: string;
@@ -75,12 +38,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const fetchSession = async () => {
       try {
         setLoading(true);
-        
-        if (!supabaseUrl || !supabaseAnonKey) {
-          toast.error("Supabase credentials not configured. Please set up your environment variables.");
-          setLoading(false);
-          return;
-        }
         
         // Get session from supabase
         const { data: { session } } = await supabase.auth.getSession();
@@ -275,25 +232,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUserData,
       supabase 
     }}>
-      {!supabaseUrl || !supabaseAnonKey ? (
-        <div className="flex h-screen items-center justify-center p-4 bg-destructive/10">
-          <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-lg text-center">
-            <h2 className="text-2xl font-bold mb-4 text-destructive">Configuration Error</h2>
-            <p className="mb-4">
-              Supabase URL and/or Anonymous Key are missing. Please set the following environment variables:
-            </p>
-            <ul className="text-left mb-6 bg-muted p-4 rounded">
-              <li className="font-mono text-sm mb-2">VITE_SUPABASE_URL</li>
-              <li className="font-mono text-sm">VITE_SUPABASE_ANON_KEY</li>
-            </ul>
-            <p className="text-sm text-muted-foreground">
-              Note: You'll need to restart the application after setting these variables.
-            </p>
-          </div>
-        </div>
-      ) : (
-        children
-      )}
+      {children}
     </AuthContext.Provider>
   );
 }
