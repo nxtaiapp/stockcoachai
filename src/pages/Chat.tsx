@@ -38,6 +38,7 @@ const ChatPage = () => {
 // Inner component that uses chat context
 const ChatInterface = () => {
   const { messages, loading, sendMessage } = useChat();
+  const { user } = useAuth(); // Add the missing useAuth hook
   const chatContainerRef = useRef<HTMLDivElement>(null);
   
   // Scroll to bottom when new messages arrive

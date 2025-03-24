@@ -8,6 +8,8 @@ interface User {
   email: string;
   name: string;
   experience_level?: string;
+  trading_goal?: string;
+  skill_level?: string;
 }
 
 interface AuthContextType {
