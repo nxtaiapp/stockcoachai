@@ -7,7 +7,8 @@ import {
   LogOut, 
   Menu, 
   X,
-  BarChart3
+  BarChart3,
+  User
 } from "lucide-react";
 
 const Header = () => {
@@ -39,6 +40,10 @@ const Header = () => {
           {user && (
             <>
               <Button variant="ghost" onClick={() => navigate("/chat")}>Chat</Button>
+              <Button variant="ghost" onClick={() => navigate("/profile")}>
+                <User size={16} className="mr-2" />
+                Profile
+              </Button>
               <Button 
                 variant="outline" 
                 className="flex items-center gap-2" 
@@ -71,6 +76,14 @@ const Header = () => {
                 </div>
                 <Button variant="ghost" className="justify-start" onClick={() => { navigate("/chat"); closeMenu(); }}>
                   Chat
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="justify-start" 
+                  onClick={() => { navigate("/profile"); closeMenu(); }}
+                >
+                  <User size={16} className="mr-2" />
+                  Profile
                 </Button>
                 <Button 
                   variant="outline" 
