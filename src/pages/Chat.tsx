@@ -71,8 +71,18 @@ const ChatInterface = () => {
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={toggleSettings}>
+          {/* Make the Settings button more visible with a title */}
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={toggleSettings}
+            className="relative flex items-center"
+            title="Settings"
+          >
             <Settings className="h-5 w-5" />
+            {!showSettings && (
+              <span className="absolute -top-1 -right-1 h-2 w-2 bg-primary rounded-full animate-pulse"></span>
+            )}
           </Button>
           
           {user && (
