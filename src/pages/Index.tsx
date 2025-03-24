@@ -1,12 +1,167 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { Button } from "@/components/ui/button";
+import { BarChart3, ArrowRight, TrendingUp, LineChart, Shield, Zap } from "lucide-react";
 
 const Index = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  // If user is already logged in, redirect to chat
+  useEffect(() => {
+    if (user) {
+      navigate("/chat");
+    }
+  }, [user, navigate]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen flex flex-col">
+      {/* Hero Section */}
+      <header className="w-full py-4 px-6 border-b border-border bg-background/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="w-7 h-7 text-primary" />
+            <span className="font-semibold text-xl">StockCoach.ai</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <Link to="/signin">
+              <Button variant="ghost">Sign In</Button>
+            </Link>
+            <Link to="/signup">
+              <Button>Get Started</Button>
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-1">
+        {/* Hero */}
+        <section className="py-20 px-6">
+          <div className="max-w-7xl mx-auto text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight animate-fade-in">
+              Your AI-Powered <span className="text-primary">Trading</span> Assistant
+            </h1>
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+              Improve your trading decisions with personalized AI guidance, market insights, and expert strategies.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: "0.2s" }}>
+              <Link to="/signup">
+                <Button size="lg" className="gap-2 text-lg">
+                  Start 14-Day Free Trial <ArrowRight className="h-5 w-5" />
+                </Button>
+              </Link>
+              <Link to="/signin">
+                <Button size="lg" variant="outline" className="text-lg">
+                  Already have an account?
+                </Button>
+              </Link>
+            </div>
+            <p className="text-sm text-muted-foreground mt-4 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+              No credit card required. Cancel anytime.
+            </p>
+          </div>
+        </section>
+
+        {/* Features */}
+        <section className="py-20 px-6 bg-secondary/50">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-16">How StockCoach.ai Helps You</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+              <div className="premium-card p-8 rounded-lg animate-slide-up" style={{ animationDelay: "0.1s" }}>
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
+                  <TrendingUp className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Market Analysis</h3>
+                <p className="text-muted-foreground">
+                  Get real-time market insights and analysis to make informed trading decisions based on current trends.
+                </p>
+              </div>
+              <div className="premium-card p-8 rounded-lg animate-slide-up" style={{ animationDelay: "0.2s" }}>
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
+                  <LineChart className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Strategy Development</h3>
+                <p className="text-muted-foreground">
+                  Build, backtest, and refine your trading strategies with AI-powered recommendations.
+                </p>
+              </div>
+              <div className="premium-card p-8 rounded-lg animate-slide-up" style={{ animationDelay: "0.3s" }}>
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
+                  <Shield className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Risk Management</h3>
+                <p className="text-muted-foreground">
+                  Learn effective risk management techniques to protect your capital and maximize returns.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="py-20 px-6">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-3xl font-bold text-center mb-16">What Our Users Say</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="glass p-8 rounded-xl">
+                <p className="text-lg mb-6">
+                  "StockCoach.ai has completely transformed my trading. The personalized strategies and risk management advice helped me increase my returns by 27% in just two months."
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="font-semibold text-primary">JD</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">James Davidson</h4>
+                    <p className="text-sm text-muted-foreground">Day Trader, 5 years experience</p>
+                  </div>
+                </div>
+              </div>
+              <div className="glass p-8 rounded-xl">
+                <p className="text-lg mb-6">
+                  "As a beginner, I was afraid to start trading. StockCoach.ai provides clear explanations and guidance that helped me build confidence and make my first profitable trades."
+                </p>
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <span className="font-semibold text-primary">SL</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold">Sarah Lewis</h4>
+                    <p className="text-sm text-muted-foreground">New Investor, 6 months experience</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="py-20 px-6 bg-primary/5">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Trading?</h2>
+            <p className="text-xl text-muted-foreground mb-10">
+              Join thousands of traders who are improving their skills and results with StockCoach.ai
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/signup">
+                <Button size="lg" className="gap-2 text-lg">
+                  Start 14-Day Free Trial <Zap className="h-5 w-5" />
+                </Button>
+              </Link>
+              <Link to="/signin">
+                <Button size="lg" variant="outline" className="text-lg">
+                  Sign In
+                </Button>
+              </Link>
+            </div>
+            <p className="text-sm text-muted-foreground mt-4">
+              No credit card required. Cancel anytime.
+            </p>
+          </div>
+        </section>
+      </main>
     </div>
   );
 };
