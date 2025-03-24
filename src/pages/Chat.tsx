@@ -5,7 +5,8 @@ import { useAuth } from "../context/AuthContext";
 import { ChatProvider, useChat } from "../context/ChatContext";
 import ChatMessage from "../components/ChatMessage";
 import MessageInput from "../components/MessageInput";
-import { BarChart3, Menu, User, LogOut, X } from "lucide-react";
+import WebhookSettings from "../components/WebhookSettings";
+import { BarChart3, Menu, User, LogOut, Settings, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 // Wrapper component for chat functionality
@@ -42,9 +43,11 @@ const ChatInterface = () => {
   const navigate = useNavigate();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
+  const toggleSettings = () => setShowSettings(!showSettings);
   
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -68,6 +71,10 @@ const ChatInterface = () => {
         </div>
         
         <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" onClick={toggleSettings}>
+            <Settings className="h-5 w-5" />
+          </Button>
+          
           {user && (
             <div className="flex items-center gap-2">
               <div className="hidden md:flex gap-4">
@@ -125,6 +132,21 @@ const ChatInterface = () => {
                 </Button>
               </>
             )}
+          </div>
+        </div>
+      )}
+      
+      {/* Settings Panel */}
+      {showSettings && (
+        <div className="absolute top-[61px] right-0 w-full md:w-96 border-b md:border-l border-border bg-background shadow-lg z-20 animate-fade-in">
+          <div className="p-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold">Settings</h3>
+              <Button variant="ghost" size="icon" onClick={toggleSettings}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <WebhookSettings />
           </div>
         </div>
       )}
