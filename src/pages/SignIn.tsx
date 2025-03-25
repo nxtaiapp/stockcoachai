@@ -43,7 +43,7 @@ const SignIn = () => {
     try {
       setIsLoading(true);
       await signIn(email, password);
-      // Navigate is handled in the AuthContext after successful sign-in
+      // Navigation is handled in the AuthContext after successful sign-in
     } catch (err) {
       console.error("Sign in error:", err);
       setError("Invalid email or password. Please try again.");
