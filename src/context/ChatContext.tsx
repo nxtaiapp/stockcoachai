@@ -52,48 +52,50 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       const userMessage = createUserMessage(user.id, content);
       setMessages(prev => [...prev, userMessage]);
       
+      let responseContent = "";
+      
       if (!n8nWebhookUrl) {
         // Fallback to mock response if no webhook URL is provided
+        console.log("No webhook URL provided, using mock response");
         // Simulate API delay
-        setTimeout(() => {
-          const aiMessage = createAIMessage(getMockResponse());
-          setMessages(prev => [...prev, aiMessage]);
-          setLoading(false);
-        }, 1500);
-        
-        return;
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        responseContent = getMockResponse();
+      } else {
+        try {
+          console.log("Sending message to webhook");
+          // Wait for the actual API response
+          responseContent = await sendMessageToWebhook(
+            n8nWebhookUrl, 
+            content, 
+            user.id, 
+            user.name || 'User', 
+            user.email || ''
+          );
+          console.log("Received response from webhook:", responseContent);
+        } catch (error) {
+          console.error("Error sending message to webhook:", error);
+          responseContent = "I'm sorry, but I couldn't reach the AI service. Please check your connection or try again later.";
+        }
       }
       
-      // Send message to n8n webhook
-      try {
-        const responseContent = await sendMessageToWebhook(
-          n8nWebhookUrl, 
-          content, 
-          user.id, 
-          user.name || 'User', 
-          user.email || ''
-        );
-        
-        const aiMessage = createAIMessage(responseContent);
-        setMessages(prev => [...prev, aiMessage]);
-      } catch (error) {
-        const errorMessage = "I'm sorry, but I couldn't reach the AI service. Please check your connection or try again later.";
-        const aiMessage = createAIMessage(errorMessage);
-        setMessages(prev => [...prev, aiMessage]);
-      } finally {
-        setLoading(false);
-      }
+      // Only add the AI message after we have a response
+      const aiMessage = createAIMessage(responseContent);
+      setMessages(prev => [...prev, aiMessage]);
+      
     } catch (error) {
       console.error('Error sending message:', error);
-      setLoading(false);
       toast.error("An error occurred while sending your message.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const clearMessages = () => {
     if (user) {
       localStorage.removeItem(`stockcoach_messages_${user.id}`);
-      setMessages([]);
+      // Add a welcome message back
+      const welcomeMessage = getWelcomeMessage(user.name || 'User');
+      setMessages([welcomeMessage]);
     }
   };
 

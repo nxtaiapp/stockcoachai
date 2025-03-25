@@ -10,6 +10,7 @@ export async function sendMessageToWebhook(
   userEmail: string
 ): Promise<string> {
   try {
+    console.log("Sending message to webhook:", webhookUrl);
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
@@ -30,7 +31,17 @@ export async function sendMessageToWebhook(
     
     // Try to parse the response
     const data = await response.json();
-    return data.response || data.message || "I received your message, but I'm not sure how to respond at the moment.";
+    console.log("Webhook response:", data);
+    
+    // Extract the response message from various possible properties
+    const responseContent = data.response || data.output || data.message || data.content;
+    
+    if (!responseContent) {
+      console.warn("No response content found in API response:", data);
+      return "I couldn't process your request. Please try again or contact support if the issue persists.";
+    }
+    
+    return responseContent;
   } catch (error) {
     console.error('Error calling n8n webhook:', error);
     toast.error("Failed to connect to n8n webhook. Please check the URL and try again.");
