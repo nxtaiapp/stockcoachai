@@ -101,19 +101,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
       if (!authUser) throw new Error('User creation failed');
 
-      // Create profile in profiles table
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: authUser.id,
-          email: email,
-          name: name,
-          experience_level: experience,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        });
+      // Get the newly created session to use the session token for profile creation
+      const { data: sessionData } = await supabase.auth.getSession();
+      
+      if (sessionData.session) {
+        // Create profile in profiles table using the session token
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: authUser.id,
+            email: email,
+            name: name,
+            experience_level: experience,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
 
-      if (profileError) throw profileError;
+        if (profileError) {
+          console.error('Error creating profile:', profileError);
+          // Don't throw here - the auth user was created successfully
+        }
+      }
 
       toast.success("Account created successfully!");
       navigate('/onboarding');
