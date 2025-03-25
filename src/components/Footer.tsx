@@ -1,17 +1,13 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { BarChart3 } from "lucide-react";
-
 const Footer = () => {
   const location = useLocation();
-  
+
   // Don't show footer in the chat interface
   if (location.pathname === "/chat") {
     return null;
   }
-
-  return (
-    <footer className="w-full py-8 px-6 border-t border-border bg-background">
+  return <footer className="w-full py-8 px-6 border-t border-border bg-background">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-1">
@@ -27,8 +23,8 @@ const Footer = () => {
           <div className="col-span-1 flex flex-col">
             <h3 className="font-medium mb-3">Company</h3>
             <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">About</Link>
-            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Careers</Link>
-            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Blog</Link>
+            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Contact Us</Link>
+            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Newsletter</Link>
           </div>
           
           <div className="col-span-1 flex flex-col">
@@ -63,8 +59,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
