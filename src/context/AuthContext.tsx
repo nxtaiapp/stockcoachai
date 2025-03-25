@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
@@ -71,6 +70,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (error) {
         console.error('Error fetching user profile:', error);
+        
+        // If profile doesn't exist, create one
+        if (error.code === 'PGRST116') {
+          await createProfile(authUser);
+          return;
+        }
         return;
       }
 
@@ -79,6 +84,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
+    }
+  };
+  
+  // Create a profile if one doesn't exist
+  const createProfile = async (authUser: User) => {
+    try {
+      const userData = authUser.user_metadata || {};
+      
+      const { error } = await supabase
+        .from('profiles')
+        .insert({
+          id: authUser.id,
+          email: authUser.email,
+          name: userData.name || userData.full_name || authUser.email?.split('@')[0] || 'User',
+          experience_level: userData.experience_level || 'beginner',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        });
+      
+      if (error) {
+        console.error('Error creating profile:', error);
+        return;
+      }
+      
+      // Fetch the profile again after creation
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', authUser.id)
+        .single();
+        
+      if (profile) {
+        setUser(profile as UserProfile);
+      }
+    } catch (error) {
+      console.error('Error in createProfile:', error);
     }
   };
 
