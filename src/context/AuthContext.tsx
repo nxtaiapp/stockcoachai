@@ -115,8 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
 
       if (data.user) {
-        // Create a profile record in our profiles table using service role client
-        // This way, we bypass RLS policies during registration
+        // Create a profile record in our profiles table
         const { error: profileError } = await supabase
           .from('profiles')
           .upsert({
@@ -126,7 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             experience_level: experience,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
-          }, { onConflict: 'id' });
+          });
 
         if (profileError) throw profileError;
         
