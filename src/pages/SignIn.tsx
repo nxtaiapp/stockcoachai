@@ -16,7 +16,7 @@ import {
 import { BarChart3, ArrowRight } from "lucide-react";
 
 const SignIn = () => {
-  const { signIn } = useAuth();
+  const { signIn, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   
   const [email, setEmail] = useState("");
@@ -38,7 +38,9 @@ const SignIn = () => {
       await signIn(email, password);
       // Navigate is handled in the AuthContext after successful sign-in
     } catch (err) {
+      console.error("Sign in error:", err);
       setError("Invalid email or password. Please try again.");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -76,6 +78,7 @@ const SignIn = () => {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  disabled={isLoading || authLoading}
                   required
                 />
               </div>
@@ -96,6 +99,7 @@ const SignIn = () => {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={isLoading || authLoading}
                   required
                 />
               </div>
@@ -103,10 +107,10 @@ const SignIn = () => {
               <Button 
                 type="submit" 
                 className="w-full flex items-center gap-2" 
-                disabled={isLoading}
+                disabled={isLoading || authLoading}
               >
                 Sign In
-                {isLoading ? (
+                {(isLoading || authLoading) ? (
                   <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 ) : (
                   <ArrowRight className="h-4 w-4" />
