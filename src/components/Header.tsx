@@ -37,7 +37,7 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
-          {user && (
+          {user ? (
             <>
               <Button variant="ghost" onClick={() => navigate("/chat")}>Chat</Button>
               <Button variant="ghost" onClick={() => navigate("/profile")}>
@@ -52,6 +52,11 @@ const Header = () => {
                 <LogOut size={16} />
                 Sign Out
               </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" onClick={() => navigate("/signin")}>Sign In</Button>
+              <Button onClick={() => navigate("/signup")}>Sign Up</Button>
             </>
           )}
         </nav>

@@ -2,63 +2,128 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
-
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  experience_level?: string;
-  trading_goal?: string;
-  skill_level?: string;
-}
+import { supabase } from '@/lib/supabase';
+import type { UserProfile } from '@/lib/supabase';
+import { AuthError, User } from '@supabase/supabase-js';
 
 interface AuthContextType {
-  user: User | null;
+  user: UserProfile | null;
   loading: boolean;
   signUp: (email: string, password: string, name: string, experience: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  setUserData: (data: Partial<User>) => void;
+  setUserData: (data: Partial<UserProfile>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // This is a placeholder for Supabase integration
-  // We'll mock the authentication for now
+  // Initialize auth state from Supabase session
   useEffect(() => {
-    // Check if user exists in localStorage
-    const storedUser = localStorage.getItem('stockcoach_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
+    const initializeAuth = async () => {
+      try {
+        setLoading(true);
+        
+        // Check active session
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          await fetchUserProfile(session.user);
+        }
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+        toast.error("Authentication error. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          await fetchUserProfile(session.user);
+        } else {
+          setUser(null);
+        }
+      }
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
+
+  // Fetch user profile from profiles table
+  const fetchUserProfile = async (authUser: User) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', authUser.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching user profile:', error);
+        return;
+      }
+
+      if (data) {
+        setUser(data as UserProfile);
+      }
+    } catch (error) {
+      console.error('Error in fetchUserProfile:', error);
+    }
+  };
 
   const signUp = async (email: string, password: string, name: string, experience: string) => {
     try {
       setLoading(true);
-      // Mock signup - will be replaced with Supabase
-      const newUser = {
-        id: Math.random().toString(36).substring(2, 9),
+      
+      // Create user in Supabase Auth
+      const { data: { user: authUser }, error } = await supabase.auth.signUp({
         email,
-        name,
-        experience_level: experience
-      };
-      
-      // Store user in localStorage for now
-      localStorage.setItem('stockcoach_user', JSON.stringify(newUser));
-      setUser(newUser);
-      
+        password,
+        options: {
+          data: {
+            name,
+            experience_level: experience
+          }
+        }
+      });
+
+      if (error) throw error;
+      if (!authUser) throw new Error('User creation failed');
+
+      // Create profile in profiles table
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: authUser.id,
+          email: email,
+          name: name,
+          experience_level: experience,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        });
+
+      if (profileError) throw profileError;
+
       toast.success("Account created successfully!");
       navigate('/onboarding');
     } catch (error) {
       console.error('Error signing up:', error);
-      toast.error("Failed to create account. Please try again.");
+      if (error instanceof AuthError) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to create account. Please try again.");
+      }
       throw error;
     } finally {
       setLoading(false);
@@ -68,22 +133,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (email: string, password: string) => {
     try {
       setLoading(true);
-      // Mock sign in - will be replaced with Supabase
-      // For demo, we'll just create a user if one doesn't exist
-      const newUser = {
-        id: Math.random().toString(36).substring(2, 9),
+      
+      const { data: { user: authUser }, error } = await supabase.auth.signInWithPassword({
         email,
-        name: email.split('@')[0],
-      };
-      
-      localStorage.setItem('stockcoach_user', JSON.stringify(newUser));
-      setUser(newUser);
-      
+        password
+      });
+
+      if (error) throw error;
+      if (!authUser) throw new Error('Sign in failed');
+
       toast.success("Signed in successfully!");
       navigate('/chat');
     } catch (error) {
       console.error('Error signing in:', error);
-      toast.error("Failed to sign in. Please check your credentials.");
+      if (error instanceof AuthError) {
+        toast.error(error.message);
+      } else {
+        toast.error("Failed to sign in. Please check your credentials.");
+      }
       throw error;
     } finally {
       setLoading(false);
@@ -92,22 +159,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     try {
-      // Mock sign out - will be replaced with Supabase
-      localStorage.removeItem('stockcoach_user');
+      setLoading(true);
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) throw error;
+      
       setUser(null);
       toast.success("Signed out successfully");
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
       toast.error("Failed to sign out. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const setUserData = (data: Partial<User>) => {
-    if (user) {
-      const updatedUser = { ...user, ...data };
-      setUser(updatedUser);
-      localStorage.setItem('stockcoach_user', JSON.stringify(updatedUser));
+  const setUserData = async (data: Partial<UserProfile>) => {
+    if (!user) return;
+
+    try {
+      // Update user profile in database
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          ...data,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setUser({ ...user, ...data });
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      toast.error("Failed to update profile data");
     }
   };
 
