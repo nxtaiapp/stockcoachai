@@ -2,23 +2,15 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { toast } from "sonner";
-
-export interface Message {
-  id: string;
-  senderId: string;
-  content: string;
-  timestamp: Date;
-  isAI: boolean;
-}
-
-interface ChatContextType {
-  messages: Message[];
-  loading: boolean;
-  n8nWebhookUrl: string;
-  setN8nWebhookUrl: (url: string) => void;
-  sendMessage: (message: string) => Promise<void>;
-  clearMessages: () => void;
-}
+import { Message, ChatContextType } from '../types/chat';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { 
+  sendMessageToWebhook, 
+  createUserMessage, 
+  createAIMessage, 
+  getWelcomeMessage,
+  getMockResponse
+} from '../services/messageService';
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
@@ -26,14 +18,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const [n8nWebhookUrl, setN8nWebhookUrl] = useState<string>(() => {
-    return localStorage.getItem('n8n_webhook_url') || '';
-  });
-
-  // Save webhook URL to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem('n8n_webhook_url', n8nWebhookUrl);
-  }, [n8nWebhookUrl]);
+  const [n8nWebhookUrl, setN8nWebhookUrl] = useLocalStorage<string>('n8n_webhook_url', '');
 
   // Load messages from localStorage when component mounts
   useEffect(() => {
@@ -43,13 +28,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         setMessages(JSON.parse(storedMessages));
       } else {
         // Add a welcome message for new users
-        const welcomeMessage: Message = {
-          id: Math.random().toString(36).substring(2, 9),
-          senderId: 'ai',
-          content: `Hello ${user.name}! Welcome to StockCoach.ai. I'm your personal AI trading assistant. How can I help you improve your trading skills today?`,
-          timestamp: new Date(),
-          isAI: true
-        };
+        const welcomeMessage = getWelcomeMessage(user.name || 'User');
         setMessages([welcomeMessage]);
         localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify([welcomeMessage]));
       }
@@ -70,44 +49,14 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       setLoading(true);
       
       // Add user message immediately
-      const userMessage: Message = {
-        id: Math.random().toString(36).substring(2, 9),
-        senderId: user.id,
-        content,
-        timestamp: new Date(),
-        isAI: false
-      };
-      
+      const userMessage = createUserMessage(user.id, content);
       setMessages(prev => [...prev, userMessage]);
       
       if (!n8nWebhookUrl) {
         // Fallback to mock response if no webhook URL is provided
-        // But don't add AI message immediately - wait for the "response"
-        
         // Simulate API delay
-        const mockResponses = [
-          "That's a great question about trading. The key is to always manage your risk and never invest more than you can afford to lose.",
-          "Looking at recent market trends, it appears that technology stocks are showing strong momentum. Consider researching companies with solid fundamentals.",
-          "When building a portfolio, diversification is essential. Consider allocating your investments across different sectors and asset classes.",
-          "For beginners, I recommend starting with index funds or ETFs that track major indices like the S&P 500.",
-          "Technical analysis suggests a potential resistance level at current prices. Watch for confirmation patterns before making your trading decision.",
-          "Dollar-cost averaging can be an effective strategy in volatile markets. It helps reduce the impact of market timing on your investments.",
-          "Before executing any trade, make sure you have a clear entry and exit strategy. Emotional decisions often lead to poor trading outcomes.",
-          "Fundamental analysis of this company shows strong earnings growth and healthy cash flows, which could indicate a good long-term investment.",
-        ];
-        
-        const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
-        
-        // Wait for the "response" to be ready before adding it
         setTimeout(() => {
-          const aiMessage: Message = {
-            id: Math.random().toString(36).substring(2, 9),
-            senderId: 'ai',
-            content: randomResponse,
-            timestamp: new Date(),
-            isAI: true
-          };
-          
+          const aiMessage = createAIMessage(getMockResponse());
           setMessages(prev => [...prev, aiMessage]);
           setLoading(false);
         }, 1500);
@@ -117,68 +66,23 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       
       // Send message to n8n webhook
       try {
-        const response = await fetch(n8nWebhookUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: content,
-            userId: user.id,
-            userName: user.name || 'User',
-            userEmail: user.email,
-            timestamp: new Date().toISOString(),
-          }),
-        });
+        const responseContent = await sendMessageToWebhook(
+          n8nWebhookUrl, 
+          content, 
+          user.id, 
+          user.name || 'User', 
+          user.email || ''
+        );
         
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        
-        // Try to parse the response
-        try {
-          const data = await response.json();
-          
-          // Only add the AI response after we've received it from the API
-          const aiMessage: Message = {
-            id: Math.random().toString(36).substring(2, 9),
-            senderId: 'ai',
-            content: data.response || data.message || "I received your message, but I'm not sure how to respond at the moment.",
-            timestamp: new Date(),
-            isAI: true
-          };
-          
-          setMessages(prev => [...prev, aiMessage]);
-          setLoading(false);
-        } catch (e) {
-          // If response is not JSON or doesn't have expected format
-          const aiMessage: Message = {
-            id: Math.random().toString(36).substring(2, 9),
-            senderId: 'ai',
-            content: "I received your message, but the response format wasn't what I expected. Please check your n8n workflow configuration.",
-            timestamp: new Date(),
-            isAI: true
-          };
-          
-          setMessages(prev => [...prev, aiMessage]);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error('Error calling n8n webhook:', error);
-        
-        const aiMessage: Message = {
-          id: Math.random().toString(36).substring(2, 9),
-          senderId: 'ai',
-          content: "I'm sorry, but I couldn't reach the AI service. Please check your connection or try again later.",
-          timestamp: new Date(),
-          isAI: true
-        };
-        
+        const aiMessage = createAIMessage(responseContent);
         setMessages(prev => [...prev, aiMessage]);
+      } catch (error) {
+        const errorMessage = "I'm sorry, but I couldn't reach the AI service. Please check your connection or try again later.";
+        const aiMessage = createAIMessage(errorMessage);
+        setMessages(prev => [...prev, aiMessage]);
+      } finally {
         setLoading(false);
-        toast.error("Failed to connect to n8n webhook. Please check the URL and try again.");
       }
-      
     } catch (error) {
       console.error('Error sending message:', error);
       setLoading(false);
@@ -214,3 +118,5 @@ export const useChat = () => {
   }
   return context;
 };
+
+export type { Message };
