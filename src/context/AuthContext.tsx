@@ -34,11 +34,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (session?.user) {
           await fetchUserProfile(session.user);
         } else {
+          setUser(null);
           setLoading(false); // Make sure to set loading to false if no session
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
         toast.error("Authentication error. Please try again.");
+        setUser(null);
         setLoading(false); // Make sure to set loading to false on error
       }
     };
@@ -80,17 +82,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
         
+        setUser(null);
         setLoading(false); // Make sure to set loading to false on error
         return;
       }
 
       if (data) {
         setUser(data as UserProfile);
+      } else {
+        setUser(null);
       }
       
       setLoading(false); // Make sure to set loading to false after fetching profile
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
+      setUser(null);
       setLoading(false); // Make sure to set loading to false on error
     }
   };
@@ -113,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       if (error) {
         console.error('Error creating profile:', error);
+        setUser(null);
         setLoading(false); // Make sure to set loading to false on error
         return;
       }
@@ -126,11 +133,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
       if (profile) {
         setUser(profile as UserProfile);
+      } else {
+        setUser(null);
       }
       
       setLoading(false); // Make sure to set loading to false after creating profile
     } catch (error) {
       console.error('Error in createProfile:', error);
+      setUser(null);
       setLoading(false); // Make sure to set loading to false on error
     }
   };
@@ -203,9 +213,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
       if (!authUser) throw new Error('Sign in failed');
 
-      // Navigate is now done here after successful sign-in and profile fetch
+      // Success toast and navigation is done here after authentication
       toast.success("Signed in successfully!");
       navigate('/chat');
+      
+      // Note: The profile fetching is handled by the auth state change listener
+      // So we don't need to navigate here or fetch the profile manually
     } catch (error) {
       console.error('Error signing in:', error);
       if (error instanceof AuthError) {
@@ -213,10 +226,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         toast.error("Failed to sign in. Please check your credentials.");
       }
+      setLoading(false); // Explicitly set loading to false on error
       throw error;
-    } finally {
-      setLoading(false);
     }
+    // No finally block here - loading state will be updated by the auth state change listener
   };
 
   const signOut = async () => {
