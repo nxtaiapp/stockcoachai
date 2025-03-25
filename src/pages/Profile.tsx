@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,16 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
-import { User, Edit, Mail, Lock } from "lucide-react";
+import { User, Edit, Mail, Lock, MessageSquare, BarChart3 } from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
 
 const Profile = () => {
   const { user, setUserData } = useAuth();
@@ -52,6 +61,30 @@ const Profile = () => {
 
   return (
     <div className="container max-w-4xl py-20 px-4 md:px-6">
+      {/* Navigation Menu */}
+      <div className="mb-8">
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <Link to="/chat">
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  <MessageSquare className="mr-2 h-4 w-4" />
+                  Back to Chat
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+            <NavigationMenuItem>
+              <Link to="/">
+                <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  StockCoach.ai
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
+
       <h1 className="text-3xl font-bold mb-8">Your Profile</h1>
       
       <Card>
