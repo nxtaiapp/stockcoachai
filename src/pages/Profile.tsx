@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -8,7 +7,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
-import { User, Edit, Mail, Lock } from "lucide-react";
+import { User, Edit, Mail, Lock, ArrowLeft, BarChart3 } from "lucide-react";
+import Header from "@/components/Header";
 
 const Profile = () => {
   const { user, setUserData } = useAuth();
@@ -51,174 +51,189 @@ const Profile = () => {
   };
 
   return (
-    <div className="container max-w-4xl py-20 px-4 md:px-6">
-      <h1 className="text-3xl font-bold mb-8">Your Profile</h1>
-      
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-primary/10 p-3 rounded-full">
-                <User className="h-6 w-6 text-primary" />
+    <>
+      <Header />
+      <div className="container max-w-4xl py-20 px-4 md:px-6 mt-14">
+        <div className="flex items-center gap-2 mb-6">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => navigate("/chat")} 
+            className="mr-2"
+            aria-label="Back to chat"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+          <h1 className="text-3xl font-bold">Your Profile</h1>
+        </div>
+        
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-primary/10 p-3 rounded-full">
+                  <User className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle>Personal Information</CardTitle>
+                  <CardDescription>Manage your account details</CardDescription>
+                </div>
               </div>
-              <div>
-                <CardTitle>Personal Information</CardTitle>
-                <CardDescription>Manage your account details</CardDescription>
-              </div>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setIsEditing(!isEditing)}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                {isEditing ? "Cancel" : "Edit Profile"}
+              </Button>
             </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => setIsEditing(!isEditing)}
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              {isEditing ? "Cancel" : "Edit Profile"}
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {isEditing ? (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-4">
+          </CardHeader>
+          <CardContent>
+            {isEditing ? (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Full Name</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                        <Input
+                          id="email"
+                          name="email"
+                          value={formData.email}
+                          readOnly
+                          disabled
+                          className="pl-10 bg-muted"
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground">Email cannot be changed</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Experience Level</Label>
+                    <RadioGroup 
+                      value={formData.experience_level} 
+                      onValueChange={(value) => handleRadioChange("experience_level", value)}
+                      className="flex flex-col space-y-1"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="beginner" id="exp-beginner" />
+                        <Label htmlFor="exp-beginner">Beginner</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="intermediate" id="exp-intermediate" />
+                        <Label htmlFor="exp-intermediate">Intermediate</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="advanced" id="exp-advanced" />
+                        <Label htmlFor="exp-advanced">Advanced</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Trading Goal</Label>
+                    <RadioGroup 
+                      value={formData.trading_goal} 
+                      onValueChange={(value) => handleRadioChange("trading_goal", value)}
+                      className="flex flex-col space-y-1"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="income" id="goal-income" />
+                        <Label htmlFor="goal-income">Generate Income</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="growth" id="goal-growth" />
+                        <Label htmlFor="goal-growth">Long-term Growth</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="trading" id="goal-trading" />
+                        <Label htmlFor="goal-trading">Active Trading</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Skill Level</Label>
+                    <RadioGroup 
+                      value={formData.skill_level} 
+                      onValueChange={(value) => handleRadioChange("skill_level", value)}
+                      className="flex flex-col space-y-1"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="beginner" id="skill-beginner" />
+                        <Label htmlFor="skill-beginner">Beginner</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="intermediate" id="skill-intermediate" />
+                        <Label htmlFor="skill-intermediate">Intermediate</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="advanced" id="skill-advanced" />
+                        <Label htmlFor="skill-advanced">Advanced</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                </div>
+                
+                <Button type="submit" className="w-full">Save Changes</Button>
+              </form>
+            ) : (
+              <div className="space-y-6">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="pl-10"
-                      />
-                    </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Full Name</p>
+                    <p className="text-base font-medium">{user.name}</p>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        readOnly
-                        disabled
-                        className="pl-10 bg-muted"
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground">Email cannot be changed</p>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Email</p>
+                    <p className="text-base font-medium">{user.email}</p>
                   </div>
                 </div>
-
-                <div className="space-y-2">
-                  <Label>Experience Level</Label>
-                  <RadioGroup 
-                    value={formData.experience_level} 
-                    onValueChange={(value) => handleRadioChange("experience_level", value)}
-                    className="flex flex-col space-y-1"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="beginner" id="exp-beginner" />
-                      <Label htmlFor="exp-beginner">Beginner</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="intermediate" id="exp-intermediate" />
-                      <Label htmlFor="exp-intermediate">Intermediate</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="advanced" id="exp-advanced" />
-                      <Label htmlFor="exp-advanced">Advanced</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Trading Goal</Label>
-                  <RadioGroup 
-                    value={formData.trading_goal} 
-                    onValueChange={(value) => handleRadioChange("trading_goal", value)}
-                    className="flex flex-col space-y-1"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="income" id="goal-income" />
-                      <Label htmlFor="goal-income">Generate Income</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="growth" id="goal-growth" />
-                      <Label htmlFor="goal-growth">Long-term Growth</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="trading" id="goal-trading" />
-                      <Label htmlFor="goal-trading">Active Trading</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Skill Level</Label>
-                  <RadioGroup 
-                    value={formData.skill_level} 
-                    onValueChange={(value) => handleRadioChange("skill_level", value)}
-                    className="flex flex-col space-y-1"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="beginner" id="skill-beginner" />
-                      <Label htmlFor="skill-beginner">Beginner</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="intermediate" id="skill-intermediate" />
-                      <Label htmlFor="skill-intermediate">Intermediate</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="advanced" id="skill-advanced" />
-                      <Label htmlFor="skill-advanced">Advanced</Label>
-                    </div>
-                  </RadioGroup>
+                
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Experience Level</p>
+                    <p className="text-base font-medium capitalize">{user.experience_level || "Not set"}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Trading Goal</p>
+                    <p className="text-base font-medium capitalize">{user.trading_goal || "Not set"}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium text-muted-foreground">Skill Level</p>
+                    <p className="text-base font-medium capitalize">{user.skill_level || "Not set"}</p>
+                  </div>
                 </div>
               </div>
-              
-              <Button type="submit" className="w-full">Save Changes</Button>
-            </form>
-          ) : (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Full Name</p>
-                  <p className="text-base font-medium">{user.name}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Email</p>
-                  <p className="text-base font-medium">{user.email}</p>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Experience Level</p>
-                  <p className="text-base font-medium capitalize">{user.experience_level || "Not set"}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Trading Goal</p>
-                  <p className="text-base font-medium capitalize">{user.trading_goal || "Not set"}</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Skill Level</p>
-                  <p className="text-base font-medium capitalize">{user.skill_level || "Not set"}</p>
-                </div>
-              </div>
+            )}
+          </CardContent>
+          <CardFooter className="border-t px-6 py-4 bg-muted/50">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Lock className="h-4 w-4" />
+              <span>Your data is stored securely</span>
             </div>
-          )}
-        </CardContent>
-        <CardFooter className="border-t px-6 py-4 bg-muted/50">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Lock className="h-4 w-4" />
-            <span>Your data is stored securely</span>
-          </div>
-        </CardFooter>
-      </Card>
-    </div>
+          </CardFooter>
+        </Card>
+      </div>
+    </>
   );
 };
 
 export default Profile;
+
