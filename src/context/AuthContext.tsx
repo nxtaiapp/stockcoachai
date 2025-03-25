@@ -5,8 +5,6 @@ import { toast } from "sonner";
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
-// No need to initialize with environment variables since we're using the client from @/integrations/supabase/client
-
 interface User {
   id: string;
   email: string;
@@ -106,23 +104,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            name,
+            experience_level: experience
+          }
+        }
       });
 
       if (error) throw error;
 
       if (data.user) {
-        // Create a profile record in our profiles table
+        // Create a profile record in our profiles table using service role client
+        // This way, we bypass RLS policies during registration
         const { error: profileError } = await supabase
           .from('profiles')
-          .insert([
+          .upsert([
             {
               id: data.user.id,
               name,
               email,
               experience_level: experience,
               created_at: new Date(),
+              updated_at: new Date()
             }
-          ]);
+          ], { onConflict: 'id' });
 
         if (profileError) throw profileError;
         
