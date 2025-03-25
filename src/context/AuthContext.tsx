@@ -119,16 +119,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // This way, we bypass RLS policies during registration
         const { error: profileError } = await supabase
           .from('profiles')
-          .upsert([
-            {
-              id: data.user.id,
-              name,
-              email,
-              experience_level: experience,
-              created_at: new Date(),
-              updated_at: new Date()
-            }
-          ], { onConflict: 'id' });
+          .upsert({
+            id: data.user.id,
+            name,
+            email,
+            experience_level: experience,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'id' });
 
         if (profileError) throw profileError;
         
@@ -212,7 +210,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .from('profiles')
           .update({
             ...data,
-            updated_at: new Date(),
+            updated_at: new Date().toISOString(),
           })
           .eq('id', user.id);
 
