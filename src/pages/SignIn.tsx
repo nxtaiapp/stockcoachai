@@ -36,9 +36,9 @@ const SignIn = () => {
     try {
       setIsLoading(true);
       await signIn(email, password);
-      // Navigation is handled in the AuthContext after successful sign-in
-    } catch (err: any) {
-      setError(err.message || "Invalid email or password. Please try again.");
+      // Navigate is handled in the AuthContext after successful sign-in
+    } catch (err) {
+      setError("Invalid email or password. Please try again.");
       setIsLoading(false);
     }
   };

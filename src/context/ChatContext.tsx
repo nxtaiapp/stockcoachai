@@ -1,7 +1,7 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useAuth } from './AuthContext';
 import { toast } from "sonner";
-import { supabase } from '@/integrations/supabase/client';
 
 export interface Message {
   id: string;
@@ -30,65 +30,38 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     return localStorage.getItem('n8n_webhook_url') || '';
   });
 
+  // Save webhook URL to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('n8n_webhook_url', n8nWebhookUrl);
   }, [n8nWebhookUrl]);
 
+  // Load messages from localStorage when component mounts
   useEffect(() => {
-    if (!user) return;
-    
-    const fetchMessages = async () => {
-      try {
-        setLoading(true);
-        
-        const { data, error } = await supabase
-          .from('chat_messages')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: true });
-        
-        if (error) throw error;
-        
-        if (data.length > 0) {
-          const formattedMessages = data.map(msg => ({
-            id: msg.id,
-            senderId: msg.sender_id,
-            content: msg.content,
-            timestamp: new Date(msg.created_at),
-            isAI: msg.is_ai,
-          }));
-          
-          setMessages(formattedMessages);
-        } else {
-          const welcomeMessage: Message = {
-            id: Math.random().toString(36).substring(2, 9),
-            senderId: 'ai',
-            content: `Hello ${user.name}! Welcome to StockCoach.ai. I'm your personal AI trading assistant. How can I help you improve your trading skills today?`,
-            timestamp: new Date(),
-            isAI: true
-          };
-          
-          setMessages([welcomeMessage]);
-          
-          await supabase.from('chat_messages').insert({
-            id: welcomeMessage.id,
-            user_id: user.id,
-            sender_id: welcomeMessage.senderId,
-            content: welcomeMessage.content,
-            created_at: welcomeMessage.timestamp.toISOString(),
-            is_ai: welcomeMessage.isAI,
-          });
-        }
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-        toast.error("Failed to load chat messages");
-      } finally {
-        setLoading(false);
+    if (user) {
+      const storedMessages = localStorage.getItem(`stockcoach_messages_${user.id}`);
+      if (storedMessages) {
+        setMessages(JSON.parse(storedMessages));
+      } else {
+        // Add a welcome message for new users
+        const welcomeMessage: Message = {
+          id: Math.random().toString(36).substring(2, 9),
+          senderId: 'ai',
+          content: `Hello ${user.name}! Welcome to StockCoach.ai. I'm your personal AI trading assistant. How can I help you improve your trading skills today?`,
+          timestamp: new Date(),
+          isAI: true
+        };
+        setMessages([welcomeMessage]);
+        localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify([welcomeMessage]));
       }
-    };
-    
-    fetchMessages();
+    }
   }, [user]);
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
+    if (user && messages.length > 0) {
+      localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify(messages));
+    }
+  }, [user, messages]);
 
   const sendMessage = async (content: string) => {
     if (!user) return;
@@ -96,6 +69,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       
+      // Add user message
       const userMessage: Message = {
         id: Math.random().toString(36).substring(2, 9),
         senderId: user.id,
@@ -106,17 +80,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       
       setMessages(prev => [...prev, userMessage]);
       
-      await supabase.from('chat_messages').insert({
-        id: userMessage.id,
-        user_id: user.id,
-        sender_id: userMessage.senderId,
-        content: userMessage.content,
-        created_at: userMessage.timestamp.toISOString(),
-        is_ai: userMessage.isAI,
-      });
-      
       if (!n8nWebhookUrl) {
-        setTimeout(async () => {
+        // Fallback to mock response if no webhook URL is provided
+        setTimeout(() => {
           const mockResponses = [
             "That's a great question about trading. The key is to always manage your risk and never invest more than you can afford to lose.",
             "Looking at recent market trends, it appears that technology stocks are showing strong momentum. Consider researching companies with solid fundamentals.",
@@ -139,22 +105,13 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           };
           
           setMessages(prev => [...prev, aiMessage]);
-          
-          await supabase.from('chat_messages').insert({
-            id: aiMessage.id,
-            user_id: user.id,
-            sender_id: aiMessage.senderId,
-            content: aiMessage.content,
-            created_at: aiMessage.timestamp.toISOString(),
-            is_ai: aiMessage.isAI,
-          });
-          
           setLoading(false);
         }, 1500);
         
         return;
       }
       
+      // Send message to n8n webhook
       try {
         const response = await fetch(n8nWebhookUrl, {
           method: 'POST',
@@ -174,6 +131,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         
+        // Try to parse the response
         try {
           const data = await response.json();
           
@@ -186,17 +144,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           };
           
           setMessages(prev => [...prev, aiMessage]);
-          
-          await supabase.from('chat_messages').insert({
-            id: aiMessage.id,
-            user_id: user.id,
-            sender_id: aiMessage.senderId,
-            content: aiMessage.content,
-            created_at: aiMessage.timestamp.toISOString(),
-            is_ai: aiMessage.isAI,
-          });
-          
         } catch (e) {
+          // If response is not JSON or doesn't have expected format
           const aiMessage: Message = {
             id: Math.random().toString(36).substring(2, 9),
             senderId: 'ai',
@@ -206,15 +155,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
           };
           
           setMessages(prev => [...prev, aiMessage]);
-          
-          await supabase.from('chat_messages').insert({
-            id: aiMessage.id,
-            user_id: user.id,
-            sender_id: aiMessage.senderId,
-            content: aiMessage.content,
-            created_at: aiMessage.timestamp.toISOString(),
-            is_ai: aiMessage.isAI,
-          });
         }
       } catch (error) {
         console.error('Error calling n8n webhook:', error);
@@ -228,16 +168,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         };
         
         setMessages(prev => [...prev, aiMessage]);
-        
-        await supabase.from('chat_messages').insert({
-          id: aiMessage.id,
-          user_id: user.id,
-          sender_id: aiMessage.senderId,
-          content: aiMessage.content,
-          created_at: aiMessage.timestamp.toISOString(),
-          is_ai: aiMessage.isAI,
-        });
-        
         toast.error("Failed to connect to n8n webhook. Please check the URL and try again.");
       } finally {
         setLoading(false);
@@ -250,22 +180,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const clearMessages = async () => {
-    if (!user) return;
-    
-    try {
-      const { error } = await supabase
-        .from('chat_messages')
-        .delete()
-        .eq('user_id', user.id);
-      
-      if (error) throw error;
-      
+  const clearMessages = () => {
+    if (user) {
+      localStorage.removeItem(`stockcoach_messages_${user.id}`);
       setMessages([]);
-      toast.success("Chat history cleared successfully");
-    } catch (error) {
-      console.error('Error clearing messages:', error);
-      toast.error("Failed to clear chat history");
     }
   };
 
