@@ -40,9 +40,9 @@ const Footer = () => {
           
           <div className="col-span-1 flex flex-col">
             <h3 className="font-medium mb-3">Legal</h3>
-            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Privacy Policy</Link>
-            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Terms of Service</Link>
-            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Cookie Policy</Link>
+            <Link to="/privacy-policy" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Privacy Policy</Link>
+            <Link to="/terms-of-service" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Terms of Service</Link>
+            <Link to="/cookie-policy" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Cookie Policy</Link>
           </div>
         </div>
         

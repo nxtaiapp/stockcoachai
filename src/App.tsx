@@ -15,6 +15,9 @@ import Onboarding from "./pages/Onboarding";
 import Chat from "./pages/Chat";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import CookiePolicy from "./pages/CookiePolicy";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +35,9 @@ const App = () => (
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/cookie-policy" element={<CookiePolicy />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <Footer />
