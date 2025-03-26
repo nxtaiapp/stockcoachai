@@ -11,7 +11,7 @@ interface ChatHeaderProps {
 }
 
 const ChatHeader = ({ toggleSettings, showSettings }: ChatHeaderProps) => {
-  const { user, signOut } = useAuth();
+  const { user, signOut, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
@@ -32,18 +32,20 @@ const ChatHeader = ({ toggleSettings, showSettings }: ChatHeaderProps) => {
         </div>
         
         <div className="flex items-center gap-2">
-          <Button 
-            variant="outline" 
-            size="icon" 
-            onClick={toggleSettings}
-            className="relative flex items-center"
-            title="Settings"
-          >
-            <Settings className="h-5 w-5" />
-            {!showSettings && (
-              <span className="absolute -top-1 -right-1 h-2 w-2 bg-primary rounded-full animate-pulse"></span>
-            )}
-          </Button>
+          {isAdmin && (
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={toggleSettings}
+              className="relative flex items-center"
+              title="Settings"
+            >
+              <Settings className="h-5 w-5" />
+              {!showSettings && (
+                <span className="absolute -top-1 -right-1 h-2 w-2 bg-primary rounded-full animate-pulse"></span>
+              )}
+            </Button>
+          )}
           
           {user && (
             <div className="flex items-center gap-2">
