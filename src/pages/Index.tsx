@@ -1,12 +1,12 @@
-
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { BarChart3, ArrowRight, TrendingUp, LineChart, Shield, Zap } from "lucide-react";
-
 const Index = () => {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
 
   // If user is already logged in, redirect to chat
@@ -15,9 +15,7 @@ const Index = () => {
       navigate("/chat");
     }
   }, [user, navigate]);
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <header className="w-full py-4 px-6 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -43,10 +41,14 @@ const Index = () => {
             <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight animate-fade-in">
               Your AI-Powered <span className="text-primary">Trading</span> Assistant
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 animate-fade-in" style={{
+            animationDelay: "0.1s"
+          }}>
               Improve your trading decisions with personalized AI guidance, market insights, and expert strategies.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: "0.2s" }}>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{
+            animationDelay: "0.2s"
+          }}>
               <Link to="/signup">
                 <Button size="lg" className="gap-2 text-lg">
                   Start 14-Day Free Trial <ArrowRight className="h-5 w-5" />
@@ -58,7 +60,9 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
-            <p className="text-sm text-muted-foreground mt-4 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+            <p className="text-sm text-muted-foreground mt-4 animate-fade-in" style={{
+            animationDelay: "0.3s"
+          }}>
               No credit card required. Cancel anytime.
             </p>
           </div>
@@ -69,7 +73,9 @@ const Index = () => {
           <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl font-bold text-center mb-16">How StockCoach.ai Helps You</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              <div className="premium-card p-8 rounded-lg animate-slide-up" style={{ animationDelay: "0.1s" }}>
+              <div className="premium-card p-8 rounded-lg animate-slide-up" style={{
+              animationDelay: "0.1s"
+            }}>
                 <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
                   <TrendingUp className="h-6 w-6 text-primary" />
                 </div>
@@ -78,16 +84,18 @@ const Index = () => {
                   Get real-time market insights and analysis to make informed trading decisions based on current trends.
                 </p>
               </div>
-              <div className="premium-card p-8 rounded-lg animate-slide-up" style={{ animationDelay: "0.2s" }}>
+              <div className="premium-card p-8 rounded-lg animate-slide-up" style={{
+              animationDelay: "0.2s"
+            }}>
                 <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
                   <LineChart className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Strategy Development</h3>
-                <p className="text-muted-foreground">
-                  Build, backtest, and refine your trading strategies with AI-powered recommendations.
-                </p>
+                <p className="text-muted-foreground">Build and refine your trading strategies with AI-powered recommendations.</p>
               </div>
-              <div className="premium-card p-8 rounded-lg animate-slide-up" style={{ animationDelay: "0.3s" }}>
+              <div className="premium-card p-8 rounded-lg animate-slide-up" style={{
+              animationDelay: "0.3s"
+            }}>
                 <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
                   <Shield className="h-6 w-6 text-primary" />
                 </div>
@@ -162,8 +170,6 @@ const Index = () => {
           </div>
         </section>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
