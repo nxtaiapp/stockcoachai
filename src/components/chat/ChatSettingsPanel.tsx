@@ -2,6 +2,7 @@
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import WebhookSettings from "../WebhookSettings";
+import { useChat } from "@/context/ChatContext";
 
 interface ChatSettingsPanelProps {
   showSettings: boolean;
@@ -9,6 +10,8 @@ interface ChatSettingsPanelProps {
 }
 
 const ChatSettingsPanel = ({ showSettings, toggleSettings }: ChatSettingsPanelProps) => {
+  const { isAdmin } = useChat();
+  
   if (!showSettings) return null;
   
   return (
@@ -20,7 +23,14 @@ const ChatSettingsPanel = ({ showSettings, toggleSettings }: ChatSettingsPanelPr
             <X className="h-4 w-4" />
           </Button>
         </div>
-        <WebhookSettings />
+        
+        {isAdmin ? (
+          <WebhookSettings />
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Only administrators can access these settings.
+          </p>
+        )}
       </div>
     </div>
   );

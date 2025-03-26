@@ -11,11 +11,12 @@ import {
   getWelcomeMessage,
   getMockResponse
 } from '../services/messageService';
+import { supabase } from '@/lib/supabase';
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [n8nWebhookUrl, setN8nWebhookUrl] = useLocalStorage<string>('n8n_webhook_url', '');
@@ -103,10 +104,11 @@ export function ChatProvider({ children }: { children: ReactNode }) {
     <ChatContext.Provider value={{ 
       messages, 
       loading, 
-      n8nWebhookUrl, 
-      setN8nWebhookUrl, 
+      n8nWebhookUrl: isAdmin ? n8nWebhookUrl : '', 
+      setN8nWebhookUrl: isAdmin ? setN8nWebhookUrl : () => {}, 
       sendMessage, 
-      clearMessages 
+      clearMessages,
+      isAdmin
     }}>
       {children}
     </ChatContext.Provider>

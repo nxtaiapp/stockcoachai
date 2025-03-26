@@ -5,15 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import { useChat } from "@/context/ChatContext";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 const WebhookSettings = () => {
-  const { n8nWebhookUrl, setN8nWebhookUrl } = useChat();
+  const { isAdmin, n8nWebhookUrl, setN8nWebhookUrl } = useChat();
   const [url, setUrl] = useState(n8nWebhookUrl);
 
   const handleSave = () => {
+    if (!isAdmin) {
+      toast.error("You don't have permission to modify these settings");
+      return;
+    }
+    
     setN8nWebhookUrl(url);
     toast.success("n8n webhook URL saved successfully");
   };
+
+  if (!isAdmin) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col space-y-4">

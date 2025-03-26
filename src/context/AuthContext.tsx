@@ -9,6 +9,7 @@ import { AuthError, User } from '@supabase/supabase-js';
 interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
+  isAdmin: boolean;
   signUp: (email: string, password: string, name: string, experience: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   // Initialize auth state from Supabase session
@@ -35,13 +37,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await fetchUserProfile(session.user);
         } else {
           setUser(null);
-          setLoading(false); // Make sure to set loading to false if no session
+          setIsAdmin(false);
+          setLoading(false);
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
         toast.error("Authentication error. Please try again.");
         setUser(null);
-        setLoading(false); // Make sure to set loading to false on error
+        setIsAdmin(false);
+        setLoading(false);
       }
     };
 
@@ -54,7 +58,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await fetchUserProfile(session.user);
         } else {
           setUser(null);
-          setLoading(false); // Make sure to set loading to false when auth state changes to logged out
+          setIsAdmin(false);
+          setLoading(false);
         }
       }
     );
@@ -83,21 +88,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         
         setUser(null);
-        setLoading(false); // Make sure to set loading to false on error
+        setIsAdmin(false);
+        setLoading(false);
         return;
       }
 
       if (data) {
         setUser(data as UserProfile);
+        
+        // Check if user has admin role
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', authUser.id)
+          .eq('role', 'admin')
+          .maybeSingle();
+          
+        setIsAdmin(roleData?.role === 'admin');
       } else {
         setUser(null);
+        setIsAdmin(false);
       }
       
-      setLoading(false); // Make sure to set loading to false after fetching profile
+      setLoading(false);
     } catch (error) {
       console.error('Error in fetchUserProfile:', error);
       setUser(null);
-      setLoading(false); // Make sure to set loading to false on error
+      setIsAdmin(false);
+      setLoading(false);
     }
   };
   
@@ -274,7 +292,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut, setUserData }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin, signUp, signIn, signOut, setUserData }}>
       {children}
     </AuthContext.Provider>
   );
