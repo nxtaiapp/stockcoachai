@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, MicOff } from "lucide-react";
 import { toast } from "sonner";
+import { useChat } from "@/context/ChatContext";
 
 interface AudioRecorderProps {
   onTranscriptionComplete: (text: string) => void;
@@ -13,6 +14,7 @@ const AudioRecorder = ({ onTranscriptionComplete, disabled = false }: AudioRecor
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
   const [isTranscribing, setIsTranscribing] = useState(false);
+  const { transcriptionWebhookUrl } = useChat();
 
   // Clean up media recorder on unmount
   useEffect(() => {
@@ -54,8 +56,11 @@ const AudioRecorder = ({ onTranscriptionComplete, disabled = false }: AudioRecor
           const formData = new FormData();
           formData.append('file', audioBlob, 'recording.webm');
           
-          // Send to the n8n webhook
-          const response = await fetch("https://nxtaisolutions.app.n8n.cloud/webhook-test/c749cf70-e75b-4620-8a95-2e3f69e77f61", {
+          // Use the configured transcription webhook URL or fall back to the default
+          const webhookUrl = transcriptionWebhookUrl || "https://nxtaisolutions.app.n8n.cloud/webhook-test/c749cf70-e75b-4620-8a95-2e3f69e77f61";
+          
+          // Send to the transcription webhook
+          const response = await fetch(webhookUrl, {
             method: 'POST',
             body: formData,
           });

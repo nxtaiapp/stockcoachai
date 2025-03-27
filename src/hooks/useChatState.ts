@@ -18,6 +18,7 @@ export const useChatState = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [n8nWebhookUrl, setN8nWebhookUrl] = useLocalStorage<string>('n8n_webhook_url', '');
+  const [transcriptionWebhookUrl, setTranscriptionWebhookUrl] = useLocalStorage<string>('transcription_webhook_url', '');
 
   // Load messages from localStorage when component mounts
   useEffect(() => {
@@ -121,7 +122,9 @@ export const useChatState = () => {
     messages,
     loading,
     n8nWebhookUrl,
+    transcriptionWebhookUrl,
     setN8nWebhookUrl,
+    setTranscriptionWebhookUrl,
     sendMessage,
     clearMessages,
     isAdmin

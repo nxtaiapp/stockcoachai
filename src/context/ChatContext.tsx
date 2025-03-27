@@ -13,7 +13,9 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       messages: chatState.messages, 
       loading: chatState.loading, 
       n8nWebhookUrl: chatState.isAdmin ? chatState.n8nWebhookUrl : '', 
+      transcriptionWebhookUrl: chatState.isAdmin ? chatState.transcriptionWebhookUrl : '',
       setN8nWebhookUrl: chatState.isAdmin ? chatState.setN8nWebhookUrl : () => {}, 
+      setTranscriptionWebhookUrl: chatState.isAdmin ? chatState.setTranscriptionWebhookUrl : () => {},
       sendMessage: chatState.sendMessage, 
       clearMessages: chatState.clearMessages,
       isAdmin: chatState.isAdmin
