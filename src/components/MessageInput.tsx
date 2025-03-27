@@ -16,6 +16,7 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -96,6 +97,7 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
         const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
         
         try {
+          setIsTranscribing(true);
           toast.info("Transcribing your message...");
           
           // Convert to base64 for sending to API
@@ -105,34 +107,65 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
             try {
               const base64Audio = reader.result?.toString().split(',')[1];
               
-              // This is where we'd normally call an API to transcribe the audio
-              // For this example, we'll just set a placeholder message
-              // In a real implementation, you would have a serverless function that calls an API like OpenAI Whisper
+              // Send to the provided transcription API
+              const response = await fetch("https://nxtaisolutions.app.n8n.cloud/webhook-test/c749cf70-e75b-4620-8a95-2e3f69e77f61", {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  audio: base64Audio
+                }),
+              });
               
-              // Mock transcription for demonstration
-              setTimeout(() => {
-                const transcription = "This is a simulated transcription. In a real implementation, this would be the text from your voice recording.";
-                setMessage(transcription);
+              // Wait for the response with a timeout of at least 1 minute
+              const timeoutPromise = new Promise((_, reject) => 
+                setTimeout(() => reject(new Error("Transcription timed out after 65 seconds")), 65000)
+              );
+              
+              let transcriptionResult;
+              try {
+                transcriptionResult = await Promise.race([
+                  response.json(),
+                  timeoutPromise
+                ]);
+              } catch (error) {
+                console.error("Error or timeout in transcription:", error);
+                toast.error("Transcription timed out. Please try again.");
+                setIsTranscribing(false);
+                return;
+              }
+              
+              if (transcriptionResult.text) {
+                // Set the transcribed text as the message
+                setMessage(transcriptionResult.text);
                 toast.success("Transcription complete!");
                 
-                // Focus the input to allow editing
-                if (inputRef.current) {
-                  inputRef.current.focus();
-                }
-              }, 1500);
+                // Add the transcription to the chat
+                onSendMessage(transcriptionResult.text);
+              } else if (transcriptionResult.error) {
+                toast.error(`Transcription error: ${transcriptionResult.error}`);
+              } else {
+                toast.error("Failed to transcribe. Please try again.");
+              }
               
               // Reset recording state
-              setIsRecording(false);
+              setIsTranscribing(false);
+              
+              // Focus the input to allow editing
+              if (inputRef.current) {
+                inputRef.current.focus();
+              }
             } catch (error) {
               console.error("Error processing audio:", error);
               toast.error("Failed to process audio. Please try again.");
-              setIsRecording(false);
+              setIsTranscribing(false);
             }
           };
         } catch (error) {
           console.error("Error transcribing audio:", error);
           toast.error("Failed to transcribe audio. Please try again.");
-          setIsRecording(false);
+          setIsTranscribing(false);
         }
       });
       
@@ -192,7 +225,7 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask Alexandra anything about trading..."
-            disabled={disabled || isRecording}
+            disabled={disabled || isRecording || isTranscribing}
             className="pr-10 py-3 md:py-6 shadow-sm border border-input bg-background rounded-lg"
           />
         </div>
@@ -202,8 +235,8 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
           onClick={toggleRecording}
           variant="outline"
           size="icon"
-          className={`h-10 w-10 rounded-full shadow-sm ${isRecording ? 'bg-red-500 text-white hover:bg-red-600' : ''}`}
-          disabled={disabled}
+          className={`h-10 w-10 rounded-full shadow-sm ${isRecording ? 'bg-red-500 text-white hover:bg-red-600' : ''} ${isTranscribing ? 'bg-yellow-500 text-white hover:bg-yellow-600 animate-pulse' : ''}`}
+          disabled={disabled || isTranscribing}
         >
           {isRecording ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
           <span className="sr-only">{isRecording ? 'Stop recording' : 'Start recording'}</span>
@@ -215,7 +248,7 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
           variant="outline"
           size="icon"
           className="h-10 w-10 rounded-full shadow-sm"
-          disabled={disabled || isRecording}
+          disabled={disabled || isRecording || isTranscribing}
         >
           <Image className="h-5 w-5" />
           <span className="sr-only">Upload image</span>
@@ -227,12 +260,12 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
           onChange={handleImageUpload}
           accept="image/*"
           className="hidden"
-          disabled={disabled || isRecording}
+          disabled={disabled || isRecording || isTranscribing}
         />
         
         <Button
           onClick={handleSend}
-          disabled={(!message.trim() && !imageFile) || disabled || isRecording}
+          disabled={(!message.trim() && !imageFile) || disabled || isRecording || isTranscribing}
           size="icon"
           className="h-10 w-10 rounded-full shadow-sm"
         >
