@@ -84,7 +84,7 @@ const AudioRecorder = ({ onTranscriptionComplete, disabled = false }: AudioRecor
           }
           
           if (transcriptionResult.text) {
-            // Set the transcribed text as the message
+            // Set the transcribed text in the input field instead of sending as a message
             onTranscriptionComplete(transcriptionResult.text);
             toast.success("Transcription complete!");
           } else if (transcriptionResult.error) {

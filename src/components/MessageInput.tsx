@@ -45,13 +45,10 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
   };
 
   const handleTranscriptionComplete = (text: string) => {
-    // Set the transcribed text as the message
+    // Just set the transcribed text as the message without sending it
     setMessage(text);
     
-    // Add the transcription to the chat
-    onSendMessage(text);
-    
-    // Focus the input to allow editing
+    // Focus the input to allow editing before sending
     if (inputRef.current) {
       inputRef.current.focus();
     }
