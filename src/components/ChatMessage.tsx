@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { Message } from "../context/ChatContext";
 import { cn } from "@/lib/utils";
-import { Waves } from "lucide-react";
+import { BarChart3 } from "lucide-react";
 
 interface ChatMessageProps {
   message: Message;
@@ -30,7 +30,7 @@ const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
       <div className="flex gap-4 max-w-3xl mx-auto">
         {message.isAI ? (
           <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center shadow-md">
-            <Waves className="h-5 w-5 text-white animate-[pulse_3s_ease-in-out_infinite]" />
+            <BarChart3 className="h-5 w-5 text-white animate-[pulse_3s_ease-in-out_infinite]" />
           </div>
         ) : (
           <div className="flex-shrink-0 h-8 w-8 rounded-full bg-secondary flex items-center justify-center">
