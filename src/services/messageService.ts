@@ -73,7 +73,7 @@ export function getWelcomeMessage(userName: string): Message {
   return {
     id: Math.random().toString(36).substring(2, 9),
     senderId: 'ai',
-    content: `Hello ${userName}! Welcome to StockCoach.ai. I'm your personal AI trading assistant. How can I help you improve your trading skills today?`,
+    content: `Hello ${userName}! Welcome to Alexandra. I'm your personal AI trading assistant. How can I help you improve your trading skills today?`,
     timestamp: new Date(),
     isAI: true
   };

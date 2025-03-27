@@ -27,7 +27,7 @@ const ChatHeader = ({ toggleSettings, showSettings }: ChatHeaderProps) => {
           </Button>
           <div className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-primary" />
-            <span className="font-semibold text-lg">StockCoach.ai</span>
+            <span className="font-semibold text-lg">Alexandra</span>
           </div>
         </div>
         

@@ -46,7 +46,7 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
 const EmptyChatState = () => (
   <div className="h-full flex flex-col items-center justify-center p-4 md:p-8">
     <BarChart3 className="h-16 w-16 text-muted-foreground mb-4" />
-    <h2 className="text-xl font-semibold text-center mb-2">Welcome to StockCoach.ai</h2>
+    <h2 className="text-xl font-semibold text-center mb-2">Welcome to Alexandra</h2>
     <p className="text-center text-muted-foreground max-w-md">
       Your AI-powered trading assistant. Ask any question about trading strategies, market analysis, or investment advice.
     </p>
@@ -61,7 +61,7 @@ const LoadingIndicator = () => (
       </div>
       <div className="flex-1">
         <div className="text-sm font-medium">
-          StockCoach AI
+          Alexandra
         </div>
         <div className="mt-1 text-muted-foreground">
           <div className="flex gap-1">
