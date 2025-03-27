@@ -5,6 +5,7 @@ export interface Message {
   isAI: boolean;
   senderId: string;
   timestamp: Date;
+  imageUrl?: string;
 }
 
 export interface ChatContextType {
@@ -12,7 +13,7 @@ export interface ChatContextType {
   loading: boolean;
   n8nWebhookUrl: string;
   setN8nWebhookUrl: (url: string) => void;
-  sendMessage: (content: string) => Promise<void>;
+  sendMessage: (content: string, imageFile?: File) => Promise<void>;
   clearMessages: () => void;
   isAdmin: boolean;
 }

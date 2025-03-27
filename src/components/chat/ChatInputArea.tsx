@@ -2,7 +2,7 @@
 import MessageInput from "../MessageInput";
 
 interface ChatInputAreaProps {
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string, imageFile?: File) => void;
   disabled: boolean;
 }
 

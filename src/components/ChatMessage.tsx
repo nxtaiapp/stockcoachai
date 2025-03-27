@@ -56,7 +56,18 @@ const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
           <div className="text-sm font-medium">
             {message.isAI ? "Alexandra" : "You"}
           </div>
-          <div className="text-foreground whitespace-pre-wrap">{message.content}</div>
+          <div className="text-foreground whitespace-pre-wrap">
+            {message.content}
+            {message.imageUrl && (
+              <div className="mt-2">
+                <img 
+                  src={message.imageUrl} 
+                  alt="Uploaded image" 
+                  className="max-w-full max-h-96 rounded-lg border border-border" 
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

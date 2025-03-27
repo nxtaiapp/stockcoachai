@@ -9,7 +9,8 @@ import {
   createUserMessage, 
   createAIMessage, 
   getWelcomeMessage,
-  getMockResponse
+  getMockResponse,
+  uploadImageAndGetUrl
 } from '../services/messageService';
 
 export const useChatState = () => {
@@ -40,17 +41,36 @@ export const useChatState = () => {
     }
   }, [user, messages]);
 
-  const sendMessage = async (content: string) => {
+  const sendMessage = async (content: string, imageFile?: File) => {
     if (!user) return;
     
     try {
       setLoading(true);
       
+      // Upload image if provided
+      let imageUrl: string | undefined;
+      if (imageFile) {
+        try {
+          imageUrl = await uploadImageAndGetUrl(imageFile);
+        } catch (error) {
+          console.error('Error uploading image:', error);
+          toast.error("Failed to upload image. Please try again.");
+          setLoading(false);
+          return;
+        }
+      }
+      
       // Add user message immediately
-      const userMessage = createUserMessage(user.id, content);
+      const userMessage = createUserMessage(user.id, content, imageUrl);
       setMessages(prev => [...prev, userMessage]);
       
       let responseContent = "";
+      let messageToSend = content;
+      
+      // If there's an image, include its URL in the message to the AI
+      if (imageUrl) {
+        messageToSend += `\n[Image: ${imageUrl}]`;
+      }
       
       if (!n8nWebhookUrl) {
         // Fallback to mock response if no webhook URL is provided
@@ -64,7 +84,7 @@ export const useChatState = () => {
           // Wait for the actual API response
           responseContent = await sendMessageToWebhook(
             n8nWebhookUrl, 
-            content, 
+            messageToSend, 
             user.id, 
             user.name || 'User', 
             user.email || ''

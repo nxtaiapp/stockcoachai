@@ -49,13 +49,14 @@ export async function sendMessageToWebhook(
   }
 }
 
-export function createUserMessage(userId: string, content: string): Message {
+export function createUserMessage(userId: string, content: string, imageUrl?: string): Message {
   return {
     id: Math.random().toString(36).substring(2, 9),
     senderId: userId,
     content,
     timestamp: new Date(),
-    isAI: false
+    isAI: false,
+    imageUrl
   };
 }
 
@@ -92,4 +93,25 @@ export function getMockResponse(): string {
   ];
   
   return mockResponses[Math.floor(Math.random() * mockResponses.length)];
+}
+
+// Function to convert an image file to a data URL
+export async function uploadImageAndGetUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+      if (event.target?.result) {
+        resolve(event.target.result as string);
+      } else {
+        reject(new Error("Failed to read image file"));
+      }
+    };
+    
+    reader.onerror = () => {
+      reject(new Error("Error reading image file"));
+    };
+    
+    reader.readAsDataURL(file);
+  });
 }
