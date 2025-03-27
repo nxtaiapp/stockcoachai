@@ -33,7 +33,7 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask StockCoach.ai anything about trading..."
+          placeholder="Ask Alexandra anything about trading..."
           disabled={disabled}
           className="pr-10 py-3 md:py-6 shadow-sm border border-input bg-background rounded-lg"
         />
