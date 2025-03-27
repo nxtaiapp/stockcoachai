@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { Message } from "../context/ChatContext";
 import { cn } from "@/lib/utils";
 import { BarChart3 } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 interface ChatMessageProps {
   message: Message;
@@ -11,6 +12,7 @@ interface ChatMessageProps {
 
 const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
   const messageRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuth();
   
   // Scroll to message if it's the latest
   useEffect(() => {
@@ -18,6 +20,17 @@ const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
       messageRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [isLatest]);
+
+  // Get user initials from name
+  const getUserInitials = () => {
+    if (!user || !user.name) return "U";
+    
+    const nameParts = user.name.split(" ");
+    if (nameParts.length === 1) return nameParts[0].charAt(0).toUpperCase();
+    
+    // Get first letter of first name and first letter of last name
+    return (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase();
+  };
 
   return (
     <div
@@ -35,7 +48,7 @@ const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
         ) : (
           <div className="flex-shrink-0 h-8 w-8 rounded-full bg-secondary flex items-center justify-center">
             <span className="text-sm font-medium text-foreground">
-              {message.senderId.charAt(0).toUpperCase()}
+              {getUserInitials()}
             </span>
           </div>
         )}
