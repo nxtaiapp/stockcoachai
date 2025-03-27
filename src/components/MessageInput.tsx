@@ -100,71 +100,57 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
           setIsTranscribing(true);
           toast.info("Transcribing your message...");
           
-          // Convert to base64 for sending to API
-          const reader = new FileReader();
-          reader.readAsDataURL(audioBlob);
-          reader.onloadend = async () => {
-            try {
-              const base64Audio = reader.result?.toString().split(',')[1];
-              
-              // Send to the provided transcription API
-              const response = await fetch("https://nxtaisolutions.app.n8n.cloud/webhook-test/c749cf70-e75b-4620-8a95-2e3f69e77f61", {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  audio: base64Audio
-                }),
-              });
-              
-              // Wait for the response with a timeout of at least 1 minute
-              const timeoutPromise = new Promise((_, reject) => 
-                setTimeout(() => reject(new Error("Transcription timed out after 65 seconds")), 65000)
-              );
-              
-              let transcriptionResult;
-              try {
-                transcriptionResult = await Promise.race([
-                  response.json(),
-                  timeoutPromise
-                ]);
-              } catch (error) {
-                console.error("Error or timeout in transcription:", error);
-                toast.error("Transcription timed out. Please try again.");
-                setIsTranscribing(false);
-                return;
-              }
-              
-              if (transcriptionResult.text) {
-                // Set the transcribed text as the message
-                setMessage(transcriptionResult.text);
-                toast.success("Transcription complete!");
-                
-                // Add the transcription to the chat
-                onSendMessage(transcriptionResult.text);
-              } else if (transcriptionResult.error) {
-                toast.error(`Transcription error: ${transcriptionResult.error}`);
-              } else {
-                toast.error("Failed to transcribe. Please try again.");
-              }
-              
-              // Reset recording state
-              setIsTranscribing(false);
-              
-              // Focus the input to allow editing
-              if (inputRef.current) {
-                inputRef.current.focus();
-              }
-            } catch (error) {
-              console.error("Error processing audio:", error);
-              toast.error("Failed to process audio. Please try again.");
-              setIsTranscribing(false);
-            }
-          };
+          // Create a FormData object for multipart/form-data submission
+          const formData = new FormData();
+          formData.append('file', audioBlob, 'recording.webm');
+          
+          // Send to the n8n webhook
+          const response = await fetch("https://nxtaisolutions.app.n8n.cloud/webhook-test/c749cf70-e75b-4620-8a95-2e3f69e77f61", {
+            method: 'POST',
+            body: formData,
+          });
+          
+          // Wait for the response with a timeout of at least 1 minute
+          const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error("Transcription timed out after 65 seconds")), 65000)
+          );
+          
+          let transcriptionResult;
+          try {
+            transcriptionResult = await Promise.race([
+              response.json(),
+              timeoutPromise
+            ]);
+          } catch (error) {
+            console.error("Error or timeout in transcription:", error);
+            toast.error("Transcription timed out. Please try again.");
+            setIsTranscribing(false);
+            return;
+          }
+          
+          if (transcriptionResult.text) {
+            // Set the transcribed text as the message
+            setMessage(transcriptionResult.text);
+            toast.success("Transcription complete!");
+            
+            // Add the transcription to the chat
+            onSendMessage(transcriptionResult.text);
+          } else if (transcriptionResult.error) {
+            toast.error(`Transcription error: ${transcriptionResult.error}`);
+          } else {
+            toast.error("Failed to transcribe. Please try again.");
+          }
+          
+          // Reset recording state
+          setIsTranscribing(false);
+          
+          // Focus the input to allow editing
+          if (inputRef.current) {
+            inputRef.current.focus();
+          }
         } catch (error) {
-          console.error("Error transcribing audio:", error);
-          toast.error("Failed to transcribe audio. Please try again.");
+          console.error("Error processing audio:", error);
+          toast.error("Failed to process audio. Please try again.");
           setIsTranscribing(false);
         }
       });
