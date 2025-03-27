@@ -2,10 +2,11 @@
 import { useState, KeyboardEvent, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send } from "lucide-react";
+import { Send, X, Check } from "lucide-react";
 import AudioRecorder from "./AudioRecorder";
 import ImageUploader from "./ImageUploader";
 import ImagePreview from "./ImagePreview";
+import { Textarea } from "@/components/ui/textarea";
 
 interface MessageInputProps {
   onSendMessage: (message: string, imageFile?: File) => void;
@@ -16,7 +17,10 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
   const [message, setMessage] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isReviewingTranscription, setIsReviewingTranscription] = useState(false);
+  const [transcribedText, setTranscribedText] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSend = () => {
     if ((message.trim() || imageFile) && !disabled) {
@@ -24,6 +28,7 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
       setMessage("");
       setImageFile(null);
       setImagePreview(null);
+      setIsReviewingTranscription(false);
     }
   };
 
@@ -45,16 +50,33 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
   };
 
   const handleTranscriptionComplete = (text: string) => {
-    // Set the transcribed text as the message
-    setMessage(text);
+    // Set the transcribed text for review
+    setTranscribedText(text);
+    setIsReviewingTranscription(true);
     
-    // Add the transcription to the chat
-    onSendMessage(text);
+    // Focus the textarea to allow editing
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+      }
+    }, 100);
+  };
+
+  const handleApproveTranscription = () => {
+    setMessage(transcribedText);
+    setIsReviewingTranscription(false);
     
-    // Focus the input to allow editing
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    // Focus the input after approval
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 100);
+  };
+
+  const handleCancelTranscription = () => {
+    setTranscribedText("");
+    setIsReviewingTranscription(false);
   };
 
   return (
@@ -63,38 +85,71 @@ const MessageInput = ({ onSendMessage, disabled = false }: MessageInputProps) =>
         <ImagePreview imageUrl={imagePreview} onRemove={handleRemoveImage} />
       )}
       
-      <div className="flex items-end gap-2">
-        <div className="relative flex-1">
-          <Input
-            ref={inputRef}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask Alexandra anything about trading..."
-            disabled={disabled}
-            className="pr-10 py-3 md:py-6 shadow-sm border border-input bg-background rounded-lg"
+      {isReviewingTranscription ? (
+        <div className="flex flex-col gap-2 border border-primary/20 rounded-lg p-3 bg-primary/5">
+          <p className="text-sm font-medium text-primary">Review your transcription:</p>
+          <Textarea
+            ref={textareaRef}
+            value={transcribedText}
+            onChange={(e) => setTranscribedText(e.target.value)}
+            placeholder="Edit your transcription..."
+            className="min-h-[100px] text-base border-muted"
+            autoFocus
           />
+          <div className="flex gap-2 justify-end">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleCancelTranscription}
+              className="gap-1"
+            >
+              <X className="h-4 w-4" />
+              Cancel
+            </Button>
+            <Button 
+              size="sm" 
+              onClick={handleApproveTranscription}
+              className="gap-1"
+            >
+              <Check className="h-4 w-4" />
+              Approve
+            </Button>
+          </div>
         </div>
-        
-        <AudioRecorder 
-          onTranscriptionComplete={handleTranscriptionComplete}
-          disabled={disabled}
-        />
-        
-        <ImageUploader 
-          onImageSelect={handleImageSelect}
-          disabled={disabled}
-        />
-        
-        <Button
-          onClick={handleSend}
-          disabled={(!message.trim() && !imageFile) || disabled}
-          size="icon"
-          className="h-10 w-10 rounded-full shadow-sm"
-        >
-          <Send className="h-5 w-5" />
-        </Button>
-      </div>
+      ) : (
+        <div className="flex items-end gap-2">
+          <div className="relative flex-1">
+            <Input
+              ref={inputRef}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask Alexandra anything about trading..."
+              disabled={disabled}
+              className="pr-10 py-3 md:py-6 shadow-sm border border-input bg-background rounded-lg"
+            />
+          </div>
+          
+          <AudioRecorder 
+            onTranscriptionComplete={handleTranscriptionComplete}
+            disabled={disabled}
+          />
+          
+          <ImageUploader 
+            onImageSelect={handleImageSelect}
+            disabled={disabled}
+          />
+          
+          <Button
+            onClick={handleSend}
+            disabled={(!message.trim() && !imageFile) || disabled}
+            size="icon"
+            className="h-10 w-10 rounded-full shadow-sm"
+          >
+            <Send className="h-5 w-5" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
