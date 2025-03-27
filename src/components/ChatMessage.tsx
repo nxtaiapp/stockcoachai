@@ -29,8 +29,8 @@ const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
     >
       <div className="flex gap-4 max-w-3xl mx-auto">
         {message.isAI ? (
-          <div className="flex-shrink-0 h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-            <Waves className="h-5 w-5 text-primary" />
+          <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-primary/80 via-purple-500/80 to-blue-400/80 flex items-center justify-center shadow-md">
+            <Waves className="h-5 w-5 text-white animate-pulse-slow" />
           </div>
         ) : (
           <div className="flex-shrink-0 h-8 w-8 rounded-full bg-secondary flex items-center justify-center">
