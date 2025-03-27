@@ -31,7 +31,7 @@ const Header = () => {
         <div className="flex items-center gap-2">
           <Link to="/chat" className="flex items-center gap-2" onClick={closeMenu}>
             <BarChart3 className="w-6 h-6 text-primary" />
-            <span className="font-semibold text-xl hidden sm:inline-block">Alexandra</span>
+            <span className="font-semibold text-xl hidden sm:inline-block">StockCoach.ai</span>
           </Link>
         </div>
 
