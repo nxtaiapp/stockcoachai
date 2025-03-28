@@ -1,234 +1,31 @@
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { toast } from "sonner";
-import { Message } from '../types/chat';
 import { useLocalStorage } from './useLocalStorage';
-import { 
-  sendMessageToWebhook, 
-  createUserMessage, 
-  createAIMessage, 
-  getWelcomeMessage,
-  getMockResponse,
-  uploadImageAndGetUrl
-} from '../services/messageService';
-import { format } from 'date-fns';
-import { supabase } from '@/integrations/supabase/client';
-
-// Type for location check result
-type LocationCheckResult = {
-  allowed: boolean;
-  country: string;
-  message: string;
-  timezone?: string;
-  error?: string;
-};
+import { getWelcomeMessage } from '../services/messageService';
+import { useTimezone } from './useTimezone';
+import { useChatPersistence } from './useChatPersistence';
+import { useChatDates } from './useChatDates';
+import { useMessageSender } from './useMessageSender';
 
 export const useChatState = () => {
   const { user, isAdmin } = useAuth();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(false);
   const [n8nWebhookUrl, setN8nWebhookUrl] = useLocalStorage<string>('n8n_webhook_url', '');
   const [transcriptionWebhookUrl, setTranscriptionWebhookUrl] = useLocalStorage<string>('transcription_webhook_url', '');
-  const [selectedDate, setSelectedDate] = useState<string>('');
-  const [userTimezone, setUserTimezone] = useState<string>('');
-
-  // Get the user's timezone from GeoRestriction data
-  useEffect(() => {
-    const getTimezone = async () => {
-      // First check if we have cached location data
-      const storedData = localStorage.getItem("geo-check-result");
-      
-      if (storedData) {
-        try {
-          const locationData = JSON.parse(storedData) as LocationCheckResult;
-          
-          if (locationData.timezone) {
-            setUserTimezone(locationData.timezone);
-            return;
-          }
-        } catch (error) {
-          console.error("Error parsing stored location data:", error);
-        }
-      }
-      
-      // If we don't have timezone data, fetch it from the edge function
-      try {
-        const { data, error } = await supabase.functions.invoke("check-location");
-        
-        if (error) {
-          throw new Error(error.message);
-        }
-        
-        const locationData = data as LocationCheckResult;
-        
-        if (locationData.timezone) {
-          setUserTimezone(locationData.timezone);
-          
-          // Update the stored data with timezone information
-          localStorage.setItem("geo-check-result", JSON.stringify(locationData));
-        } else {
-          // Fallback to browser timezone
-          setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
-        }
-      } catch (err) {
-        console.error("Error fetching location data:", err);
-        // Fallback to browser timezone
-        setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
-      }
-    };
-    
-    getTimezone();
-  }, []);
-
-  // Get current date in user's timezone
-  const getCurrentDate = () => {
-    // Create a date object for the current time
-    const now = new Date();
-    
-    // If we have the user's timezone, use it to format the date
-    if (userTimezone) {
-      // Use the browser's built-in functionality to format the date in the user's timezone
-      const formatter = new Intl.DateTimeFormat('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        timeZone: userTimezone
-      });
-      
-      const parts = formatter.formatToParts(now);
-      
-      // Extract year, month, and day
-      const year = parts.find(part => part.type === 'year')?.value || '';
-      const month = parts.find(part => part.type === 'month')?.value || '';
-      const day = parts.find(part => part.type === 'day')?.value || '';
-      
-      // Format as yyyy-MM-dd
-      return `${year}-${month}-${day}`;
-    }
-    
-    // Fallback to format without timezone
-    return format(now, 'yyyy-MM-dd');
-  };
-
-  // Load messages from localStorage when component mounts
-  useEffect(() => {
-    if (user) {
-      const storedMessages = localStorage.getItem(`stockcoach_messages_${user.id}`);
-      if (storedMessages) {
-        const parsedMessages = JSON.parse(storedMessages);
-        setMessages(parsedMessages);
-        
-        // Select the most recent date by default
-        if (parsedMessages.length > 0) {
-          const mostRecentDate = format(new Date(parsedMessages[parsedMessages.length - 1].timestamp), 'yyyy-MM-dd');
-          setSelectedDate(mostRecentDate);
-        }
-      } else {
-        // Add a welcome message for new users
-        const welcomeMessage = getWelcomeMessage(user.name || 'User');
-        setMessages([welcomeMessage]);
-        localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify([welcomeMessage]));
-        setSelectedDate(format(new Date(welcomeMessage.timestamp), 'yyyy-MM-dd'));
-      }
-    }
-  }, [user]);
-
-  // Save messages to localStorage whenever they change
-  useEffect(() => {
-    if (user && messages.length > 0) {
-      localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify(messages));
-    }
-  }, [user, messages]);
-
-  // Group messages by date and get a sorted list of unique dates
-  const chatDates = useMemo(() => {
-    const dates = messages.map(message => 
-      format(new Date(message.timestamp), 'yyyy-MM-dd')
-    );
-    // Get unique dates and sort in descending order (newest first)
-    return [...new Set(dates)].sort((a, b) => b.localeCompare(a));
-  }, [messages]);
-
-  // Filter messages by selected date
-  const filteredMessages = useMemo(() => {
-    if (!selectedDate) return [];
-    return messages.filter(message => 
-      format(new Date(message.timestamp), 'yyyy-MM-dd') === selectedDate
-    );
-  }, [messages, selectedDate]);
-
-  // Select a specific date
-  const selectDate = (date: string) => {
-    setSelectedDate(date);
-  };
-
-  const sendMessage = async (content: string, imageFile?: File) => {
-    if (!user) return;
-    
-    try {
-      setLoading(true);
-      
-      // Upload image if provided
-      let imageUrl: string | undefined;
-      if (imageFile) {
-        try {
-          imageUrl = await uploadImageAndGetUrl(imageFile);
-        } catch (error) {
-          console.error('Error uploading image:', error);
-          toast.error("Failed to upload image. Please try again.");
-          setLoading(false);
-          return;
-        }
-      }
-      
-      // Add user message immediately
-      const userMessage = createUserMessage(user.id, content, imageUrl);
-      setMessages(prev => [...prev, userMessage]);
-      
-      let responseContent = "";
-      let messageToSend = content;
-      
-      // If there's an image, include its URL in the message to the AI
-      if (imageUrl) {
-        messageToSend += `\n[Image: ${imageUrl}]`;
-      }
-      
-      if (!n8nWebhookUrl) {
-        // Fallback to mock response if no webhook URL is provided
-        console.log("No webhook URL provided, using mock response");
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        responseContent = getMockResponse();
-      } else {
-        try {
-          console.log("Sending message to webhook");
-          // Wait for the actual API response
-          responseContent = await sendMessageToWebhook(
-            n8nWebhookUrl, 
-            messageToSend, 
-            user.id, 
-            user.name || 'User', 
-            user.email || ''
-          );
-          console.log("Received response from webhook:", responseContent);
-        } catch (error) {
-          console.error("Error sending message to webhook:", error);
-          responseContent = "I'm sorry, but I couldn't reach the AI service. Please check your connection or try again later.";
-        }
-      }
-      
-      // Only add the AI message after we have a response
-      const aiMessage = createAIMessage(responseContent);
-      setMessages(prev => [...prev, aiMessage]);
-      
-    } catch (error) {
-      console.error('Error sending message:', error);
-      toast.error("An error occurred while sending your message.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  
+  // Use our new hooks
+  const { userTimezone, getCurrentDate } = useTimezone();
+  const { messages, setMessages, selectedDate, setSelectedDate } = useChatPersistence(user?.id);
+  const { chatDates, filteredMessages, selectDate } = useChatDates(messages, selectedDate, setSelectedDate);
+  const { loading, sendMessage } = useMessageSender(
+    user?.id, 
+    user?.name, 
+    user?.email, 
+    messages, 
+    setMessages, 
+    n8nWebhookUrl
+  );
 
   const clearMessages = () => {
     if (user) {
@@ -245,9 +42,6 @@ export const useChatState = () => {
       
       // Set the selected date to today to show the new chat immediately
       setSelectedDate(todayDate);
-      
-      // Save the updated messages to localStorage
-      localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify(updatedMessages));
       
       // Show a toast notification
       toast.success("Started a new chat session");
