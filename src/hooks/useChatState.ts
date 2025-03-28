@@ -135,16 +135,22 @@ export const useChatState = () => {
 
   const clearMessages = () => {
     if (user) {
+      // Get today's date in yyyy-MM-dd format
+      const todayDate = format(new Date(), 'yyyy-MM-dd');
+      
       // Remove existing messages
       localStorage.removeItem(`stockcoach_messages_${user.id}`);
       
-      // Add a welcome message back
+      // Add a welcome message back with today's timestamp
       const welcomeMessage = getWelcomeMessage(user.name || 'User');
+      
+      // Make sure the welcome message has today's date
+      welcomeMessage.timestamp = new Date();
+      
       setMessages([welcomeMessage]);
       
-      // Set the selected date to the welcome message date
-      const newDate = format(new Date(welcomeMessage.timestamp), 'yyyy-MM-dd');
-      setSelectedDate(newDate);
+      // Set the selected date to today
+      setSelectedDate(todayDate);
       
       // Save the new messages to localStorage
       localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify([welcomeMessage]));
