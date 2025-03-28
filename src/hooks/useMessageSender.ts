@@ -3,12 +3,14 @@ import { useState } from 'react';
 import { Message } from '../types/chat';
 import { toast } from "sonner";
 import { 
-  sendMessageToWebhook, 
   createUserMessage, 
   createAIMessage, 
-  getMockResponse,
   uploadImageAndGetUrl 
 } from '../services/messageService';
+import {
+  sendMessageToWebhook,
+  getMockResponse
+} from '../services/aiService';
 
 export const useMessageSender = (
   userId: string | undefined, 
