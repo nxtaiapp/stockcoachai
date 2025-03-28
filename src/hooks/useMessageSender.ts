@@ -5,7 +5,8 @@ import { toast } from "sonner";
 import { 
   createUserMessage, 
   createAIMessage, 
-  uploadImageAndGetUrl 
+  uploadImageAndGetUrl,
+  saveMessageToSupabase
 } from '../services/messageService';
 import {
   sendMessageToWebhook,
@@ -45,6 +46,14 @@ export const useMessageSender = (
       const userMessage = createUserMessage(userId, content, imageUrl);
       setMessages(prev => [...prev, userMessage]);
       
+      // Save user message to Supabase
+      try {
+        await saveMessageToSupabase(userMessage, userId);
+      } catch (error) {
+        console.error('Failed to save user message to Supabase:', error);
+        toast.error("Failed to save your message to the database.");
+      }
+      
       let responseContent = "";
       let messageToSend = content;
       
@@ -80,6 +89,14 @@ export const useMessageSender = (
       // Only add the AI message after we have a response
       const aiMessage = createAIMessage(responseContent);
       setMessages(prev => [...prev, aiMessage]);
+      
+      // Save AI message to Supabase
+      try {
+        await saveMessageToSupabase(aiMessage, userId);
+      } catch (error) {
+        console.error('Failed to save AI message to Supabase:', error);
+        // Don't show toast for this as it's less critical for user experience
+      }
       
     } catch (error) {
       console.error('Error sending message:', error);
