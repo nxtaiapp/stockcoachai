@@ -14,9 +14,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const ChatSidebar = () => {
-  const { chatDates, selectDate, selectedDate, clearMessages, userTimezone } = useChat();
+  const { chatDates, selectDate, selectedDate, clearMessages, userTimezone, canCreateNewChat } = useChat();
 
   const handleNewChat = () => {
     clearMessages();
@@ -39,15 +40,30 @@ const ChatSidebar = () => {
   return (
     <Sidebar>
       <SidebarHeader className="px-4 py-6">
-        <Button 
-          variant="outline"
-          className="w-full flex items-center justify-start gap-2"
-          onClick={handleNewChat}
-        >
-          <PlusCircle className="h-4 w-4" />
-          <span>New Chat</span>
-        </Button>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div>
+                <Button 
+                  variant="outline"
+                  className="w-full flex items-center justify-start gap-2"
+                  onClick={handleNewChat}
+                  disabled={!canCreateNewChat}
+                >
+                  <PlusCircle className="h-4 w-4" />
+                  <span>New Chat</span>
+                </Button>
+              </div>
+            </TooltipTrigger>
+            {!canCreateNewChat && (
+              <TooltipContent>
+                <p>You can only create one chat per day</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
       </SidebarHeader>
+      
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Chat History</SidebarGroupLabel>

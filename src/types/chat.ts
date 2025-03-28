@@ -22,4 +22,5 @@ export interface ChatContextType {
   selectedDate: string;
   selectDate: (date: string) => void;
   userTimezone: string;
+  canCreateNewChat: boolean;
 }

@@ -27,8 +27,12 @@ export const useChatState = () => {
     n8nWebhookUrl
   );
 
+  // Check if the user can create a new chat (one per day)
+  const todayDate = getCurrentDate();
+  const canCreateNewChat = !chatDates.includes(todayDate) || isAdmin;
+
   const clearMessages = () => {
-    if (user) {
+    if (user && canCreateNewChat) {
       // Get today's date in the user's timezone
       const todayDate = getCurrentDate();
       
@@ -45,6 +49,8 @@ export const useChatState = () => {
       
       // Show a toast notification
       toast.success("Started a new chat session");
+    } else if (!canCreateNewChat) {
+      toast.error("You can only create one chat per day");
     }
   };
 
@@ -62,6 +68,7 @@ export const useChatState = () => {
     chatDates,
     selectedDate,
     selectDate,
-    userTimezone
+    userTimezone,
+    canCreateNewChat
   };
 };
