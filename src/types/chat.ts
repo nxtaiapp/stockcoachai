@@ -21,4 +21,5 @@ export interface ChatContextType {
   chatDates: string[];
   selectedDate: string;
   selectDate: (date: string) => void;
+  userTimezone: string;
 }
