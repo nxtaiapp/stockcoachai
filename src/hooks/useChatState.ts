@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { toast } from "sonner";
@@ -60,6 +59,14 @@ export const useChatState = () => {
     // Get unique dates and sort in descending order (newest first)
     return [...new Set(dates)].sort((a, b) => b.localeCompare(a));
   }, [messages]);
+
+  // Filter messages by selected date
+  const filteredMessages = useMemo(() => {
+    if (!selectedDate) return [];
+    return messages.filter(message => 
+      format(new Date(message.timestamp), 'yyyy-MM-dd') === selectedDate
+    );
+  }, [messages, selectedDate]);
 
   // Select a specific date
   const selectDate = (date: string) => {
@@ -138,22 +145,22 @@ export const useChatState = () => {
       // Get today's date in yyyy-MM-dd format
       const todayDate = format(new Date(), 'yyyy-MM-dd');
       
-      // Remove existing messages
-      localStorage.removeItem(`stockcoach_messages_${user.id}`);
-      
-      // Add a welcome message back with today's timestamp
+      // Create welcome message with today's timestamp
       const welcomeMessage = getWelcomeMessage(user.name || 'User');
-      
-      // Make sure the welcome message has today's date
       welcomeMessage.timestamp = new Date();
       
-      setMessages([welcomeMessage]);
+      // Two options:
+      // 1. Keep all existing messages but add a new welcome message
+      // 2. Clear all messages and start fresh with just the welcome message
+      
+      // We'll go with option 1 to preserve history while creating a new chat
+      setMessages(prev => [...prev, welcomeMessage]);
       
       // Set the selected date to today
       setSelectedDate(todayDate);
       
-      // Save the new messages to localStorage
-      localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify([welcomeMessage]));
+      // Save the messages to localStorage
+      localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify([...messages, welcomeMessage]));
       
       // Show a toast notification
       toast.success("Started a new chat session");
@@ -161,7 +168,8 @@ export const useChatState = () => {
   };
 
   return {
-    messages,
+    messages: filteredMessages,
+    allMessages: messages,
     loading,
     n8nWebhookUrl,
     transcriptionWebhookUrl,
