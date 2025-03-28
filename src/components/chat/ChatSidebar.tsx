@@ -51,7 +51,7 @@ const ChatSidebar = () => {
       
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Chat History</SidebarGroupLabel>
+          <SidebarGroupLabel>Session History </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {chatDates.length === 0 ? <div className="text-sm text-muted-foreground px-4 py-2">
