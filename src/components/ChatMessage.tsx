@@ -2,7 +2,6 @@
 import { useEffect, useRef } from "react";
 import { Message } from "../context/ChatContext";
 import { cn } from "@/lib/utils";
-import { BarChart3 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 interface ChatMessageProps {
@@ -42,8 +41,12 @@ const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
     >
       <div className="flex gap-4 max-w-3xl mx-auto">
         {message.isAI ? (
-          <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center shadow-md">
-            <BarChart3 className="h-5 w-5 text-white animate-[pulse_3s_ease-in-out_infinite]" />
+          <div className="flex-shrink-0 h-8 w-8 rounded-full overflow-hidden">
+            <img 
+              src="/lovable-uploads/cd3f4d88-d41e-4702-8228-5671c0bca615.png" 
+              alt="Alexandra AI" 
+              className="w-full h-full object-cover"
+            />
           </div>
         ) : (
           <div className="flex-shrink-0 h-8 w-8 rounded-full bg-secondary flex items-center justify-center">
