@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import { Message } from "../context/ChatContext";
 import { cn } from "@/lib/utils";
+import { BarChart3 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 interface ChatMessageProps {
@@ -41,33 +42,8 @@ const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
     >
       <div className="flex gap-4 max-w-3xl mx-auto">
         {message.isAI ? (
-          <div className="flex-shrink-0 h-8 w-8 rounded-full overflow-hidden bg-gradient-to-r from-blue-400 to-blue-600 animate-pulse-slow">
-            <div className="w-full h-full flex items-center justify-center">
-              <svg 
-                className="w-5 h-5 text-white" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path 
-                  d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" 
-                  stroke="white" 
-                  strokeWidth="2"
-                />
-                <path 
-                  d="M8 12C8 12 10 8 12 8C14 8 16 12 16 12C16 12 14 16 12 16C10 16 8 12 8 12Z" 
-                  stroke="white" 
-                  strokeWidth="2"
-                  fill="rgba(255,255,255,0.3)"
-                />
-                <circle 
-                  cx="12" 
-                  cy="12" 
-                  r="2" 
-                  fill="white"
-                />
-              </svg>
-            </div>
+          <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 flex items-center justify-center shadow-md">
+            <BarChart3 className="h-5 w-5 text-white animate-[pulse_3s_ease-in-out_infinite]" />
           </div>
         ) : (
           <div className="flex-shrink-0 h-8 w-8 rounded-full bg-secondary flex items-center justify-center">
