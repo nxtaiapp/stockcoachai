@@ -31,7 +31,7 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
   return (
     <div 
       ref={chatContainerRef}
-      className="flex-1 overflow-y-auto pb-20"
+      className="absolute inset-0 overflow-y-auto pb-20"
       style={{ overscrollBehavior: "none" }}
     >
       {filteredMessages.length === 0 ? (

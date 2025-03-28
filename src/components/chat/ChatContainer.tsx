@@ -16,22 +16,21 @@ const ChatContainer = () => {
 
   return (
     <SidebarProvider>
-      <div className="flex flex-col h-screen max-h-screen overflow-hidden bg-background w-full">
+      <div className="flex h-screen w-full overflow-hidden bg-background">
         <ChatSidebar />
-        <SidebarInset className="overflow-hidden">
-          <div className="flex flex-col h-full w-full">
-            <ChatHeader 
-              toggleSettings={toggleSettings} 
-              showSettings={showSettings} 
-            />
-            
-            <ChatSettingsPanel 
-              showSettings={showSettings} 
-              toggleSettings={toggleSettings} 
-            />
-            
+        <SidebarInset className="flex flex-col w-full overflow-hidden">
+          <ChatHeader 
+            toggleSettings={toggleSettings} 
+            showSettings={showSettings} 
+          />
+          
+          <ChatSettingsPanel 
+            showSettings={showSettings} 
+            toggleSettings={toggleSettings} 
+          />
+          
+          <div className="relative flex-1 overflow-hidden">
             <ChatMessages messages={messages} loading={loading} />
-            
             <ChatInputArea onSendMessage={sendMessage} disabled={loading} />
           </div>
         </SidebarInset>
