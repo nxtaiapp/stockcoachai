@@ -1,8 +1,10 @@
 
 import { useEffect, useRef } from "react";
+import { format } from "date-fns";
 import { Message } from "../../context/ChatContext";
 import ChatMessage from "../ChatMessage";
 import { BarChart3 } from "lucide-react";
+import { useChat } from "../../context/ChatContext";
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -10,14 +12,21 @@ interface ChatMessagesProps {
 }
 
 const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
+  const { selectedDate } = useChat();
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Filter messages by selected date
+  const filteredMessages = messages.filter(message => {
+    const messageDate = format(new Date(message.timestamp), 'yyyy-MM-dd');
+    return messageDate === selectedDate;
+  });
   
   // Scroll to bottom when new messages arrive
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [filteredMessages]);
 
   return (
     <div 
@@ -25,15 +34,15 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
       className="flex-1 overflow-y-auto pb-20"
       style={{ overscrollBehavior: "none" }}
     >
-      {messages.length === 0 ? (
+      {filteredMessages.length === 0 ? (
         <EmptyChatState />
       ) : (
         <div className="max-w-3xl mx-auto">
-          {messages.map((message, index) => (
+          {filteredMessages.map((message, index) => (
             <ChatMessage 
               key={message.id} 
               message={message}
-              isLatest={index === messages.length - 1}
+              isLatest={index === filteredMessages.length - 1}
             />
           ))}
           {loading && <LoadingIndicator />}
@@ -48,7 +57,7 @@ const EmptyChatState = () => (
     <BarChart3 className="h-16 w-16 text-muted-foreground mb-4" />
     <h2 className="text-xl font-semibold text-center mb-2">Welcome to StockCoach.ai</h2>
     <p className="text-center text-muted-foreground max-w-md">
-      Your AI-powered trading assistant. Ask any question about trading strategies, market analysis, or investment advice.
+      Your AI-powered trading coach. Ask any question about trading strategies, market analysis, or investment advice.
     </p>
   </div>
 );

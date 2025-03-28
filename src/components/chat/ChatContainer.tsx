@@ -1,10 +1,12 @@
 
 import { useState } from "react";
 import { useChat } from "../../context/ChatContext";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import ChatHeader from "./ChatHeader";
 import ChatSettingsPanel from "./ChatSettingsPanel";
 import ChatMessages from "./ChatMessages";
 import ChatInputArea from "./ChatInputArea";
+import ChatSidebar from "./ChatSidebar";
 
 const ChatContainer = () => {
   const { messages, loading, sendMessage } = useChat();
@@ -13,21 +15,28 @@ const ChatContainer = () => {
   const toggleSettings = () => setShowSettings(!showSettings);
 
   return (
-    <div className="flex flex-col h-screen max-h-screen overflow-hidden bg-background">
-      <ChatHeader 
-        toggleSettings={toggleSettings} 
-        showSettings={showSettings} 
-      />
-      
-      <ChatSettingsPanel 
-        showSettings={showSettings} 
-        toggleSettings={toggleSettings} 
-      />
-      
-      <ChatMessages messages={messages} loading={loading} />
-      
-      <ChatInputArea onSendMessage={sendMessage} disabled={loading} />
-    </div>
+    <SidebarProvider>
+      <div className="flex flex-col h-screen max-h-screen overflow-hidden bg-background w-full">
+        <ChatSidebar />
+        <SidebarInset>
+          <div className="flex flex-col h-full">
+            <ChatHeader 
+              toggleSettings={toggleSettings} 
+              showSettings={showSettings} 
+            />
+            
+            <ChatSettingsPanel 
+              showSettings={showSettings} 
+              toggleSettings={toggleSettings} 
+            />
+            
+            <ChatMessages messages={messages} loading={loading} />
+            
+            <ChatInputArea onSendMessage={sendMessage} disabled={loading} />
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 };
 

@@ -18,4 +18,7 @@ export interface ChatContextType {
   sendMessage: (message: string, imageFile?: File) => Promise<void>;
   clearMessages: () => void;
   isAdmin: boolean;
+  chatDates: string[];
+  selectedDate: string;
+  selectDate: (date: string) => void;
 }

@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { toast } from "sonner";
 import { Message } from '../types/chat';
@@ -12,6 +12,7 @@ import {
   getMockResponse,
   uploadImageAndGetUrl
 } from '../services/messageService';
+import { format } from 'date-fns';
 
 export const useChatState = () => {
   const { user, isAdmin } = useAuth();
@@ -19,18 +20,27 @@ export const useChatState = () => {
   const [loading, setLoading] = useState(false);
   const [n8nWebhookUrl, setN8nWebhookUrl] = useLocalStorage<string>('n8n_webhook_url', '');
   const [transcriptionWebhookUrl, setTranscriptionWebhookUrl] = useLocalStorage<string>('transcription_webhook_url', '');
+  const [selectedDate, setSelectedDate] = useState<string>('');
 
   // Load messages from localStorage when component mounts
   useEffect(() => {
     if (user) {
       const storedMessages = localStorage.getItem(`stockcoach_messages_${user.id}`);
       if (storedMessages) {
-        setMessages(JSON.parse(storedMessages));
+        const parsedMessages = JSON.parse(storedMessages);
+        setMessages(parsedMessages);
+        
+        // Select the most recent date by default
+        if (parsedMessages.length > 0) {
+          const mostRecentDate = format(new Date(parsedMessages[parsedMessages.length - 1].timestamp), 'yyyy-MM-dd');
+          setSelectedDate(mostRecentDate);
+        }
       } else {
         // Add a welcome message for new users
         const welcomeMessage = getWelcomeMessage(user.name || 'User');
         setMessages([welcomeMessage]);
         localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify([welcomeMessage]));
+        setSelectedDate(format(new Date(welcomeMessage.timestamp), 'yyyy-MM-dd'));
       }
     }
   }, [user]);
@@ -41,6 +51,20 @@ export const useChatState = () => {
       localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify(messages));
     }
   }, [user, messages]);
+
+  // Group messages by date and get a sorted list of unique dates
+  const chatDates = useMemo(() => {
+    const dates = messages.map(message => 
+      format(new Date(message.timestamp), 'yyyy-MM-dd')
+    );
+    // Get unique dates and sort in descending order (newest first)
+    return [...new Set(dates)].sort((a, b) => b.localeCompare(a));
+  }, [messages]);
+
+  // Select a specific date
+  const selectDate = (date: string) => {
+    setSelectedDate(date);
+  };
 
   const sendMessage = async (content: string, imageFile?: File) => {
     if (!user) return;
@@ -127,6 +151,9 @@ export const useChatState = () => {
     setTranscriptionWebhookUrl,
     sendMessage,
     clearMessages,
-    isAdmin
+    isAdmin,
+    chatDates,
+    selectedDate,
+    selectDate
   };
 };

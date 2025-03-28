@@ -18,7 +18,10 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       setTranscriptionWebhookUrl: chatState.isAdmin ? chatState.setTranscriptionWebhookUrl : () => {},
       sendMessage: chatState.sendMessage, 
       clearMessages: chatState.clearMessages,
-      isAdmin: chatState.isAdmin
+      isAdmin: chatState.isAdmin,
+      chatDates: chatState.chatDates,
+      selectedDate: chatState.selectedDate,
+      selectDate: chatState.selectDate
     }}>
       {children}
     </ChatContext.Provider>
