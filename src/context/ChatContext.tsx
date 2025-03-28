@@ -23,7 +23,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       selectedDate: chatState.selectedDate,
       selectDate: chatState.selectDate,
       userTimezone: chatState.userTimezone,
-      canCreateNewChat: chatState.canCreateNewChat
+      canCreateNewChat: chatState.canCreateNewChat,
+      isTodaySession: chatState.isTodaySession
     }}>
       {children}
     </ChatContext.Provider>

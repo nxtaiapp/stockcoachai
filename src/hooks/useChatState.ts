@@ -30,6 +30,9 @@ export const useChatState = () => {
   // Check if the user can create a new chat (one per day)
   const todayDate = getCurrentDate();
   const canCreateNewChat = !chatDates.includes(todayDate);
+  
+  // Check if the selected date is today's date
+  const isTodaySession = selectedDate === todayDate;
 
   const clearMessages = () => {
     if (user && canCreateNewChat) {
@@ -69,6 +72,7 @@ export const useChatState = () => {
     selectedDate,
     selectDate,
     userTimezone,
-    canCreateNewChat
+    canCreateNewChat,
+    isTodaySession
   };
 };
