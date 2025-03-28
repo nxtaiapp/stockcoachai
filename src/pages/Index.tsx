@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { BarChart3, ArrowRight, TrendingUp, LineChart, Shield, Zap } from "lucide-react";
+
 const Index = () => {
   const {
     user
@@ -39,7 +40,7 @@ const Index = () => {
         <section className="py-20 px-6">
           <div className="max-w-7xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight animate-fade-in">
-              Your AI-Powered <span className="text-primary">Trading</span> Assistant
+              Your AI-Powered <span className="text-primary">Trading</span> Coach
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 animate-fade-in" style={{
             animationDelay: "0.1s"
@@ -172,4 +173,5 @@ const Index = () => {
       </main>
     </div>;
 };
+
 export default Index;
