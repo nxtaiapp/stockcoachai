@@ -18,8 +18,8 @@ const ChatContainer = () => {
     <SidebarProvider>
       <div className="flex flex-col h-screen max-h-screen overflow-hidden bg-background w-full">
         <ChatSidebar />
-        <SidebarInset>
-          <div className="flex flex-col h-full">
+        <SidebarInset className="overflow-hidden">
+          <div className="flex flex-col h-full w-full">
             <ChatHeader 
               toggleSettings={toggleSettings} 
               showSettings={showSettings} 

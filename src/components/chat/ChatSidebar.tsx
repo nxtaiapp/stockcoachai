@@ -1,6 +1,6 @@
 
 import { format } from "date-fns";
-import { Calendar, BarChart3 } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { useChat } from "../../context/ChatContext";
 import {
   Sidebar,
@@ -19,9 +19,8 @@ const ChatSidebar = () => {
 
   return (
     <Sidebar>
-      <SidebarHeader className="flex items-center space-x-2 px-4 py-6">
-        <BarChart3 className="h-6 w-6 text-primary" />
-        <span className="text-xl font-semibold">StockCoach.ai</span>
+      <SidebarHeader className="px-4 py-6">
+        {/* Removed StockCoach.ai title and icon */}
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
