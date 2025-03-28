@@ -29,7 +29,7 @@ export const useChatState = () => {
 
   // Check if the user can create a new chat (one per day)
   const todayDate = getCurrentDate();
-  const canCreateNewChat = !chatDates.includes(todayDate) || isAdmin;
+  const canCreateNewChat = !chatDates.includes(todayDate);
 
   const clearMessages = () => {
     if (user && canCreateNewChat) {
