@@ -149,18 +149,15 @@ export const useChatState = () => {
       const welcomeMessage = getWelcomeMessage(user.name || 'User');
       welcomeMessage.timestamp = new Date();
       
-      // Two options:
-      // 1. Keep all existing messages but add a new welcome message
-      // 2. Clear all messages and start fresh with just the welcome message
+      // Add the welcome message to the existing messages
+      const updatedMessages = [...messages, welcomeMessage];
+      setMessages(updatedMessages);
       
-      // We'll go with option 1 to preserve history while creating a new chat
-      setMessages(prev => [...prev, welcomeMessage]);
-      
-      // Set the selected date to today
+      // Set the selected date to today to show the new chat immediately
       setSelectedDate(todayDate);
       
-      // Save the messages to localStorage
-      localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify([...messages, welcomeMessage]));
+      // Save the updated messages to localStorage
+      localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify(updatedMessages));
       
       // Show a toast notification
       toast.success("Started a new chat session");
