@@ -1,5 +1,5 @@
 
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { Calendar, PlusCircle } from "lucide-react";
 import { useChat } from "../../context/ChatContext";
 import {
@@ -16,10 +16,24 @@ import {
 import { Button } from "@/components/ui/button";
 
 const ChatSidebar = () => {
-  const { chatDates, selectDate, selectedDate, clearMessages } = useChat();
+  const { chatDates, selectDate, selectedDate, clearMessages, userTimezone } = useChat();
 
   const handleNewChat = () => {
     clearMessages();
+  };
+
+  // Format date string considering user's timezone
+  const formatChatDate = (dateString: string) => {
+    try {
+      // Parse the ISO date string
+      const date = parseISO(dateString);
+      
+      // Format the date for display
+      return format(date, "MMM d, yyyy");
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return dateString; // Return original string if parsing fails
+    }
   };
 
   return (
@@ -52,7 +66,7 @@ const ChatSidebar = () => {
                     >
                       <Calendar className="h-4 w-4" />
                       <span>
-                        {format(new Date(date), "MMM d, yyyy")}
+                        {formatChatDate(date)}
                       </span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

@@ -25,7 +25,8 @@ serve(async (req) => {
       return new Response(JSON.stringify({ 
         allowed: true, 
         country: 'US',
-        message: 'Development environment' 
+        message: 'Development environment',
+        timezone: 'America/Los_Angeles' 
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -42,7 +43,8 @@ serve(async (req) => {
     return new Response(JSON.stringify({
       allowed: isUSA,
       country: ipData.country_code || 'Unknown',
-      message: isUSA ? 'Access allowed' : 'Access restricted to US users only'
+      message: isUSA ? 'Access allowed' : 'Access restricted to US users only',
+      timezone: ipData.timezone || 'America/New_York'
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200
@@ -55,6 +57,7 @@ serve(async (req) => {
       allowed: true,
       country: 'Unknown',
       message: 'Error during location check, access allowed by default',
+      timezone: 'America/New_York', // Default timezone
       error: error.message
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

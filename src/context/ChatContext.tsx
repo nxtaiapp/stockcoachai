@@ -21,7 +21,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       isAdmin: chatState.isAdmin,
       chatDates: chatState.chatDates,
       selectedDate: chatState.selectedDate,
-      selectDate: chatState.selectDate
+      selectDate: chatState.selectDate,
+      userTimezone: chatState.userTimezone
     }}>
       {children}
     </ChatContext.Provider>
