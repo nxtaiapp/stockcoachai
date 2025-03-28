@@ -135,10 +135,22 @@ export const useChatState = () => {
 
   const clearMessages = () => {
     if (user) {
+      // Remove existing messages
       localStorage.removeItem(`stockcoach_messages_${user.id}`);
+      
       // Add a welcome message back
       const welcomeMessage = getWelcomeMessage(user.name || 'User');
       setMessages([welcomeMessage]);
+      
+      // Set the selected date to the welcome message date
+      const newDate = format(new Date(welcomeMessage.timestamp), 'yyyy-MM-dd');
+      setSelectedDate(newDate);
+      
+      // Save the new messages to localStorage
+      localStorage.setItem(`stockcoach_messages_${user.id}`, JSON.stringify([welcomeMessage]));
+      
+      // Show a toast notification
+      toast.success("Started a new chat session");
     }
   };
 

@@ -1,6 +1,6 @@
 
 import { format } from "date-fns";
-import { Calendar } from "lucide-react";
+import { Calendar, PlusCircle } from "lucide-react";
 import { useChat } from "../../context/ChatContext";
 import {
   Sidebar,
@@ -13,14 +13,26 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
 
 const ChatSidebar = () => {
-  const { chatDates, selectDate, selectedDate } = useChat();
+  const { chatDates, selectDate, selectedDate, clearMessages } = useChat();
+
+  const handleNewChat = () => {
+    clearMessages();
+  };
 
   return (
     <Sidebar>
       <SidebarHeader className="px-4 py-6">
-        {/* Removed StockCoach.ai title and icon */}
+        <Button 
+          variant="outline"
+          className="w-full flex items-center justify-start gap-2"
+          onClick={handleNewChat}
+        >
+          <PlusCircle className="h-4 w-4" />
+          <span>New Chat</span>
+        </Button>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
