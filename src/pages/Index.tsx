@@ -1,8 +1,17 @@
+
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { BarChart3, ArrowRight, TrendingUp, LineChart, Shield, Zap } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const Index = () => {
   const {
@@ -25,12 +34,23 @@ const Index = () => {
             <span className="font-semibold text-xl">StockCoach.ai</span>
           </div>
           <div className="flex items-center gap-4">
-            <Link to="/signin">
-              <Button variant="ghost">Sign In</Button>
-            </Link>
-            <Link to="/signup">
-              <Button>Get Started</Button>
-            </Link>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button>Join Waitlist</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Join Our Waitlist</DialogTitle>
+                  <DialogDescription>
+                    Thanks for your interest in StockCoach.ai! We're currently in closed beta. Leave your email and we'll notify you when we have an opening.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex items-center gap-2 mt-4">
+                  <input type="email" placeholder="Your email address" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+                  <Button className="shrink-0">Submit</Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </header>
@@ -47,24 +67,33 @@ const Index = () => {
           }}>
               Improve your trading decisions with personalized AI guidance, market insights, and expert strategies.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{
+            <div className="flex justify-center animate-fade-in" style={{
             animationDelay: "0.2s"
           }}>
-              <Link to="/signup">
-                <Button size="lg" className="gap-2 text-lg">
-                  Start 14-Day Free Trial <ArrowRight className="h-5 w-5" />
-                </Button>
-              </Link>
-              <Link to="/signin">
-                <Button size="lg" variant="outline" className="text-lg">
-                  Already have an account?
-                </Button>
-              </Link>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="lg" className="gap-2 text-lg">
+                    Join Our Waitlist <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Join Our Waitlist</DialogTitle>
+                    <DialogDescription>
+                      We're currently in closed beta. Leave your email and we'll notify you when spots become available.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex items-center gap-2 mt-4">
+                    <input type="email" placeholder="Your email address" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+                    <Button className="shrink-0">Submit</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
             <p className="text-sm text-muted-foreground mt-4 animate-fade-in" style={{
             animationDelay: "0.3s"
           }}>
-              No credit card required. Cancel anytime.
+              Limited spots available. Join the waitlist today.
             </p>
           </div>
         </section>
@@ -153,20 +182,29 @@ const Index = () => {
             <p className="text-xl text-muted-foreground mb-10">
               Join thousands of traders who are improving their skills and results with StockCoach.ai
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/signup">
-                <Button size="lg" className="gap-2 text-lg">
-                  Start 14-Day Free Trial <Zap className="h-5 w-5" />
-                </Button>
-              </Link>
-              <Link to="/signin">
-                <Button size="lg" variant="outline" className="text-lg">
-                  Sign In
-                </Button>
-              </Link>
+            <div className="flex justify-center">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="lg" className="gap-2 text-lg">
+                    Join Our Waitlist <Zap className="h-5 w-5" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Join Our Waitlist</DialogTitle>
+                    <DialogDescription>
+                      StockCoach.ai is currently available by invitation only. Submit your email to be notified when new spots open up.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex items-center gap-2 mt-4">
+                    <input type="email" placeholder="Your email address" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
+                    <Button className="shrink-0">Submit</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
             <p className="text-sm text-muted-foreground mt-4">
-              No credit card required. Cancel anytime.
+              Limited availability. Priority access for serious traders.
             </p>
           </div>
         </section>
