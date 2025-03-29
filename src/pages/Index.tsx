@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { WaitlistForm } from "@/components/WaitlistForm";
 
 const Index = () => {
   const {
@@ -25,6 +26,7 @@ const Index = () => {
       navigate("/chat");
     }
   }, [user, navigate]);
+  
   return <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <header className="w-full py-4 px-6 border-b border-border bg-background/80 backdrop-blur-md">
@@ -38,17 +40,14 @@ const Index = () => {
               <DialogTrigger asChild>
                 <Button>Join Waitlist</Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="sm:max-w-[550px] max-h-[90vh]">
                 <DialogHeader>
                   <DialogTitle>Join Our Waitlist</DialogTitle>
                   <DialogDescription>
-                    Thanks for your interest in StockCoach.ai! We're currently in closed beta. Leave your email and we'll notify you when we have an opening.
+                    Thanks for your interest in StockCoach.ai! We're currently in closed beta. Fill out this form to join our waitlist.
                   </DialogDescription>
                 </DialogHeader>
-                <div className="flex items-center gap-2 mt-4">
-                  <input type="email" placeholder="Your email address" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
-                  <Button className="shrink-0">Submit</Button>
-                </div>
+                <WaitlistForm />
               </DialogContent>
             </Dialog>
           </div>
@@ -76,17 +75,14 @@ const Index = () => {
                     Join Our Waitlist <ArrowRight className="h-5 w-5" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[550px] max-h-[90vh]">
                   <DialogHeader>
                     <DialogTitle>Join Our Waitlist</DialogTitle>
                     <DialogDescription>
-                      We're currently in closed beta. Leave your email and we'll notify you when spots become available.
+                      We're currently in closed beta. Fill out this form to join our waitlist and be notified when spots become available.
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="flex items-center gap-2 mt-4">
-                    <input type="email" placeholder="Your email address" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
-                    <Button className="shrink-0">Submit</Button>
-                  </div>
+                  <WaitlistForm />
                 </DialogContent>
               </Dialog>
             </div>
@@ -189,17 +185,14 @@ const Index = () => {
                     Join Our Waitlist <Zap className="h-5 w-5" />
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[550px] max-h-[90vh]">
                   <DialogHeader>
                     <DialogTitle>Join Our Waitlist</DialogTitle>
                     <DialogDescription>
-                      StockCoach.ai is currently available by invitation only. Submit your email to be notified when new spots open up.
+                      StockCoach.ai is currently available by invitation only. Fill out this form to join our waitlist.
                     </DialogDescription>
                   </DialogHeader>
-                  <div className="flex items-center gap-2 mt-4">
-                    <input type="email" placeholder="Your email address" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
-                    <Button className="shrink-0">Submit</Button>
-                  </div>
+                  <WaitlistForm />
                 </DialogContent>
               </Dialog>
             </div>
