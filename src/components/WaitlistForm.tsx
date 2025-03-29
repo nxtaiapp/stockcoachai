@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters."
@@ -33,7 +34,9 @@ const formSchema = z.object({
   insights: z.string().optional(),
   earlyAccess: z.enum(["yes", "no", "maybe"]).optional()
 });
+
 type FormValues = z.infer<typeof formSchema>;
+
 export function WaitlistForm({
   onClose
 }: {
@@ -58,19 +61,83 @@ export function WaitlistForm({
       insights: ""
     }
   });
-  function onSubmit(values: FormValues) {
+
+  async function onSubmit(values: FormValues) {
     console.log(values);
-
-    // Here you would typically send this data to your backend
-    // For now, we'll just show a success message
-
-    toast.success("You've been added to our waitlist!", {
-      description: "We'll be in touch soon with updates."
-    });
-    if (onClose) {
-      onClose();
+    
+    // Set loading state
+    const submitButton = document.querySelector('button[type="submit"]') as HTMLButtonElement;
+    if (submitButton) {
+      const originalText = submitButton.innerHTML;
+      submitButton.disabled = true;
+      submitButton.innerHTML = 'Submitting...';
+      
+      try {
+        // Post the form data to the specified API endpoint
+        const response = await fetch('https://nxtaisolutions.app.n8n.cloud/webhook-test/92ab66bc-0d1e-4d7f-a7c3-e157319891c5', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to submit form');
+        }
+        
+        // Show success message
+        toast.success("You've been added to our waitlist!", {
+          description: "We'll be in touch soon with updates."
+        });
+        
+        // Close the dialog if onClose function is provided
+        if (onClose) {
+          onClose();
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        toast.error("Couldn't submit your information", {
+          description: "Please try again later."
+        });
+      } finally {
+        // Reset button state
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.innerHTML = originalText;
+        }
+      }
+    } else {
+      // Fallback if button element is not found
+      try {
+        const response = await fetch('https://nxtaisolutions.app.n8n.cloud/webhook-test/92ab66bc-0d1e-4d7f-a7c3-e157319891c5', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to submit form');
+        }
+        
+        toast.success("You've been added to our waitlist!", {
+          description: "We'll be in touch soon with updates."
+        });
+        
+        if (onClose) {
+          onClose();
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        toast.error("Couldn't submit your information", {
+          description: "Please try again later."
+        });
+      }
     }
   }
+
   return <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-h-[70vh] overflow-y-auto px-1">
         <div className="space-y-4">
