@@ -1,3 +1,4 @@
+
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -58,7 +59,7 @@ export function WaitlistForm({
       
       try {
         // Post the form data to the specified API endpoint
-        const response = await fetch('https://nxtaisolutions.app.n8n.cloud/webhook-test/92ab66bc-0d1e-4d7f-a7c3-e157319891c5', {
+        const response = await fetch('https://nxtaisolutions.app.n8n.cloud/webhook/92ab66bc-0d1e-4d7f-a7c3-e157319891c5', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -94,7 +95,7 @@ export function WaitlistForm({
     } else {
       // Fallback if button element is not found
       try {
-        const response = await fetch('https://nxtaisolutions.app.n8n.cloud/webhook-test/92ab66bc-0d1e-4d7f-a7c3-e157319891c5', {
+        const response = await fetch('https://nxtaisolutions.app.n8n.cloud/webhook/92ab66bc-0d1e-4d7f-a7c3-e157319891c5', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
