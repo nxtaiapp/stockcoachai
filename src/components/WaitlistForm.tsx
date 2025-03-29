@@ -1,4 +1,3 @@
-
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -12,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters."
@@ -35,9 +33,7 @@ const formSchema = z.object({
   insights: z.string().optional(),
   earlyAccess: z.enum(["yes", "no", "maybe"]).optional()
 });
-
 type FormValues = z.infer<typeof formSchema>;
-
 export function WaitlistForm({
   onClose
 }: {
@@ -62,7 +58,6 @@ export function WaitlistForm({
       insights: ""
     }
   });
-
   function onSubmit(values: FormValues) {
     console.log(values);
 
@@ -76,7 +71,6 @@ export function WaitlistForm({
       onClose();
     }
   }
-
   return <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-h-[70vh] overflow-y-auto px-1">
         <div className="space-y-4">
@@ -109,12 +103,8 @@ export function WaitlistForm({
                   <Checkbox checked={field.value} onCheckedChange={field.onChange} required />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <FormLabel className="font-normal">
-                    Would you like to receive occasional email updates about StockCoach.ai?
-                  </FormLabel>
-                  <FormDescription>
-                    Yes, keep me in the loop with updates, early access opportunities, and launch news.
-                  </FormDescription>
+                  <FormLabel className="font-normal">I agree to receive email updates about StockCoach.ai.</FormLabel>
+                  
                 </div>
               </FormItem>} />
         </div>
