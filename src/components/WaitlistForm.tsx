@@ -21,15 +21,7 @@ const formSchema = z.object({
   }),
   emailUpdates: z.boolean().default(false),
   experienceLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
-  markets: z.object({
-    nasdaq: z.boolean().default(false),
-    stocks: z.boolean().default(false),
-    options: z.boolean().default(false),
-    forex: z.boolean().default(false),
-    crypto: z.boolean().default(false),
-    other: z.boolean().default(false)
-  }).optional(),
-  otherMarket: z.string().optional(),
+  markets: z.string().optional(),
   challenges: z.string().optional(),
   insights: z.string().optional(),
   earlyAccess: z.enum(["yes", "no", "maybe"]).optional()
@@ -48,15 +40,7 @@ export function WaitlistForm({
       name: "",
       email: "",
       emailUpdates: false,
-      markets: {
-        nasdaq: false,
-        stocks: false,
-        options: false,
-        forex: false,
-        crypto: false,
-        other: false
-      },
-      otherMarket: "",
+      markets: "",
       challenges: "",
       insights: ""
     }
@@ -214,70 +198,18 @@ export function WaitlistForm({
                 <FormMessage />
               </FormItem>} />
           
-          <div className="space-y-2">
-            <FormLabel>2. What markets do you trade?</FormLabel>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <FormField control={form.control} name="markets.nasdaq" render={({
-              field
-            }) => <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                    <FormLabel className="font-normal">
-                      NASDAQ Futures / ES / NQ
-                    </FormLabel>
-                  </FormItem>} />
-              <FormField control={form.control} name="markets.stocks" render={({
-              field
-            }) => <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                    <FormLabel className="font-normal">Stocks</FormLabel>
-                  </FormItem>} />
-              <FormField control={form.control} name="markets.options" render={({
-              field
-            }) => <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                    <FormLabel className="font-normal">Options</FormLabel>
-                  </FormItem>} />
-              <FormField control={form.control} name="markets.forex" render={({
-              field
-            }) => <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                    <FormLabel className="font-normal">Forex</FormLabel>
-                  </FormItem>} />
-              <FormField control={form.control} name="markets.crypto" render={({
-              field
-            }) => <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                    <FormLabel className="font-normal">Crypto</FormLabel>
-                  </FormItem>} />
-              <FormField control={form.control} name="markets.other" render={({
-              field
-            }) => <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                    <FormLabel className="font-normal">Other</FormLabel>
-                  </FormItem>} />
-            </div>
-            
-            {form.watch("markets.other") && <FormField control={form.control} name="otherMarket" render={({
-            field
-          }) => <FormItem>
-                    <FormControl>
-                      <Input placeholder="Please specify" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>} />}
-          </div>
+          <FormField control={form.control} name="markets" render={({
+          field
+        }) => <FormItem>
+                <FormLabel>2. What markets do you trade?</FormLabel>
+                <FormDescription>
+                  E.g., NASDAQ, Stocks, Options, Forex, Crypto, etc.
+                </FormDescription>
+                <FormControl>
+                  <Input placeholder="Markets you trade in" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>} />
           
           <FormField control={form.control} name="challenges" render={({
           field
