@@ -62,7 +62,7 @@ export type Database = {
           id: string
           name: string | null
           skill_level: string | null
-          trading_goal: string | null
+          trading_style: string | null
           updated_at: string | null
         }
         Insert: {
@@ -72,7 +72,7 @@ export type Database = {
           id: string
           name?: string | null
           skill_level?: string | null
-          trading_goal?: string | null
+          trading_style?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -82,7 +82,7 @@ export type Database = {
           id?: string
           name?: string | null
           skill_level?: string | null
-          trading_goal?: string | null
+          trading_style?: string | null
           updated_at?: string | null
         }
         Relationships: []

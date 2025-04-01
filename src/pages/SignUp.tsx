@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -54,7 +53,7 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [experience, setExperience] = useState("");
-  const [tradingGoal, setTradingGoal] = useState("");
+  const [tradingStyle, setTradingStyle] = useState("");
   const [skillLevel, setSkillLevel] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -63,14 +62,14 @@ const SignUp = () => {
     e.preventDefault();
     setError("");
     
-    if (!name || !email || !password || !experience || !tradingGoal || !skillLevel) {
+    if (!name || !email || !password || !experience || !tradingStyle || !skillLevel) {
       setError("Please fill in all fields");
       return;
     }
 
     try {
       setIsLoading(true);
-      await signUp(email, password, name, experience, tradingGoal, skillLevel);
+      await signUp(email, password, name, experience, tradingStyle, skillLevel);
       // Navigate is handled in the AuthContext after successful sign-up
     } catch (err) {
       setError("An error occurred during registration. Please try again.");
@@ -159,15 +158,15 @@ const SignUp = () => {
                   </SelectContent>
                 </Select>
               </div>
-
+              
               <div className="space-y-4">
-                <Label>Primary Trading Goal</Label>
-                <RadioGroup value={tradingGoal} onValueChange={setTradingGoal}>
+                <Label>Trading Style</Label>
+                <RadioGroup value={tradingStyle} onValueChange={setTradingStyle}>
                   <div className="grid grid-cols-1 gap-3">
                     {tradingGoals.map((goal) => (
                       <div key={goal.id} className={`
                         flex items-start space-x-2 border rounded-lg p-3 transition-all
-                        ${tradingGoal === goal.id ? 'border-primary bg-primary/5' : 'border-border'}
+                        ${tradingStyle === goal.id ? 'border-primary bg-primary/5' : 'border-border'}
                       `}>
                         <RadioGroupItem value={goal.id} id={`goal-${goal.id}`} className="mt-1" />
                         <Label htmlFor={`goal-${goal.id}`} className="flex-1 cursor-pointer">

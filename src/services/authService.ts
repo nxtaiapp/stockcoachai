@@ -15,7 +15,7 @@ export const createProfile = async (authUser: User): Promise<UserProfile | null>
         email: authUser.email,
         name: userData.name || userData.full_name || authUser.email?.split('@')[0] || 'User',
         experience_level: userData.experience_level || 'beginner',
-        trading_goal: userData.trading_goal || 'long-term', // Default trading goal
+        trading_style: userData.trading_style || 'long-term', // Changed from trading_goal
         skill_level: userData.skill_level || 'beginner', // Default skill level
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
@@ -119,7 +119,7 @@ export const signUpUser = async (
   password: string, 
   name: string, 
   experience: string,
-  tradingGoal: string = 'long-term',
+  tradingStyle: string = 'long-term', // Changed from tradingGoal
   skillLevel: string = 'beginner'
 ): Promise<User | null> => {
   const { data: { user: authUser }, error } = await supabase.auth.signUp({
@@ -129,7 +129,7 @@ export const signUpUser = async (
       data: {
         name,
         experience_level: experience,
-        trading_goal: tradingGoal,
+        trading_style: tradingStyle, // Changed from trading_goal
         skill_level: skillLevel
       }
     }

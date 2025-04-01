@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -27,7 +26,7 @@ const Profile = () => {
     name: user?.name || "",
     email: user?.email || "",
     experience_level: user?.experience_level || "beginner",
-    trading_goal: user?.trading_goal || "income",
+    trading_style: user?.trading_style || "income",
     skill_level: user?.skill_level || "beginner"
   });
 
@@ -51,7 +50,7 @@ const Profile = () => {
     setUserData({
       name: formData.name,
       experience_level: formData.experience_level,
-      trading_goal: formData.trading_goal,
+      trading_style: formData.trading_style,
       skill_level: formData.skill_level
     });
     
@@ -61,7 +60,6 @@ const Profile = () => {
 
   return (
     <div className="container max-w-4xl py-20 px-4 md:px-6">
-      {/* Navigation Menu */}
       <div className="mb-8">
         <NavigationMenu>
           <NavigationMenuList>
@@ -167,10 +165,10 @@ const Profile = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Trading Goal</Label>
+                  <Label>Trading Style</Label>
                   <RadioGroup 
-                    value={formData.trading_goal} 
-                    onValueChange={(value) => handleRadioChange("trading_goal", value)}
+                    value={formData.trading_style} 
+                    onValueChange={(value) => handleRadioChange("trading_style", value)}
                     className="flex flex-col space-y-1"
                   >
                     <div className="flex items-center space-x-2">
@@ -232,8 +230,8 @@ const Profile = () => {
                   <p className="text-base font-medium capitalize">{user.experience_level || "Not set"}</p>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Trading Goal</p>
-                  <p className="text-base font-medium capitalize">{user.trading_goal || "Not set"}</p>
+                  <p className="text-sm font-medium text-muted-foreground">Trading Style</p>
+                  <p className="text-base font-medium capitalize">{user.trading_style || "Not set"}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Skill Level</p>

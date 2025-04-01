@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -50,11 +49,10 @@ const Onboarding = () => {
   const { user, setUserData, loading } = useAuth();
   const navigate = useNavigate();
   
-  const [selectedGoal, setSelectedGoal] = useState("");
+  const [selectedStyle, setSelectedStyle] = useState("");
   const [skillLevel, setSkillLevel] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Redirect if not logged in
   useEffect(() => {
     if (!loading && !user) {
       navigate("/signin");
@@ -64,21 +62,19 @@ const Onboarding = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!selectedGoal || !skillLevel) {
-      toast.error("Please select both a trading goal and skill level");
+    if (!selectedStyle || !skillLevel) {
+      toast.error("Please select both a trading style and skill level");
       return;
     }
 
     try {
       setIsSubmitting(true);
       
-      // Update user profile with onboarding data
       await setUserData({
-        trading_goal: selectedGoal,
+        trading_style: selectedStyle,
         skill_level: skillLevel
       });
       
-      // Redirect to chat
       navigate("/chat");
     } catch (err) {
       console.error(err);
@@ -115,13 +111,13 @@ const Onboarding = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="space-y-4">
-                <h3 className="text-lg font-medium">What is your primary trading goal?</h3>
-                <RadioGroup value={selectedGoal} onValueChange={setSelectedGoal}>
+                <h3 className="text-lg font-medium">What is your preferred trading style?</h3>
+                <RadioGroup value={selectedStyle} onValueChange={setSelectedStyle}>
                   <div className="grid grid-cols-1 gap-4">
                     {tradingGoals.map((goal) => (
                       <div key={goal.id} className={`
                         flex items-start space-x-2 border rounded-lg p-4 transition-all
-                        ${selectedGoal === goal.id ? 'border-primary bg-primary/5' : 'border-border'}
+                        ${selectedStyle === goal.id ? 'border-primary bg-primary/5' : 'border-border'}
                       `}>
                         <RadioGroupItem value={goal.id} id={goal.id} className="mt-1" />
                         <Label htmlFor={goal.id} className="flex-1 cursor-pointer">
@@ -153,7 +149,7 @@ const Onboarding = () => {
               <Button 
                 type="submit" 
                 className="w-full flex items-center gap-2" 
-                disabled={!selectedGoal || !skillLevel || isSubmitting}
+                disabled={!selectedStyle || !skillLevel || isSubmitting}
               >
                 Continue to StockCoach.ai
                 {isSubmitting ? (
