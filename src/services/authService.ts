@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import type { UserProfile } from '@/lib/types';
 import { User } from '@supabase/supabase-js';
@@ -179,5 +178,30 @@ export const signOutUser = async (): Promise<void> => {
         !(error.message.includes('session') && error.message.includes('missing'))) {
       throw error;
     }
+  }
+};
+
+// Change user password
+export const changeUserPassword = async (currentPassword: string, newPassword: string): Promise<void> => {
+  try {
+    // First verify the current password by attempting a sign-in
+    const { data: { user: authUser }, error: signInError } = await supabase.auth.signInWithPassword({
+      email: (await supabase.auth.getUser()).data.user?.email || '',
+      password: currentPassword
+    });
+
+    if (signInError) {
+      throw new Error("Current password is incorrect");
+    }
+
+    // Now update the password
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+
+    if (updateError) throw updateError;
+  } catch (error) {
+    console.error('Error changing password:', error);
+    throw error;
   }
 };
