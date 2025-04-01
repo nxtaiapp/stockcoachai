@@ -24,9 +24,14 @@ export async function uploadImageAndGetUrl(file: File): Promise<string> {
   });
 }
 
+// Generate a proper UUID for database compatibility
+function generateUUID(): string {
+  return crypto.randomUUID();
+}
+
 export function createUserMessage(userId: string, content: string, imageUrl?: string): Message {
   return {
-    id: Math.random().toString(36).substring(2, 9),
+    id: generateUUID(),
     senderId: userId,
     content,
     timestamp: new Date(),
@@ -37,7 +42,7 @@ export function createUserMessage(userId: string, content: string, imageUrl?: st
 
 export function createAIMessage(content: string): Message {
   return {
-    id: Math.random().toString(36).substring(2, 9),
+    id: generateUUID(),
     senderId: 'ai',
     content,
     timestamp: new Date(),
@@ -47,7 +52,7 @@ export function createAIMessage(content: string): Message {
 
 export function getWelcomeMessage(userName: string): Message {
   return {
-    id: Math.random().toString(36).substring(2, 9),
+    id: generateUUID(),
     senderId: 'ai',
     content: `Hello ${userName}! Welcome to StockCoach.ai. I'm your personal AI trading assistant. How can I help you improve your trading skills today?`,
     timestamp: new Date(),

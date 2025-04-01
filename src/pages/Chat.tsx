@@ -12,6 +12,7 @@ const ChatPage = () => {
   const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
+  const [checkingMessages, setCheckingMessages] = useState(false);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -24,6 +25,8 @@ const ChatPage = () => {
     if (!user?.id) return;
     
     try {
+      setCheckingMessages(true);
+      
       // Check if the table can be accessed
       const { data, error, status } = await supabase
         .from('chat_messages')
@@ -42,6 +45,8 @@ const ChatPage = () => {
       console.error("Error checking Supabase messages:", err);
       setDebugInfo(`Exception: ${JSON.stringify(err)}`);
       toast.error("Exception while checking messages");
+    } finally {
+      setCheckingMessages(false);
     }
   };
 
@@ -61,12 +66,13 @@ const ChatPage = () => {
             variant="outline" 
             size="sm" 
             onClick={checkSupabaseMessages}
+            disabled={checkingMessages}
             className="bg-background/80 backdrop-blur-sm"
           >
-            Debug Messages
+            {checkingMessages ? 'Checking...' : 'Debug Messages'}
           </Button>
           {debugInfo && (
-            <div className="mt-2 p-2 bg-background/90 backdrop-blur-sm border border-border rounded-md text-xs max-w-[300px] overflow-auto">
+            <div className="mt-2 p-3 bg-background/90 backdrop-blur-sm border border-border rounded-md text-sm max-w-[300px] overflow-auto">
               {debugInfo}
             </div>
           )}
