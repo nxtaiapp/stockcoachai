@@ -14,9 +14,11 @@ export const createProfile = async (authUser: User): Promise<UserProfile | null>
         id: authUser.id,
         email: authUser.email,
         name: userData.name || userData.full_name || authUser.email?.split('@')[0] || 'User',
+        first_name: userData.first_name || userData.name?.split(' ')[0] || '',
+        last_name: userData.last_name || (userData.name?.includes(' ') ? userData.name.split(' ').slice(1).join(' ') : ''),
         experience_level: userData.experience_level || 'beginner',
-        trading_style: userData.trading_style || 'long-term', // Changed from trading_goal
-        skill_level: userData.skill_level || 'beginner', // Default skill level
+        trading_style: userData.trading_style || 'long-term',
+        skill_level: userData.skill_level || 'beginner',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       });
@@ -119,17 +121,24 @@ export const signUpUser = async (
   password: string, 
   name: string, 
   experience: string,
-  tradingStyle: string = 'long-term', // Changed from tradingGoal
+  tradingStyle: string = 'long-term',
   skillLevel: string = 'beginner'
 ): Promise<User | null> => {
+  // Extract first and last name from the full name
+  const nameParts = name.trim().split(' ');
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
   const { data: { user: authUser }, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
         name,
+        first_name: firstName,
+        last_name: lastName,
         experience_level: experience,
-        trading_style: tradingStyle, // Changed from trading_goal
+        trading_style: tradingStyle,
         skill_level: skillLevel
       }
     }

@@ -11,7 +11,7 @@ export interface AuthContextType {
     password: string, 
     name: string, 
     experience: string,
-    tradingStyle: string, // Changed from tradingGoal
+    tradingStyle: string,
     skillLevel: string
   ) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;

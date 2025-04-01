@@ -4,8 +4,10 @@ export type UserProfile = {
   id: string;
   email: string;
   name: string;
+  first_name?: string;
+  last_name?: string;
   experience_level?: string;
-  trading_style?: string; // Changed from trading_goal
+  trading_style?: string;
   skill_level?: string;
   created_at?: string;
   updated_at?: string;

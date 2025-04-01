@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -23,7 +24,8 @@ const Profile = () => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || "",
+    first_name: user?.first_name || "",
+    last_name: user?.last_name || "",
     email: user?.email || "",
     experience_level: user?.experience_level || "beginner",
     trading_style: user?.trading_style || "income",
@@ -47,8 +49,13 @@ const Profile = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Construct full name from first and last
+    const name = `${formData.first_name} ${formData.last_name}`.trim();
+    
     setUserData({
-      name: formData.name,
+      name,
+      first_name: formData.first_name,
+      last_name: formData.last_name,
       experience_level: formData.experience_level,
       trading_style: formData.trading_style,
       skill_level: formData.skill_level
@@ -113,13 +120,26 @@ const Profile = () => {
               <div className="space-y-4">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="name">Full Name</Label>
+                    <Label htmlFor="first_name">First Name</Label>
                     <div className="relative">
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                       <Input
-                        id="name"
-                        name="name"
-                        value={formData.name}
+                        id="first_name"
+                        name="first_name"
+                        value={formData.first_name}
+                        onChange={handleChange}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="last_name">Last Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="last_name"
+                        name="last_name"
+                        value={formData.last_name}
                         onChange={handleChange}
                         className="pl-10"
                       />
@@ -215,8 +235,12 @@ const Profile = () => {
             <div className="space-y-6">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Full Name</p>
-                  <p className="text-base font-medium">{user.name}</p>
+                  <p className="text-sm font-medium text-muted-foreground">First Name</p>
+                  <p className="text-base font-medium">{user.first_name || (user.name ? user.name.split(' ')[0] : '')}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-muted-foreground">Last Name</p>
+                  <p className="text-base font-medium">{user.last_name || (user.name && user.name.includes(' ') ? user.name.split(' ').slice(1).join(' ') : '')}</p>
                 </div>
                 <div className="space-y-1">
                   <p className="text-sm font-medium text-muted-foreground">Email</p>

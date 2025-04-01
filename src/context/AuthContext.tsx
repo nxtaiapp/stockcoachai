@@ -23,11 +23,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     password: string, 
     name: string, 
     experience: string,
-    tradingStyle: string, // Changed from tradingGoal
+    tradingStyle: string,
     skillLevel: string
   ) => {
     try {
-      await signUpUser(email, password, name, experience, tradingStyle, skillLevel); // Updated param name
+      await signUpUser(email, password, name, experience, tradingStyle, skillLevel);
       toast.success("Account created successfully!");
       navigate('/chat');
     } catch (error) {
