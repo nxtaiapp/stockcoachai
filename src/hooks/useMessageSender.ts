@@ -24,7 +24,10 @@ export const useMessageSender = (
   const [loading, setLoading] = useState(false);
 
   const sendMessage = async (content: string, imageFile?: File) => {
-    if (!userId) return;
+    if (!userId) {
+      toast.error("You must be logged in to send messages");
+      return;
+    }
     
     try {
       setLoading(true);
@@ -48,7 +51,9 @@ export const useMessageSender = (
       
       // Save user message to Supabase
       try {
+        console.log('Saving user message to Supabase');
         await saveMessageToSupabase(userMessage, userId);
+        console.log('User message saved successfully');
       } catch (error) {
         console.error('Failed to save user message to Supabase:', error);
         toast.error("Failed to save your message to the database.");
@@ -92,7 +97,9 @@ export const useMessageSender = (
       
       // Save AI message to Supabase
       try {
+        console.log('Saving AI message to Supabase');
         await saveMessageToSupabase(aiMessage, userId);
+        console.log('AI message saved successfully');
       } catch (error) {
         console.error('Failed to save AI message to Supabase:', error);
         // Don't show toast for this as it's less critical for user experience

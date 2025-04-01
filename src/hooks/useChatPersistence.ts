@@ -14,10 +14,13 @@ export const useChatPersistence = (userId: string | undefined) => {
   useEffect(() => {
     if (userId) {
       setIsLoading(true);
+      console.log('Loading messages for user:', userId);
       
       // First try to fetch messages from Supabase
       fetchMessagesFromSupabase(userId)
         .then((supabaseMessages) => {
+          console.log('Fetched messages from Supabase:', supabaseMessages.length);
+          
           if (supabaseMessages.length > 0) {
             setMessages(supabaseMessages);
             
@@ -27,23 +30,38 @@ export const useChatPersistence = (userId: string | undefined) => {
               'yyyy-MM-dd'
             );
             setSelectedDate(mostRecentDate);
+            console.log('Selected date:', mostRecentDate);
           } else {
+            console.log('No messages found in Supabase, checking localStorage');
             // If no messages in Supabase, check localStorage as fallback
             const storedMessages = localStorage.getItem(`stockcoach_messages_${userId}`);
             if (storedMessages) {
-              const parsedMessages = JSON.parse(storedMessages);
-              setMessages(parsedMessages);
-              
-              // Select the most recent date by default
-              if (parsedMessages.length > 0) {
-                const mostRecentDate = format(
-                  new Date(parsedMessages[parsedMessages.length - 1].timestamp), 
-                  'yyyy-MM-dd'
-                );
-                setSelectedDate(mostRecentDate);
+              try {
+                const parsedMessages = JSON.parse(storedMessages);
+                console.log('Found messages in localStorage:', parsedMessages.length);
+                setMessages(parsedMessages);
+                
+                // Select the most recent date by default
+                if (parsedMessages.length > 0) {
+                  const mostRecentDate = format(
+                    new Date(parsedMessages[parsedMessages.length - 1].timestamp), 
+                    'yyyy-MM-dd'
+                  );
+                  setSelectedDate(mostRecentDate);
+                  console.log('Selected date from localStorage:', mostRecentDate);
+                }
+              } catch (e) {
+                console.error('Error parsing stored messages:', e);
+                
+                // If parsing fails, start with welcome message
+                const welcomeMessage = getWelcomeMessage(userId);
+                setMessages([welcomeMessage]);
+                setSelectedDate(format(new Date(welcomeMessage.timestamp), 'yyyy-MM-dd'));
+                console.log('Added welcome message due to parse error');
               }
             } else {
               // Add a welcome message for new users
+              console.log('No messages found in localStorage, adding welcome message');
               const welcomeMessage = getWelcomeMessage(userId);
               setMessages([welcomeMessage]);
               setSelectedDate(format(new Date(welcomeMessage.timestamp), 'yyyy-MM-dd'));
@@ -59,6 +77,7 @@ export const useChatPersistence = (userId: string | undefined) => {
           if (storedMessages) {
             try {
               const parsedMessages = JSON.parse(storedMessages);
+              console.log('Fallback to localStorage messages:', parsedMessages.length);
               setMessages(parsedMessages);
               
               if (parsedMessages.length > 0) {

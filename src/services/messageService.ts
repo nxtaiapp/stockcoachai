@@ -55,9 +55,11 @@ export function getWelcomeMessage(userName: string): Message {
   };
 }
 
-// New function to save a message to Supabase
+// Updated function to save a message to Supabase with better error logging
 export async function saveMessageToSupabase(message: Message, userId: string): Promise<void> {
   try {
+    console.log('Saving message to Supabase:', { message, userId });
+    
     const { error } = await supabase
       .from('chat_messages')
       .insert({
@@ -72,6 +74,8 @@ export async function saveMessageToSupabase(message: Message, userId: string): P
     if (error) {
       console.error('Error saving message to Supabase:', error);
       throw error;
+    } else {
+      console.log('Message saved successfully to Supabase');
     }
   } catch (error) {
     console.error('Failed to save message to Supabase:', error);
@@ -79,9 +83,11 @@ export async function saveMessageToSupabase(message: Message, userId: string): P
   }
 }
 
-// New function to fetch messages from Supabase
+// Updated function to fetch messages from Supabase with better error handling
 export async function fetchMessagesFromSupabase(userId: string): Promise<Message[]> {
   try {
+    console.log('Fetching messages for user:', userId);
+    
     const { data, error } = await supabase
       .from('chat_messages')
       .select('*')
@@ -92,6 +98,8 @@ export async function fetchMessagesFromSupabase(userId: string): Promise<Message
       console.error('Error fetching messages from Supabase:', error);
       throw error;
     }
+    
+    console.log('Fetched messages from Supabase:', data);
     
     // Convert Supabase data to Message objects
     return (data || []).map(item => ({
