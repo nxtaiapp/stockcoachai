@@ -26,7 +26,8 @@ import { TradingStyleOptions } from "./TradingStyleOptions";
 export const SignUpForm = () => {
   const { signUp } = useAuth();
   
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [experience, setExperience] = useState("");
@@ -39,14 +40,15 @@ export const SignUpForm = () => {
     e.preventDefault();
     setError("");
     
-    if (!name || !email || !password || !experience || !tradingStyle || !skillLevel) {
+    if (!firstName || !lastName || !email || !password || !experience || !tradingStyle || !skillLevel) {
       setError("Please fill in all fields");
       return;
     }
 
     try {
       setIsLoading(true);
-      await signUp(email, password, name, experience, tradingStyle, skillLevel);
+      const fullName = `${firstName} ${lastName}`.trim();
+      await signUp(email, password, fullName, experience, tradingStyle, skillLevel);
       // Navigate is handled in the AuthContext after successful sign-up
     } catch (err) {
       setError("An error occurred during registration. Please try again.");
@@ -70,16 +72,30 @@ export const SignUpForm = () => {
             </div>
           )}
           
-          <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="John Doe"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">First Name</Label>
+              <Input
+                id="firstName"
+                type="text"
+                placeholder="John"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last Name</Label>
+              <Input
+                id="lastName"
+                type="text"
+                placeholder="Doe"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </div>
           </div>
           
           <div className="space-y-2">
