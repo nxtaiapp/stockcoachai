@@ -2,9 +2,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { 
   CardContent, 
   CardDescription, 
@@ -12,16 +9,9 @@ import {
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ArrowRight } from "lucide-react";
-import { TradingStyleOptions } from "./TradingStyleOptions";
+import { UserInfoForm } from "./UserInfoForm";
+import { ExperienceForm } from "./ExperienceForm";
+import { SignUpFormFooter } from "./SignUpFormFooter";
 
 export const SignUpForm = () => {
   const { signUp } = useAuth();
@@ -72,129 +62,27 @@ export const SignUpForm = () => {
             </div>
           )}
           
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
-              <Input
-                id="firstName"
-                type="text"
-                placeholder="John"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
-              <Input
-                id="lastName"
-                type="text"
-                placeholder="Doe"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                required
-              />
-            </div>
-          </div>
+          <UserInfoForm
+            firstName={firstName}
+            lastName={lastName}
+            email={email}
+            password={password}
+            setFirstName={setFirstName}
+            setLastName={setLastName}
+            setEmail={setEmail}
+            setPassword={setPassword}
+          />
           
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+          <ExperienceForm
+            experience={experience}
+            tradingStyle={tradingStyle}
+            skillLevel={skillLevel}
+            setExperience={setExperience}
+            setTradingStyle={setTradingStyle}
+            setSkillLevel={setSkillLevel}
+          />
           
-          <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              Must be at least 8 characters
-            </p>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="experience">Trading Experience</Label>
-            <Select 
-              value={experience} 
-              onValueChange={setExperience}
-              required
-            >
-              <SelectTrigger id="experience">
-                <SelectValue placeholder="Select your experience level" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="beginner">Beginner (0-1 years)</SelectItem>
-                <SelectItem value="intermediate">Intermediate (1-5 years)</SelectItem>
-                <SelectItem value="advanced">Advanced (5+ years)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="space-y-4">
-            <Label>Trading Style</Label>
-            <RadioGroup value={tradingStyle} onValueChange={setTradingStyle}>
-              <div className="grid grid-cols-1 gap-3">
-                <TradingStyleOptions selectedStyle={tradingStyle} />
-              </div>
-            </RadioGroup>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="skillLevel">Trading Skill Level</Label>
-            <Select 
-              value={skillLevel} 
-              onValueChange={setSkillLevel}
-              required
-            >
-              <SelectTrigger id="skillLevel">
-                <SelectValue placeholder="Select your skill level" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="novice">Novice - Just getting started</SelectItem>
-                <SelectItem value="beginner">Beginner - Some basic knowledge</SelectItem>
-                <SelectItem value="intermediate">Intermediate - Regular trader with experience</SelectItem>
-                <SelectItem value="advanced">Advanced - Experienced and confident</SelectItem>
-                <SelectItem value="expert">Expert - Professional level knowledge</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <Button 
-            type="submit" 
-            className="w-full flex items-center gap-2" 
-            disabled={isLoading}
-          >
-            Create Account
-            {isLoading ? (
-              <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            ) : (
-              <ArrowRight className="h-4 w-4" />
-            )}
-          </Button>
-          
-          <p className="text-xs text-center text-muted-foreground">
-            By creating an account, you agree to our{" "}
-            <Link to="/" className="text-primary hover:underline">
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link to="/" className="text-primary hover:underline">
-              Privacy Policy
-            </Link>
-          </p>
+          <SignUpFormFooter isLoading={isLoading} />
         </form>
       </CardContent>
       <CardFooter className="flex justify-center">
