@@ -21,6 +21,13 @@ export const useAuthState = () => {
         
         if (session?.user) {
           const { profile, isAdmin: userIsAdmin } = await fetchUserProfile(session.user);
+          
+          // Ensure the profile has a proper name, not an ID
+          if (profile && (!profile.name || profile.name.includes('-'))) {
+            // If name is missing or looks like a UUID, use email or a fallback
+            profile.name = profile.email?.split('@')[0] || 'User';
+          }
+          
           setUser(profile);
           setIsAdmin(userIsAdmin);
         } else {
@@ -43,6 +50,12 @@ export const useAuthState = () => {
       async (event, session) => {
         if (session?.user) {
           const { profile, isAdmin: userIsAdmin } = await fetchUserProfile(session.user);
+          
+          // Same name validation as above
+          if (profile && (!profile.name || profile.name.includes('-'))) {
+            profile.name = profile.email?.split('@')[0] || 'User';
+          }
+          
           setUser(profile);
           setIsAdmin(userIsAdmin);
         } else {

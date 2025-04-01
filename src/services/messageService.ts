@@ -51,8 +51,18 @@ export function createAIMessage(content: string): Message {
 }
 
 export function getWelcomeMessage(userName: string): Message {
-  // Use the actual name passed in, or fallback to "there" if no name is provided
-  const displayName = userName && userName.trim() !== '' ? userName : 'there';
+  // Clean the username to ensure we're not displaying UUIDs or IDs
+  let displayName = "there";
+  
+  if (userName && userName.trim() !== '') {
+    // Check if the name looks like a UUID (contains hyphens)
+    if (!userName.includes('-')) {
+      displayName = userName;
+    } else {
+      // If it has hyphens, it might be a UUID, so use a generic greeting
+      displayName = "there";
+    }
+  }
   
   return {
     id: generateUUID(),

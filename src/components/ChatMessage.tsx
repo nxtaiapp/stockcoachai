@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from "react";
 import { Message } from "../context/ChatContext";
 import { cn } from "@/lib/utils";
@@ -32,6 +31,19 @@ const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
     return (nameParts[0].charAt(0) + nameParts[nameParts.length - 1].charAt(0)).toUpperCase();
   };
 
+  // Get display name for user (prevent showing UUID or ID)
+  const getUserDisplayName = () => {
+    if (!user) return "You";
+    
+    // If user.name exists and doesn't look like a UUID (no hyphens), use it
+    if (user.name && !user.name.includes('-')) {
+      return user.name;
+    }
+    
+    // Otherwise, try to use email username or fallback to "You"
+    return user.email ? user.email.split('@')[0] : "You";
+  };
+
   return (
     <div
       ref={messageRef}
@@ -54,7 +66,7 @@ const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
         )}
         <div className="flex-1 space-y-2">
           <div className="text-sm font-medium">
-            {message.isAI ? "Alexandra" : user?.name || "You"}
+            {message.isAI ? "Alexandra" : getUserDisplayName()}
           </div>
           <div className="text-foreground whitespace-pre-wrap">
             {message.content}
