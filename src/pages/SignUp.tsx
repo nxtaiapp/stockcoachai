@@ -20,7 +20,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { BarChart3, ArrowRight } from "lucide-react";
+
+const tradingGoals = [
+  {
+    id: "day-trading",
+    title: "Day Trading",
+    description: "Make multiple trades within the same day"
+  },
+  {
+    id: "swing-trading",
+    title: "Swing Trading",
+    description: "Hold positions for several days to weeks"
+  },
+  {
+    id: "long-term",
+    title: "Long-Term Investing",
+    description: "Build wealth through long-term positions"
+  },
+  {
+    id: "options",
+    title: "Options Trading",
+    description: "Trade options contracts for leverage"
+  }
+];
 
 const SignUp = () => {
   const { signUp } = useAuth();
@@ -30,6 +54,8 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [experience, setExperience] = useState("");
+  const [tradingGoal, setTradingGoal] = useState("");
+  const [skillLevel, setSkillLevel] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -37,14 +63,14 @@ const SignUp = () => {
     e.preventDefault();
     setError("");
     
-    if (!name || !email || !password || !experience) {
+    if (!name || !email || !password || !experience || !tradingGoal || !skillLevel) {
       setError("Please fill in all fields");
       return;
     }
 
     try {
       setIsLoading(true);
-      await signUp(email, password, name, experience);
+      await signUp(email, password, name, experience, tradingGoal, skillLevel);
       // Navigate is handled in the AuthContext after successful sign-up
     } catch (err) {
       setError("An error occurred during registration. Please try again.");
@@ -130,6 +156,46 @@ const SignUp = () => {
                     <SelectItem value="beginner">Beginner (0-1 years)</SelectItem>
                     <SelectItem value="intermediate">Intermediate (1-5 years)</SelectItem>
                     <SelectItem value="advanced">Advanced (5+ years)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-4">
+                <Label>Primary Trading Goal</Label>
+                <RadioGroup value={tradingGoal} onValueChange={setTradingGoal}>
+                  <div className="grid grid-cols-1 gap-3">
+                    {tradingGoals.map((goal) => (
+                      <div key={goal.id} className={`
+                        flex items-start space-x-2 border rounded-lg p-3 transition-all
+                        ${tradingGoal === goal.id ? 'border-primary bg-primary/5' : 'border-border'}
+                      `}>
+                        <RadioGroupItem value={goal.id} id={`goal-${goal.id}`} className="mt-1" />
+                        <Label htmlFor={`goal-${goal.id}`} className="flex-1 cursor-pointer">
+                          <div className="font-medium">{goal.title}</div>
+                          <div className="text-sm text-muted-foreground">{goal.description}</div>
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </RadioGroup>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="skillLevel">Trading Skill Level</Label>
+                <Select 
+                  value={skillLevel} 
+                  onValueChange={setSkillLevel}
+                  required
+                >
+                  <SelectTrigger id="skillLevel">
+                    <SelectValue placeholder="Select your skill level" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="novice">Novice - Just getting started</SelectItem>
+                    <SelectItem value="beginner">Beginner - Some basic knowledge</SelectItem>
+                    <SelectItem value="intermediate">Intermediate - Regular trader with experience</SelectItem>
+                    <SelectItem value="advanced">Advanced - Experienced and confident</SelectItem>
+                    <SelectItem value="expert">Expert - Professional level knowledge</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

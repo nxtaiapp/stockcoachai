@@ -6,7 +6,14 @@ export interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
   isAdmin: boolean;
-  signUp: (email: string, password: string, name: string, experience: string) => Promise<void>;
+  signUp: (
+    email: string, 
+    password: string, 
+    name: string, 
+    experience: string,
+    tradingGoal: string,
+    skillLevel: string
+  ) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   setUserData: (data: Partial<UserProfile>) => Promise<void>;

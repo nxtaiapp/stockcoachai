@@ -18,11 +18,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { user, isAdmin, loading, setUser } = useAuthState();
   const navigate = useNavigate();
 
-  const signUp = async (email: string, password: string, name: string, experience: string) => {
+  const signUp = async (
+    email: string, 
+    password: string, 
+    name: string, 
+    experience: string,
+    tradingGoal: string,
+    skillLevel: string
+  ) => {
     try {
-      await signUpUser(email, password, name, experience);
+      await signUpUser(email, password, name, experience, tradingGoal, skillLevel);
       toast.success("Account created successfully!");
-      navigate('/onboarding');
+      navigate('/chat');
     } catch (error) {
       console.error('Error signing up:', error);
       if (error instanceof AuthError) {
