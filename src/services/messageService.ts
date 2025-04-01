@@ -51,10 +51,13 @@ export function createAIMessage(content: string): Message {
 }
 
 export function getWelcomeMessage(userName: string): Message {
+  // Use the actual name passed in, or fallback to "there" if no name is provided
+  const displayName = userName && userName.trim() !== '' ? userName : 'there';
+  
   return {
     id: generateUUID(),
     senderId: 'ai',
-    content: `Hello ${userName}! Welcome to StockCoach.ai. I'm your personal AI trading assistant. How can I help you improve your trading skills today?`,
+    content: `Hello ${displayName}! Welcome to StockCoach.ai. I'm your personal AI trading assistant. How can I help you improve your trading skills today?`,
     timestamp: new Date(),
     isAI: true
   };

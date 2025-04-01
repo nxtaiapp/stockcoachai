@@ -39,7 +39,7 @@ export const useChatState = () => {
       // Get today's date in the user's timezone
       const todayDate = getCurrentDate();
       
-      // Create welcome message with today's timestamp
+      // Create welcome message with today's timestamp and use the user's name
       const welcomeMessage = getWelcomeMessage(user.name || 'User');
       welcomeMessage.timestamp = new Date();
       

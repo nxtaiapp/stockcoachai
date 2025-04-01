@@ -54,7 +54,7 @@ const ChatMessage = ({ message, isLatest }: ChatMessageProps) => {
         )}
         <div className="flex-1 space-y-2">
           <div className="text-sm font-medium">
-            {message.isAI ? "Alexandra" : "You"}
+            {message.isAI ? "Alexandra" : user?.name || "You"}
           </div>
           <div className="text-foreground whitespace-pre-wrap">
             {message.content}
