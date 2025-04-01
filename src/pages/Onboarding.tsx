@@ -21,6 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { BarChart3, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 
 const tradingGoals = [
   {
@@ -64,6 +65,7 @@ const Onboarding = () => {
     e.preventDefault();
     
     if (!selectedGoal || !skillLevel) {
+      toast.error("Please select both a trading goal and skill level");
       return;
     }
 
@@ -71,7 +73,7 @@ const Onboarding = () => {
       setIsSubmitting(true);
       
       // Update user profile with onboarding data
-      setUserData({
+      await setUserData({
         trading_goal: selectedGoal,
         skill_level: skillLevel
       });
@@ -80,6 +82,7 @@ const Onboarding = () => {
       navigate("/chat");
     } catch (err) {
       console.error(err);
+      toast.error("Failed to save your preferences");
       setIsSubmitting(false);
     }
   };

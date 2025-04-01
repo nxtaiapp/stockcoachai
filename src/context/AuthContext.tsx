@@ -80,17 +80,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) return;
 
     try {
+      console.log("Updating user profile with data:", data);
       const success = await updateUserProfile(user.id, data);
       
       if (success) {
         // Update local state
         setUser({ ...user, ...data });
+        toast.success("Profile updated successfully");
       } else {
         throw new Error("Failed to update profile");
       }
     } catch (error) {
       console.error('Error updating user data:', error);
       toast.error("Failed to update profile data");
+      throw error;
     }
   };
 
