@@ -146,6 +146,23 @@ export const signInUser = async (email: string, password: string): Promise<User 
 
 // Sign out the current user
 export const signOutUser = async (): Promise<void> => {
-  const { error } = await supabase.auth.signOut();
-  if (error) throw error;
+  try {
+    // Check if there's an active session first
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      console.log('No active session found, user is already signed out');
+      return;
+    }
+    
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error during sign out:', error);
+    // We'll now throw the error only if it's not a session missing error
+    if (error instanceof Error && 
+        !(error.message.includes('session') && error.message.includes('missing'))) {
+      throw error;
+    }
+  }
 };

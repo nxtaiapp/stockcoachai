@@ -52,13 +52,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     try {
-      await signOutUser();
+      // Even if there's no active session, we'll always clear local state
+      // This ensures the user is signed out from the application perspective
       setUser(null);
+      
+      // Then try to sign out from Supabase
+      await signOutUser();
       toast.success("Signed out successfully");
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
-      toast.error("Failed to sign out. Please try again.");
+      
+      // If we already cleared the local state, we can still consider this a successful sign out
+      // from the user's perspective, even if the backend failed
+      if (error instanceof AuthError && error.message.includes('session')) {
+        // The user is effectively signed out locally, so still show success and redirect
+        toast.success("Signed out successfully");
+        navigate('/');
+      } else {
+        toast.error("There was an issue during sign out, but you've been logged out of this device");
+        navigate('/');
+      }
     }
   };
 
