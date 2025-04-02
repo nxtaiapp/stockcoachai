@@ -69,9 +69,8 @@ export const useChatState = () => {
           console.log("Received welcome message from webhook:", welcomeContent);
         } catch (error) {
           console.error("Error getting welcome message from webhook:", error);
-          // If there's an error, fall back to the default welcome message
-          const defaultWelcome = getWelcomeMessage(user.name || 'User');
-          welcomeContent = defaultWelcome.content;
+          // If there's an error, use the custom error message
+          welcomeContent = "Oops! Alexandra lost signal to the trading brain. Might be a hiccup in the connection—refresh, retry, and let's get back to chart domination!";
         }
       } else {
         // If no webhook URL is provided, use the default welcome message

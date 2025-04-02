@@ -88,7 +88,7 @@ export const useMessageSender = (
           console.log("Received response from webhook:", responseContent);
         } catch (error) {
           console.error("Error sending message to webhook:", error);
-          responseContent = "I'm sorry, but I couldn't reach the AI service. Please check your connection or try again later.";
+          responseContent = "Oops! Alexandra lost signal to the trading brain. Might be a hiccup in the connection—refresh, retry, and let's get back to chart domination!";
         }
       }
       
