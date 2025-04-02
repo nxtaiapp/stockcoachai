@@ -20,6 +20,7 @@ export async function sendMessageToWebhook(
         userId,
         userName,
         userEmail,
+        messageType: 'userQuery', // Added messageType variable
         timestamp: new Date().toISOString(),
       }),
     });
