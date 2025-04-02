@@ -1,19 +1,10 @@
-
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { BarChart3, ArrowRight, TrendingUp, LineChart, Shield, Zap } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { WaitlistForm } from "@/components/WaitlistForm";
-
 const Index = () => {
   const {
     user
@@ -26,7 +17,6 @@ const Index = () => {
       navigate("/chat");
     }
   }, [user, navigate]);
-  
   return <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <header className="w-full py-4 px-6 border-b border-border bg-background/80 backdrop-blur-md">
@@ -135,41 +125,7 @@ const Index = () => {
         </section>
 
         {/* Testimonials */}
-        <section className="py-20 px-6">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-16">What Our Users Say</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="glass p-8 rounded-xl">
-                <p className="text-lg mb-6">
-                  "StockCoach.ai has completely transformed my trading. The personalized strategies and risk management advice helped me increase my returns by 27% in just two months."
-                </p>
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="font-semibold text-primary">JD</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">James Davidson</h4>
-                    <p className="text-sm text-muted-foreground">Day Trader, 5 years experience</p>
-                  </div>
-                </div>
-              </div>
-              <div className="glass p-8 rounded-xl">
-                <p className="text-lg mb-6">
-                  "As a beginner, I was afraid to start trading. StockCoach.ai provides clear explanations and guidance that helped me build confidence and make my first profitable trades."
-                </p>
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="font-semibold text-primary">SL</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold">Sarah Lewis</h4>
-                    <p className="text-sm text-muted-foreground">New Investor, 6 months experience</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        
 
         {/* CTA */}
         <section className="py-20 px-6 bg-primary/5">
@@ -204,5 +160,4 @@ const Index = () => {
       </main>
     </div>;
 };
-
 export default Index;
