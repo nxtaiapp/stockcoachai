@@ -6,7 +6,8 @@ export async function sendMessageToWebhook(
   content: string, 
   userId: string, 
   userName: string, 
-  userEmail: string
+  userEmail: string,
+  messageType: string = 'userQuery' // Default messageType, now configurable
 ): Promise<string> {
   try {
     console.log("Sending message to webhook:", webhookUrl);
@@ -20,7 +21,7 @@ export async function sendMessageToWebhook(
         userId,
         userName,
         userEmail,
-        messageType: 'userQuery', // Added messageType variable
+        messageType, // Using the passed messageType parameter
         timestamp: new Date().toISOString(),
       }),
     });

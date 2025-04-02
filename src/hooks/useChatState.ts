@@ -50,6 +50,9 @@ export const useChatState = () => {
       // Set the selected date to today to show the new chat immediately
       setSelectedDate(todayDate);
       
+      // Send a special message to the API with messageType 'New'
+      sendMessage("Hello, I'd like to start a new session.", undefined, 'New');
+      
       // Show a toast notification
       toast.success("Started a new chat session");
     } else if (!canCreateNewChat) {

@@ -23,7 +23,7 @@ export const useMessageSender = (
 ) => {
   const [loading, setLoading] = useState(false);
 
-  const sendMessage = async (content: string, imageFile?: File) => {
+  const sendMessage = async (content: string, imageFile?: File, messageType: string = 'userQuery') => {
     if (!userId) {
       toast.error("You must be logged in to send messages");
       return;
@@ -75,14 +75,15 @@ export const useMessageSender = (
         responseContent = getMockResponse();
       } else {
         try {
-          console.log("Sending message to webhook");
+          console.log("Sending message to webhook with type:", messageType);
           // Wait for the actual API response
           responseContent = await sendMessageToWebhook(
             n8nWebhookUrl, 
             messageToSend, 
             userId, 
             userName || 'User', 
-            userEmail || ''
+            userEmail || '',
+            messageType // Pass the messageType parameter
           );
           console.log("Received response from webhook:", responseContent);
         } catch (error) {
