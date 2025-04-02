@@ -64,7 +64,7 @@ export const useChatState = () => {
             user.id,
             user.name || 'User',
             user.email || '',
-            'New'
+            'New'  // Explicitly set messageType to 'New' for new sessions
           );
           console.log("Received welcome message from webhook:", welcomeContent);
         } catch (error) {

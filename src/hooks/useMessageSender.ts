@@ -23,7 +23,7 @@ export const useMessageSender = (
 ) => {
   const [loading, setLoading] = useState(false);
 
-  const sendMessage = async (content: string, imageFile?: File, messageType: string = 'userQuery') => {
+  const sendMessage = async (content: string, imageFile?: File, messageType: string = 'Chat') => {
     if (!userId) {
       toast.error("You must be logged in to send messages");
       return;
@@ -83,7 +83,7 @@ export const useMessageSender = (
             userId, 
             userName || 'User', 
             userEmail || '',
-            messageType // Pass the messageType parameter
+            messageType // Use the messageType parameter (now defaults to 'Chat')
           );
           console.log("Received response from webhook:", responseContent);
         } catch (error) {
