@@ -70,7 +70,7 @@ export const useChatState = () => {
         } catch (error) {
           console.error("Error getting welcome message from webhook:", error);
           // If there's an error, use the custom error message
-          welcomeContent = "Oops! Alexandra lost signal to the trading brain. Might be a hiccup in the connection—refresh, retry, and let's get back to chart domination!";
+          welcomeContent = "Aw, Snap! Alexandra lost connection to her trading brain. Could be a hiccup in the signal—try refreshing or retrying, and let's get back to chart domination!";
         }
       } else {
         // If no webhook URL is provided, use the default welcome message

@@ -88,7 +88,7 @@ export const useMessageSender = (
           console.log("Received response from webhook:", responseContent);
         } catch (error) {
           console.error("Error sending message to webhook:", error);
-          responseContent = "Oops! Alexandra lost signal to the trading brain. Might be a hiccup in the connection—refresh, retry, and let's get back to chart domination!";
+          responseContent = "Aw, Snap! Alexandra lost connection to her trading brain. Could be a hiccup in the signal—try refreshing or retrying, and let's get back to chart domination!";
         }
       }
       
