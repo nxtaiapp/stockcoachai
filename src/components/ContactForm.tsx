@@ -47,13 +47,20 @@ export function ContactForm() {
     setIsSubmitting(true);
     
     try {
-      // In a real application, this would send the data to an API endpoint
-      // For demo purposes, we'll just show a success message
-      console.log("Form values:", values);
+      // Send data to webhook
+      const response = await fetch("https://nxtaisolutions.app.n8n.cloud/webhook/4617a9c9-24c0-4415-815b-fd2384cdf8c7", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
       
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
       
+      console.log("Form submitted successfully:", values);
       toast.success("Your message has been sent! We'll get back to you soon.");
       form.reset();
     } catch (error) {
