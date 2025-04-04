@@ -1,5 +1,9 @@
+
 import { Link, useLocation } from "react-router-dom";
 import { BarChart3 } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ContactForm } from "./ContactForm";
+
 const Footer = () => {
   const location = useLocation();
 
@@ -23,7 +27,20 @@ const Footer = () => {
           <div className="col-span-1 flex flex-col">
             <h3 className="font-medium mb-3">Company</h3>
             <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">About</Link>
-            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Contact Us</Link>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="text-left text-muted-foreground hover:text-foreground mb-2 text-sm">Contact Us</button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[500px]">
+                <DialogHeader>
+                  <DialogTitle>Contact Us</DialogTitle>
+                  <DialogDescription>
+                    Have questions or feedback? Send us a message and we'll get back to you as soon as possible.
+                  </DialogDescription>
+                </DialogHeader>
+                <ContactForm />
+              </DialogContent>
+            </Dialog>
             <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Newsletter</Link>
           </div>
           
