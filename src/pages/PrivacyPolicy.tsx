@@ -1,11 +1,12 @@
-
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { FileText, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const PrivacyPolicy = () => {
+  const navigate = useNavigate();
+  
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
@@ -90,6 +91,23 @@ const PrivacyPolicy = () => {
           <p>If you are a California resident, you have specific rights under the California Consumer Protection Act (CCPA), including the right to know what personal information we collect, the right to request deletion of your personal information, and the right to opt-out of certain data sales or sharing (though we do not currently sell or share your data for value).</p>
           
           <p className="mt-8 text-lg">Contact: <a href="mailto:info@nxtai.app" className="text-primary hover:underline">info@nxtai.app</a></p>
+        </div>
+
+        <div className="flex justify-center space-x-4 mt-8">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate(-1)} 
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" /> Go Back
+          </Button>
+          
+          <Button 
+            onClick={() => navigate("/")} 
+            className="gap-2"
+          >
+            Return to Home
+          </Button>
         </div>
       </main>
     </div>
