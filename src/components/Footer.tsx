@@ -41,14 +41,14 @@ const Footer = () => {
                 <ContactForm />
               </DialogContent>
             </Dialog>
-            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Newsletter</Link>
+            <Link to="/coming-soon?page=Newsletter" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Newsletter</Link>
           </div>
           
           <div className="col-span-1 flex flex-col">
             <h3 className="font-medium mb-3">Resources</h3>
-            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Documentation</Link>
-            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Help Center</Link>
-            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Pricing</Link>
+            <Link to="/coming-soon?page=Documentation" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Documentation</Link>
+            <Link to="/coming-soon?page=Help Center" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Help Center</Link>
+            <Link to="/coming-soon?page=Pricing" className="text-muted-foreground hover:text-foreground mb-2 text-sm">Pricing</Link>
           </div>
           
           <div className="col-span-1 flex flex-col">
