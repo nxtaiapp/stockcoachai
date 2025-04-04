@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { BarChart3 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -26,7 +25,7 @@ const Footer = () => {
           
           <div className="col-span-1 flex flex-col">
             <h3 className="font-medium mb-3">Company</h3>
-            <Link to="/" className="text-muted-foreground hover:text-foreground mb-2 text-sm">About</Link>
+            <Link to="/coming-soon?page=About" className="text-muted-foreground hover:text-foreground mb-2 text-sm">About</Link>
             <Dialog>
               <DialogTrigger asChild>
                 <button className="text-left text-muted-foreground hover:text-foreground mb-2 text-sm">Contact Us</button>
