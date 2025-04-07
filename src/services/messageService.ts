@@ -102,12 +102,12 @@ export function getWelcomeMessageContent(userName: string, skillLevel?: string, 
     intermediate: {
       morning: `Morning, ${userName}! What's your plan for today's session — and how can I help you sharpen it?`,
       afternoon: `Midday check-in, ${userName}: what setups are you seeing, and where do you need a second opinion?`,
-      evening: `Good evening, ${userName}! Let's review — what worked today, what didn't, and how can we improve it tomorrow?`
+      evening: `Evening, ${userName}! Let's review — what worked today, what didn't, and how can we improve it tomorrow?`
     },
     advanced: {
-      morning: `Welcome back, ${userName}. What edge are you pressing today — and how can I help refine your execution?`,
+      morning: `Morning, ${userName}. What edge are you pressing today — and how can I help refine your execution?`,
       afternoon: `Eyes on the market, ${userName}? Let me know where you need confirmation, analysis, or a quick gut check.`,
-      evening: `Good evening, ${userName}. Time to optimize. What do your trades reveal today — and how do we get even better?`
+      evening: `Evening, ${userName}. Time to optimize. What do your trades reveal today — and how do we get even better?`
     }
   };
   
