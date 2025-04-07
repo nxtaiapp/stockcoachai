@@ -54,7 +54,7 @@ export function getWelcomeMessageContent(userName: string, skillLevel?: string, 
   // Select appropriate message based on experience and time of day
   const messages = {
     beginner: {
-      morning: `${firstName}, ready to build stronger habits and grow your edge? What would you like to learn or work on today?`,
+      morning: `Good morning ${firstName}. Ready to build stronger habits and grow your edge? What would you like to learn or work on today?`,
       afternoon: `${firstName}, hope your trading day's going well! What strategy, concept, or challenge can I help you understand better right now?`,
       evening: `${firstName}, reflecting on today's trades? Let's break them down and find what you can take into tomorrow.`
     },
