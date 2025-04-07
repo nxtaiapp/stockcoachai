@@ -51,7 +51,7 @@ export function createAIMessage(content: string): Message {
 }
 
 // Export the welcome message content function so it can be used in other components
-export function getWelcomeMessageContent(userName: string, skillLevel?: string): string {
+export function getWelcomeMessageContent(userName: string, skillLevel?: string, experienceLevel?: string): string {
   // Get the current hour to determine time of day
   const currentHour = new Date().getHours();
   
@@ -65,22 +65,32 @@ export function getWelcomeMessageContent(userName: string, skillLevel?: string):
     timePeriod = 'evening';
   }
   
-  // Map user's skill level to beginner/intermediate/advanced
+  // Map user's experience level to beginner/intermediate/advanced
+  // First check experience_level, then fall back to skill_level
   let experience: 'beginner' | 'intermediate' | 'advanced';
-  switch(skillLevel?.toLowerCase()) {
-    case 'expert':
-    case 'advanced':
-      experience = 'advanced';
-      break;
-    case 'intermediate':
-      experience = 'intermediate';
-      break;
-    case 'novice':
-    case 'beginner':
-    default:
-      experience = 'beginner';
-      break;
+  if (experienceLevel?.toLowerCase() === 'intermediate') {
+    experience = 'intermediate';
+  } else if (['expert', 'advanced'].includes(experienceLevel?.toLowerCase() || '')) {
+    experience = 'advanced';
+  } else {
+    // If no experience_level, fall back to skill_level
+    switch(skillLevel?.toLowerCase()) {
+      case 'expert':
+      case 'advanced':
+        experience = 'advanced';
+        break;
+      case 'intermediate':
+        experience = 'intermediate';
+        break;
+      case 'novice':
+      case 'beginner':
+      default:
+        experience = 'beginner';
+        break;
+    }
   }
+  
+  console.log("Selecting welcome message:", { userName, experienceLevel, skillLevel, experience, timePeriod });
   
   // Select appropriate message based on experience and time of day
   const messages = {
@@ -104,7 +114,7 @@ export function getWelcomeMessageContent(userName: string, skillLevel?: string):
   return messages[experience][timePeriod];
 }
 
-export function getWelcomeMessage(userName: string, skillLevel?: string): Message {
+export function getWelcomeMessage(userName: string, skillLevel?: string, experienceLevel?: string): Message {
   // Clean the username to ensure we're not displaying UUIDs or IDs
   let displayName = "there";
   
@@ -118,7 +128,7 @@ export function getWelcomeMessage(userName: string, skillLevel?: string): Messag
     }
   }
   
-  const content = getWelcomeMessageContent(displayName, skillLevel);
+  const content = getWelcomeMessageContent(displayName, skillLevel, experienceLevel);
   
   return {
     id: generateUUID(),

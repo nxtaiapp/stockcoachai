@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { BarChart3 } from "lucide-react";
@@ -47,20 +48,35 @@ const PromptSuggestions = () => {
     
     let experience: 'beginner' | 'intermediate' | 'advanced';
     
-    switch(user?.skill_level?.toLowerCase()) {
-      case 'expert':
-      case 'advanced':
-        experience = 'advanced';
-        break;
-      case 'intermediate':
-        experience = 'intermediate';
-        break;
-      case 'novice':
-      case 'beginner':
-      default:
-        experience = 'beginner';
-        break;
+    // First check the experience_level field, which stores the trader's experience level
+    if (user?.experience_level?.toLowerCase() === 'intermediate') {
+      experience = 'intermediate';
+    } else if (['expert', 'advanced'].includes(user?.experience_level?.toLowerCase() || '')) {
+      experience = 'advanced';
+    } else {
+      // If experience_level doesn't match, fall back to skill_level
+      switch(user?.skill_level?.toLowerCase()) {
+        case 'expert':
+        case 'advanced':
+          experience = 'advanced';
+          break;
+        case 'intermediate':
+          experience = 'intermediate';
+          break;
+        case 'novice':
+        case 'beginner':
+        default:
+          experience = 'beginner';
+          break;
+      }
     }
+    
+    console.log("User profile data:", {
+      name: user?.name,
+      experience_level: user?.experience_level,
+      skill_level: user?.skill_level,
+      determined_experience: experience
+    });
     
     const messages = {
       beginner: {

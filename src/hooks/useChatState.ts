@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
@@ -89,7 +88,11 @@ export const useChatState = () => {
         }
       } else {
         // If no webhook URL is provided, use the default welcome message
-        const defaultWelcome = getWelcomeMessage(user.name || 'User', user.skill_level);
+        const defaultWelcome = getWelcomeMessage(
+          user.name || 'User', 
+          user.skill_level,
+          user.experience_level
+        );
         welcomeContent = defaultWelcome.content;
       }
       
