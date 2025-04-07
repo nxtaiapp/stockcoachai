@@ -24,7 +24,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
       selectDate: chatState.selectDate,
       userTimezone: chatState.userTimezone,
       canCreateNewChat: chatState.canCreateNewChat,
-      isTodaySession: chatState.isTodaySession
+      isTodaySession: chatState.isTodaySession,
+      hasTodayMessages: chatState.hasTodayMessages
     }}>
       {children}
     </ChatContext.Provider>

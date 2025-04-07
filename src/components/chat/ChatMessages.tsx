@@ -54,10 +54,10 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
 };
 
 const EmptyChatState = () => {
-  const { isTodaySession } = useChat();
+  const { isTodaySession, hasTodayMessages } = useChat();
   
-  // Show prompt suggestions for today's chat
-  if (isTodaySession) {
+  // Show prompt suggestions for today's chat when there are no messages
+  if (isTodaySession && !hasTodayMessages) {
     return <PromptSuggestions />;
   }
   

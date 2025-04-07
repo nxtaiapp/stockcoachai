@@ -24,4 +24,5 @@ export interface ChatContextType {
   userTimezone: string;
   canCreateNewChat: boolean;
   isTodaySession: boolean;
+  hasTodayMessages: boolean;
 }

@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import { toast } from "sonner";
 import { useLocalStorage } from './useLocalStorage';
@@ -38,6 +39,11 @@ export const useChatState = () => {
   
   // Check if the selected date is today's date
   const isTodaySession = selectedDate === todayDate;
+  
+  // Check if there are any messages for today
+  const hasTodayMessages = messages.some(message => 
+    format(new Date(message.timestamp), 'yyyy-MM-dd') === todayDate
+  );
 
   const clearMessages = async () => {
     if (!user || !canCreateNewChat) {
@@ -114,6 +120,7 @@ export const useChatState = () => {
     selectDate,
     userTimezone,
     canCreateNewChat,
-    isTodaySession
+    isTodaySession,
+    hasTodayMessages
   };
 };

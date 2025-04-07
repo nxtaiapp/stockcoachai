@@ -9,7 +9,7 @@ import ChatInputArea from "./ChatInputArea";
 import ChatSidebar from "./ChatSidebar";
 
 const ChatContainer = () => {
-  const { messages, loading, sendMessage, isTodaySession } = useChat();
+  const { messages, loading, sendMessage, isTodaySession, canCreateNewChat } = useChat();
   const [showSettings, setShowSettings] = useState(false);
   
   const toggleSettings = () => setShowSettings(!showSettings);
