@@ -46,24 +46,27 @@ export function getWelcomeMessageContent(userName: string, skillLevel?: string, 
     }
   }
   
-  console.log("Selecting welcome message:", { userName, experienceLevel, skillLevel, experience, timePeriod });
+  // Extract first name if a name is provided
+  const firstName = userName && userName !== 'there' ? userName.split(' ')[0] : '';
+  
+  console.log("Selecting welcome message:", { userName, firstName, experienceLevel, skillLevel, experience, timePeriod });
   
   // Select appropriate message based on experience and time of day
   const messages = {
     beginner: {
-      morning: `Ready to build stronger habits and grow your edge? What would you like to learn or work on today?`,
-      afternoon: `Hope your trading day's going well! What strategy, concept, or challenge can I help you understand better right now?`,
-      evening: `Reflecting on today's trades? Let's break them down and find what you can take into tomorrow.`
+      morning: `${firstName}, ready to build stronger habits and grow your edge? What would you like to learn or work on today?`,
+      afternoon: `${firstName}, hope your trading day's going well! What strategy, concept, or challenge can I help you understand better right now?`,
+      evening: `${firstName}, reflecting on today's trades? Let's break them down and find what you can take into tomorrow.`
     },
     intermediate: {
-      morning: `What's your plan for today's session — and how can I help you sharpen it?`,
-      afternoon: `What setups are you seeing, and where do you need a second opinion?`,
-      evening: `Let's review — what worked today, what didn't, and how can we improve it tomorrow?`
+      morning: `${firstName}, what's your plan for today's session — and how can I help you sharpen it?`,
+      afternoon: `${firstName}, what setups are you seeing, and where do you need a second opinion?`,
+      evening: `${firstName}, let's review — what worked today, what didn't, and how can we improve it tomorrow?`
     },
     advanced: {
-      morning: `What edge are you pressing today — and how can I help refine your execution?`,
-      afternoon: `Eyes on the market? Let me know where you need confirmation, analysis, or a quick gut check.`,
-      evening: `Time to optimize. What do your trades reveal today — and how do we get even better?`
+      morning: `${firstName}, what edge are you pressing today — and how can I help refine your execution?`,
+      afternoon: `${firstName}, eyes on the market? Let me know where you need confirmation, analysis, or a quick gut check.`,
+      evening: `${firstName}, time to optimize. What do your trades reveal today — and how do we get even better?`
     }
   };
   
