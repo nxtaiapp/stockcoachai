@@ -1,38 +1,25 @@
 
 import React from "react";
-import { Button } from "@/components/ui/button";
 import { BarChart3 } from "lucide-react";
-import { useChat } from "../../context/ChatContext";
 import { useAuth } from "../../context/AuthContext";
 import { getWelcomeMessageContent } from "../../services/messageService";
 
-interface PromptSuggestion {
-  text: string;
-}
-
 const PromptSuggestions = () => {
-  const { sendMessage } = useChat();
   const { user } = useAuth();
   
-  const suggestions: PromptSuggestion[] = [
-    { text: "What trading strategies would work best in the current market?" },
-    { text: "Explain how to analyze a stock's fundamentals before investing" },
-    { text: "How should I diversify my portfolio to minimize risk?" },
-    { text: "What are the key technical indicators I should monitor daily?" }
-  ];
-  
-  const handleSuggestionClick = (suggestion: string) => {
-    sendMessage(suggestion);
-  };
-  
-  const getUserDisplayName = () => {
-    if (!user) return "there";
+  const getUserFirstName = () => {
+    if (!user) return "";
     
     if (user.name && !user.name.includes('-')) {
-      return user.name;
+      // Extract first name only
+      return user.name.split(' ')[0];
     }
     
-    return user.email ? user.email.split('@')[0] : "there";
+    if (user.email) {
+      return user.email.split('@')[0];
+    }
+    
+    return "";
   };
   
   const getWelcomeMessage = () => {
@@ -100,7 +87,7 @@ const PromptSuggestions = () => {
   };
   
   const welcomeMessage = getWelcomeMessage();
-  const displayName = getUserDisplayName();
+  const firstName = getUserFirstName();
   
   return (
     <div className="flex flex-col items-center justify-center p-10 max-w-3xl mx-auto">
@@ -112,22 +99,9 @@ const PromptSuggestions = () => {
         <p className="text-center text-muted-foreground max-w-md mb-2">
           Your AI-powered trading coach.
         </p>
-        <h2 className="text-xl text-center mb-4">
-          {displayName ? `Hello ${displayName}! ` : ''}{welcomeMessage}
+        <h2 className="text-xl text-center mb-4 text-[#8E9196]">
+          {firstName ? `Hello ${firstName}! ` : ''}{welcomeMessage}
         </h2>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
-        {suggestions.map((suggestion, index) => (
-          <Button
-            key={index}
-            variant="outline"
-            className="p-4 h-auto text-left justify-start normal-case text-sm md:text-base border-border/60 hover:bg-muted/50"
-            onClick={() => handleSuggestionClick(suggestion.text)}
-          >
-            {suggestion.text}
-          </Button>
-        ))}
       </div>
     </div>
   );
