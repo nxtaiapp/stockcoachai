@@ -87,7 +87,7 @@ const PromptSuggestions = () => {
         <p className="text-center text-muted-foreground max-w-md mb-2">
           Your AI-powered trading coach.
         </p>
-        <h2 className="text-xl text-center mb-4 text-[#8E9196] py-[76px]">
+        <h2 className="text-xl text-center mb-4 text-[#8E9196] py-[100px]">
           {firstName ? `Hello ${firstName}! ` : ''}{welcomeMessage}
         </h2>
       </div>
