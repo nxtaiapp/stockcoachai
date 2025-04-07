@@ -5,6 +5,7 @@ import { Message } from "../../context/ChatContext";
 import ChatMessage from "../ChatMessage";
 import { BarChart3 } from "lucide-react";
 import { useChat } from "../../context/ChatContext";
+import PromptSuggestions from "./PromptSuggestions";
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -52,15 +53,25 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
   );
 };
 
-const EmptyChatState = () => (
-  <div className="h-full flex flex-col items-center justify-center p-4 md:p-8">
-    <BarChart3 className="h-16 w-16 text-muted-foreground mb-4" />
-    <h2 className="text-xl font-semibold text-center mb-2">Welcome to StockCoach.ai</h2>
-    <p className="text-center text-muted-foreground max-w-md">
-      Your AI-powered trading coach. Ask any question about trading strategies, market analysis, or investment advice.
-    </p>
-  </div>
-);
+const EmptyChatState = () => {
+  const { isTodaySession } = useChat();
+  
+  // Show prompt suggestions for today's chat
+  if (isTodaySession) {
+    return <PromptSuggestions />;
+  }
+  
+  // Show generic welcome message for previous days' chats
+  return (
+    <div className="h-full flex flex-col items-center justify-center p-4 md:p-8">
+      <BarChart3 className="h-16 w-16 text-muted-foreground mb-4" />
+      <h2 className="text-xl font-semibold text-center mb-2">StockCoach.ai</h2>
+      <p className="text-center text-muted-foreground max-w-md">
+        Your AI-powered trading coach. This chat session doesn't have any messages yet.
+      </p>
+    </div>
+  );
+};
 
 const LoadingIndicator = () => (
   <div className="p-4 max-w-3xl mx-auto">
