@@ -54,19 +54,19 @@ export function getWelcomeMessageContent(userName: string, skillLevel?: string, 
   // Select appropriate message based on experience and time of day
   const messages = {
     beginner: {
-      morning: `Good morning ${firstName}. Ready to build stronger habits and grow your edge? What would you like to learn or work on today?`,
-      afternoon: `${firstName}, hope your trading day's going well! What strategy, concept, or challenge can I help you understand better right now?`,
-      evening: `${firstName}, reflecting on today's trades? Let's break them down and find what you can take into tomorrow.`
+      morning: `Good morning ${firstName}. What would you like to learn or work on today?`,
+      afternoon: `Good afternoon ${firstName}.  What strategy, concept, or challenge can I help you understand better right now?`,
+      evening: `Good evening ${firstName}. Reflecting on today's trades? Let's break them down and find what you can take into tomorrow.`
     },
     intermediate: {
-      morning: `Good morning ${firstName}, what's your plan for today's session — and how can I help you sharpen it?`,
-      afternoon: `${firstName}, what setups are you seeing, and where do you need a second opinion?`,
-      evening: `${firstName}, let's review — what worked today, what didn't, and how can we improve it tomorrow?`
+      morning: `Good morning ${firstName}. What's your plan for today's session?`,
+      afternoon: `Good afternoon ${firstName}. What setups are you seeing?`,
+      evening: `Good evening ${firstName}. What worked today, what didn't, and how can we improve it tomorrow?`
     },
     advanced: {
       morning: `Good morning ${firstName}. What edge are you pressing today?`,
-      afternoon: `${firstName}, eyes on the market? Let me know where you need confirmation, analysis, or a quick gut check.`,
-      evening: `${firstName}, time to optimize. What do your trades reveal today — and how do we get even better?`
+      afternoon: `Good afternoon ${firstName}, Let me know where you need confirmation, analysis, or a quick gut check.`,
+      evening: `Good evening ${firstName}, What did your trades reveal today?`
     }
   };
   
