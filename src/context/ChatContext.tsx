@@ -3,9 +3,11 @@ import { createContext, useContext, ReactNode } from 'react';
 import { Message, ChatContextType } from '../types/chat';
 import { useChatState } from '../hooks/useChatState';
 
+// Create the context with a default undefined value
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
+  // Use the chat state hook to get all the chat functionality
   const chatState = useChatState();
   
   return (
@@ -32,6 +34,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// The useChat hook to access the context
 export const useChat = () => {
   const context = useContext(ChatContext);
   if (context === undefined) {
