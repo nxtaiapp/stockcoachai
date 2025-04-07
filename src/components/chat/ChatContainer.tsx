@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useChat } from "../../context/ChatContext";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import ChatHeader from "./ChatHeader";
@@ -9,10 +9,29 @@ import ChatInputArea from "./ChatInputArea";
 import ChatSidebar from "./ChatSidebar";
 
 const ChatContainer = () => {
-  const { messages, loading, sendMessage, isTodaySession, canCreateNewChat, hasTodayMessages } = useChat();
+  const { 
+    messages, 
+    loading, 
+    sendMessage, 
+    isTodaySession, 
+    canCreateNewChat, 
+    hasTodayMessages,
+    selectDate,
+    chatDates,
+    userTimezone
+  } = useChat();
   const [showSettings, setShowSettings] = useState(false);
   
   const toggleSettings = () => setShowSettings(!showSettings);
+
+  // When rendering for the first time and we have no messages for today,
+  // ensure we're showing today's session
+  useEffect(() => {
+    if (!isTodaySession && !hasTodayMessages) {
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+      selectDate(today);
+    }
+  }, [isTodaySession, hasTodayMessages, selectDate]);
 
   return (
     <SidebarProvider>

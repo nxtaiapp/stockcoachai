@@ -28,6 +28,14 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [filteredMessages]);
+  
+  console.log("ChatMessages rendering with:", { 
+    isTodaySession,
+    hasTodayMessages,
+    selectedDate,
+    filteredMessagesLength: filteredMessages.length,
+    showWelcomeScreen: isTodaySession && filteredMessages.length === 0
+  });
 
   return (
     <div 
@@ -54,12 +62,16 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
 };
 
 const EmptyChatState = () => {
-  const { isTodaySession, hasTodayMessages } = useChat();
+  const { isTodaySession, hasTodayMessages, selectedDate } = useChat();
   
-  console.log("EmptyChatState rendering with:", { isTodaySession, hasTodayMessages });
+  console.log("EmptyChatState rendering with:", { 
+    isTodaySession, 
+    hasTodayMessages,
+    selectedDate
+  });
   
-  // Show prompt suggestions for today's chat when there are no messages
-  if (isTodaySession && !hasTodayMessages) {
+  // Show prompt suggestions when viewing today's session and there are no messages
+  if (isTodaySession) {
     return <PromptSuggestions />;
   }
   

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Message } from '../types/chat';
 import { format } from 'date-fns';
@@ -7,7 +6,7 @@ import { toast } from 'sonner';
 
 export const useChatPersistence = (userId: string | undefined) => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd')); // Default to today
   const [isLoading, setIsLoading] = useState(true);
 
   // Load messages from Supabase when component mounts
@@ -24,13 +23,25 @@ export const useChatPersistence = (userId: string | undefined) => {
           if (supabaseMessages.length > 0) {
             setMessages(supabaseMessages);
             
-            // Select the most recent date by default
-            const mostRecentDate = format(
-              new Date(supabaseMessages[supabaseMessages.length - 1].timestamp), 
-              'yyyy-MM-dd'
+            // Check if we have messages for today
+            const todayDate = format(new Date(), 'yyyy-MM-dd');
+            const hasTodayMessages = supabaseMessages.some(message => 
+              format(new Date(message.timestamp), 'yyyy-MM-dd') === todayDate
             );
-            setSelectedDate(mostRecentDate);
-            console.log('Selected date:', mostRecentDate);
+            
+            // If we have messages for today, select today's date
+            // Otherwise, select the most recent message date
+            if (hasTodayMessages) {
+              setSelectedDate(todayDate);
+              console.log('Selected today\'s date:', todayDate);
+            } else {
+              const mostRecentDate = format(
+                new Date(supabaseMessages[supabaseMessages.length - 1].timestamp), 
+                'yyyy-MM-dd'
+              );
+              setSelectedDate(mostRecentDate);
+              console.log('Selected most recent date:', mostRecentDate);
+            }
           } else {
             console.log('No messages found in Supabase, checking localStorage');
             // If no messages in Supabase, check localStorage as fallback
