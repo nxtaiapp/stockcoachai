@@ -45,6 +45,15 @@ export const useChatState = () => {
     format(new Date(message.timestamp), 'yyyy-MM-dd') === todayDate
   );
 
+  console.log("Current state:", { 
+    todayDate, 
+    selectedDate, 
+    isTodaySession, 
+    hasTodayMessages,
+    messagesCount: messages.length,
+    todayMessagesCount: messages.filter(m => format(new Date(m.timestamp), 'yyyy-MM-dd') === todayDate).length
+  });
+
   const clearMessages = async () => {
     if (!user || !canCreateNewChat) {
       if (!canCreateNewChat) {

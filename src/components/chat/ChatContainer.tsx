@@ -9,7 +9,7 @@ import ChatInputArea from "./ChatInputArea";
 import ChatSidebar from "./ChatSidebar";
 
 const ChatContainer = () => {
-  const { messages, loading, sendMessage, isTodaySession, canCreateNewChat } = useChat();
+  const { messages, loading, sendMessage, isTodaySession, canCreateNewChat, hasTodayMessages } = useChat();
   const [showSettings, setShowSettings] = useState(false);
   
   const toggleSettings = () => setShowSettings(!showSettings);
@@ -30,7 +30,10 @@ const ChatContainer = () => {
           />
           
           <div className="relative flex-1 overflow-hidden">
-            <ChatMessages messages={messages} loading={loading} />
+            <ChatMessages 
+              messages={messages} 
+              loading={loading} 
+            />
             <ChatInputArea onSendMessage={sendMessage} disabled={loading} />
           </div>
         </SidebarInset>

@@ -13,7 +13,7 @@ interface ChatMessagesProps {
 }
 
 const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
-  const { selectedDate } = useChat();
+  const { selectedDate, isTodaySession, hasTodayMessages } = useChat();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   
   // Filter messages by selected date
@@ -55,6 +55,8 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
 
 const EmptyChatState = () => {
   const { isTodaySession, hasTodayMessages } = useChat();
+  
+  console.log("EmptyChatState rendering with:", { isTodaySession, hasTodayMessages });
   
   // Show prompt suggestions for today's chat when there are no messages
   if (isTodaySession && !hasTodayMessages) {
