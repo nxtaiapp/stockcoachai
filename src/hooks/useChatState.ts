@@ -89,7 +89,7 @@ export const useChatState = () => {
         }
       } else {
         // If no webhook URL is provided, use the default welcome message
-        const defaultWelcome = getWelcomeMessage(user.name || 'User');
+        const defaultWelcome = getWelcomeMessage(user.name || 'User', user.skill_level);
         welcomeContent = defaultWelcome.content;
       }
       
