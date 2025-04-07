@@ -1,3 +1,4 @@
+
 import React from "react";
 import { BarChart3 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
@@ -77,7 +78,6 @@ const PromptSuggestions = () => {
     return messages[experience][timePeriod];
   };
   const welcomeMessage = getWelcomeMessage();
-  const firstName = getUserFirstName();
   return <div className="flex flex-col items-center justify-center p-10 max-w-3xl mx-auto">
       <div className="flex flex-col items-center mb-10">
         <div className="bg-primary/10 h-16 w-16 rounded-full flex items-center justify-center mb-4">
@@ -88,7 +88,7 @@ const PromptSuggestions = () => {
           Your AI-powered trading coach.
         </p>
         <h2 className="text-xl text-center mb-4 text-[#8E9196] py-[100px]">
-          {firstName ? `Hello ${firstName}! ` : ''}{welcomeMessage}
+          {welcomeMessage}
         </h2>
       </div>
     </div>;
