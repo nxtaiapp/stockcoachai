@@ -20,6 +20,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import CookiePolicy from "./pages/CookiePolicy";
 import ComingSoon from "./pages/ComingSoon";
+import MessageLimit from "./pages/MessageLimit";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => {
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                 <Route path="/cookie-policy" element={<CookiePolicy />} />
                 <Route path="/coming-soon" element={<ComingSoon />} />
+                <Route path="/message-limit" element={<MessageLimit />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Footer />

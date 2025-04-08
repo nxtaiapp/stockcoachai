@@ -12,6 +12,9 @@ import {
   sendMessageToWebhook,
   getMockResponse
 } from '../services/aiService';
+import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/lib/supabase';
 
 export const useMessageSender = (
   userId: string | undefined, 
@@ -22,10 +25,42 @@ export const useMessageSender = (
   n8nWebhookUrl: string
 ) => {
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  
+  // Set the message allocation limit
+  const allocatedMessages = 100;
+
+  // Fetch the current message count for this user
+  const { data: messageCount = 0 } = useQuery({
+    queryKey: ['messageCount', userId],
+    queryFn: async () => {
+      if (!userId) return 0;
+      
+      const { count, error } = await supabase
+        .from('chat_messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', userId)
+        .eq('is_ai', false);
+      
+      if (error) {
+        console.error('Error fetching message count:', error);
+        return 0;
+      }
+      
+      return count || 0;
+    },
+    enabled: !!userId
+  });
 
   const sendMessage = async (content: string, imageFile?: File, messageType: string = 'Chat') => {
     if (!userId) {
       toast.error("You must be logged in to send messages");
+      return;
+    }
+    
+    // Check if user has reached message limit
+    if (messageCount >= allocatedMessages) {
+      navigate('/message-limit');
       return;
     }
     
@@ -83,7 +118,7 @@ export const useMessageSender = (
             userId, 
             userName || 'User', 
             userEmail || '',
-            messageType // Use the messageType parameter (now defaults to 'Chat')
+            messageType
           );
           console.log("Received response from webhook:", responseContent);
         } catch (error) {
