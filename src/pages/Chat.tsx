@@ -7,12 +7,14 @@ import ChatContainer from "../components/chat/ChatContainer";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
+import WelcomeScreen from "@/components/chat/WelcomeScreen";
 
 const ChatPage = () => {
   const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [checkingMessages, setCheckingMessages] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   // Redirect if not logged in
   useEffect(() => {
@@ -84,7 +86,11 @@ const ChatPage = () => {
         </div>
       )}
       <ChatProvider>
-        <ChatContainer />
+        {showChat ? (
+          <ChatContainer />
+        ) : (
+          <WelcomeScreen onStartChat={() => setShowChat(true)} />
+        )}
       </ChatProvider>
     </>
   );
