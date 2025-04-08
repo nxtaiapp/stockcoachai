@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { BarChart3, Menu, User, LogOut, Settings } from "lucide-react";
+import { BarChart3, ChevronLeft, Menu, User, LogOut, Settings } from "lucide-react";
 
 interface ChatHeaderProps {
   toggleSettings: () => void;
@@ -26,6 +26,14 @@ const ChatHeader = ({ toggleSettings, showSettings }: ChatHeaderProps) => {
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              className="mr-2 flex items-center gap-2" 
+              onClick={() => navigate("/welcome")}
+            >
+              <ChevronLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Dashboard</span>
+            </Button>
             <BarChart3 className="h-5 w-5 text-primary" />
             <span className="font-semibold text-lg">StockCoach.ai</span>
           </div>
@@ -80,6 +88,15 @@ const ChatHeader = ({ toggleSettings, showSettings }: ChatHeaderProps) => {
       {isMenuOpen && (
         <div className="md:hidden absolute top-[61px] left-0 right-0 border-b border-border bg-background animate-slide-in z-20">
           <div className="flex flex-col p-4 gap-4">
+            <Button
+              variant="ghost"
+              className="justify-start"
+              onClick={() => { navigate("/welcome"); closeMenu(); }}
+            >
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              Dashboard
+            </Button>
+            
             {user && (
               <>
                 <div className="py-2 px-4 rounded-md bg-secondary/50">
