@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { MessageSquare, BarChart3 } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -14,18 +14,10 @@ export const ProfileNavigation = () => {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Link to="/chat">
+          <Link to="/welcome">
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              <MessageSquare className="mr-2 h-4 w-4" />
-              Back to Chat
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link to="/">
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              <BarChart3 className="mr-2 h-4 w-4" />
-              StockCoach.ai
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

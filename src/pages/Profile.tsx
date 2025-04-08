@@ -36,7 +36,7 @@ const Profile = () => {
         <ProfileNavigation />
       </div>
 
-      <h1 className="text-3xl font-bold mb-8">Your Profile</h1>
+      <h1 className="text-3xl font-bold mb-8">Settings</h1>
       
       <Tabs defaultValue="personal" className="space-y-6">
         <TabsList>
