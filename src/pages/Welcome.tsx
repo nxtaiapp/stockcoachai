@@ -8,19 +8,15 @@ import { ChatProvider } from "@/context/ChatContext";
 import { useChat } from "@/context/ChatContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+
 const WelcomeContent = () => {
-  const {
-    user
-  } = useAuth();
-  const {
-    clearMessages,
-    canCreateNewChat
-  } = useChat();
+  const { user } = useAuth();
+  const { clearMessages, canCreateNewChat } = useChat();
   const navigate = useNavigate();
+  
   const getUserFirstName = () => {
     if (!user) return "";
     if (user.name && !user.name.includes('-')) {
-      // Extract first name only
       return user.name.split(' ')[0];
     }
     if (user.email) {
@@ -28,19 +24,18 @@ const WelcomeContent = () => {
     }
     return "";
   };
+  
   const firstName = getUserFirstName();
 
-  // Use the getWelcomeMessageContent function from our service
   const welcomeMessage = getWelcomeMessageContent(firstName, user?.skill_level, user?.experience_level);
+  
   const handleStartChat = async () => {
-    // If we can create a new session, clear messages to generate the welcome message
     if (canCreateNewChat) {
       await clearMessages();
     }
     navigate("/chat");
   };
 
-  // Quick action buttons for future feature expansion
   const quickActions = [{
     icon: <LineChart className="h-4 w-4" />,
     label: "Market Analysis",
@@ -60,10 +55,11 @@ const WelcomeContent = () => {
   }, {
     icon: <Settings className="h-4 w-4" />,
     label: "Settings",
-    comingSoon: true
+    comingSoon: false,
+    onClick: () => navigate("/profile")
   }];
+  
   return <div className="min-h-screen bg-background pb-10">
-      {/* Dashboard Header */}
       <div className="bg-card border-b border-border">
         <div className="container mx-auto px-4 py-6">
           <h1 className="text-2xl font-bold">Dashboard</h1>
@@ -73,7 +69,6 @@ const WelcomeContent = () => {
       
       <div className="container mx-auto px-4 pt-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content Area - Welcome Card */}
           <div className="lg:col-span-2">
             <Card className="shadow-md animate-fade-in">
               <CardHeader className="flex flex-col md:flex-row md:items-center justify-between pb-2">
@@ -117,7 +112,6 @@ const WelcomeContent = () => {
               </CardFooter>
             </Card>
             
-            {/* Recent Activity Section for future implementation */}
             <Card className="mt-6 shadow-md">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">Recent Activity</CardTitle>
@@ -131,15 +125,20 @@ const WelcomeContent = () => {
             </Card>
           </div>
           
-          {/* Sidebar - Quick Actions & Stats */}
           <div className="space-y-6">
-            {/* Quick Actions */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="text-lg font-medium">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="grid gap-3">
-                {quickActions.map((action, index) => <Button key={index} variant="outline" className="justify-start h-auto py-3" disabled={action.comingSoon}>
+                {quickActions.map((action, index) => (
+                  <Button 
+                    key={index} 
+                    variant="outline" 
+                    className="justify-start h-auto py-3" 
+                    disabled={action.comingSoon}
+                    onClick={action.onClick}
+                  >
                     <div className="flex items-center gap-3">
                       <div className="bg-primary/10 p-2 rounded-md">
                         {action.icon}
@@ -149,11 +148,11 @@ const WelcomeContent = () => {
                         {action.comingSoon && <span className="text-xs text-muted-foreground">Coming soon</span>}
                       </div>
                     </div>
-                  </Button>)}
+                  </Button>
+                ))}
               </CardContent>
             </Card>
             
-            {/* Trading Stats */}
             <Card className="shadow-md">
               <CardHeader>
                 <CardTitle className="text-lg font-medium">Trading Stats</CardTitle>
@@ -170,10 +169,10 @@ const WelcomeContent = () => {
     </div>;
 };
 
-// Wrapper component that provides the ChatProvider
 const WelcomePage = () => {
   return <ChatProvider>
       <WelcomeContent />
     </ChatProvider>;
 };
+
 export default WelcomePage;
