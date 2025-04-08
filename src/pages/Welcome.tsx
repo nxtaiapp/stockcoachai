@@ -1,13 +1,14 @@
 
 import React from "react";
-import { BarChart3, ArrowRight } from "lucide-react";
+import { BarChart3, ArrowRight, LineChart, PieChart, Star, BookOpen, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { getWelcomeMessageContent } from "../services/welcomeMessageService";
 import { ChatProvider } from "@/context/ChatContext"; 
 import { useChat } from "@/context/ChatContext";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 const WelcomeContent = () => {
   const { user } = useAuth();
@@ -43,46 +44,136 @@ const WelcomeContent = () => {
     navigate("/chat");
   };
   
+  // Quick action buttons for future feature expansion
+  const quickActions = [
+    { icon: <LineChart className="h-4 w-4" />, label: "Market Analysis", comingSoon: true },
+    { icon: <PieChart className="h-4 w-4" />, label: "Portfolio Overview", comingSoon: true },
+    { icon: <Star className="h-4 w-4" />, label: "Saved Strategies", comingSoon: true },
+    { icon: <BookOpen className="h-4 w-4" />, label: "Learning Resources", comingSoon: true },
+    { icon: <Settings className="h-4 w-4" />, label: "Settings", comingSoon: true },
+  ];
+  
   return (
-    <div className="min-h-screen pt-16 flex flex-col items-center justify-center px-4">
-      <Card className="max-w-3xl w-full animate-fade-in">
-        <CardHeader className="text-center">
-          <div className="mx-auto bg-primary/10 h-20 w-20 rounded-full flex items-center justify-center mb-6">
-            <BarChart3 className="h-10 w-10 text-primary" />
-          </div>
-          <CardTitle className="text-3xl font-bold">Welcome to StockCoach.ai</CardTitle>
-        </CardHeader>
-        
-        <CardContent className="text-center space-y-6">
-          <div className="bg-muted/50 p-6 rounded-lg">
-            <h2 className="text-xl font-medium mb-4">Alexandra, Your Trading Coach</h2>
-            <p className="text-muted-foreground text-lg">{welcomeMessage}</p>
+    <div className="min-h-screen bg-background pb-10">
+      {/* Dashboard Header */}
+      <div className="bg-card border-b border-border">
+        <div className="container mx-auto px-4 py-6">
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back, {firstName || "Trader"}</p>
+        </div>
+      </div>
+      
+      <div className="container mx-auto px-4 pt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Content Area - Welcome Card */}
+          <div className="lg:col-span-2">
+            <Card className="shadow-md animate-fade-in">
+              <CardHeader className="flex flex-col md:flex-row md:items-center justify-between pb-2">
+                <div>
+                  <CardTitle className="text-xl font-bold">Your Trading Coach</CardTitle>
+                  <CardDescription>Alexandra is ready to assist with your trading strategy</CardDescription>
+                </div>
+                <div className="mt-4 md:mt-0 bg-primary/10 h-16 w-16 rounded-full flex items-center justify-center">
+                  <BarChart3 className="h-8 w-8 text-primary" />
+                </div>
+              </CardHeader>
+              
+              <Separator />
+              
+              <CardContent className="pt-6 space-y-6">
+                <div className="bg-muted/50 p-6 rounded-lg">
+                  <h2 className="text-xl font-medium mb-4">Today's Coaching Message</h2>
+                  <p className="text-lg text-muted-foreground">{welcomeMessage}</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-medium mb-2">How Alexandra helps you:</h3>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground pl-2">
+                    <li>Analyze your trading patterns and decisions</li>
+                    <li>Understand market movements and trends</li>
+                    <li>Develop and refine your trading strategy</li>
+                    <li>Learn from your past trades</li>
+                  </ul>
+                </div>
+              </CardContent>
+              
+              <CardFooter className="flex flex-col items-start pt-2">
+                <Button 
+                  onClick={handleStartChat} 
+                  size="lg" 
+                  className="w-full sm:w-auto flex items-center gap-2"
+                >
+                  {canCreateNewChat ? "Start New Session" : "Continue Current Session"}
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+                
+                {!canCreateNewChat && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    You already have a session for today.
+                  </p>
+                )}
+              </CardFooter>
+            </Card>
+            
+            {/* Recent Activity Section for future implementation */}
+            <Card className="mt-6 shadow-md">
+              <CardHeader>
+                <CardTitle className="text-xl font-bold">Recent Activity</CardTitle>
+                <CardDescription>Your latest trading conversations and insights</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-center h-40 border border-dashed border-muted-foreground/50 rounded-md bg-muted/30">
+                  <p className="text-muted-foreground">Your recent trading activity will appear here</p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
           
-          <div className="max-w-md mx-auto">
-            <p className="text-muted-foreground mb-2">
-              Alexandra helps you analyze trades, understand market patterns, and develop your trading strategy.
-            </p>
+          {/* Sidebar - Quick Actions & Stats */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <Card className="shadow-md">
+              <CardHeader>
+                <CardTitle className="text-lg font-medium">Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-3">
+                {quickActions.map((action, index) => (
+                  <Button
+                    key={index}
+                    variant="outline" 
+                    className="justify-start h-auto py-3"
+                    disabled={action.comingSoon}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 p-2 rounded-md">
+                        {action.icon}
+                      </div>
+                      <div className="text-left">
+                        <div className="font-medium">{action.label}</div>
+                        {action.comingSoon && (
+                          <span className="text-xs text-muted-foreground">Coming soon</span>
+                        )}
+                      </div>
+                    </div>
+                  </Button>
+                ))}
+              </CardContent>
+            </Card>
+            
+            {/* Trading Stats */}
+            <Card className="shadow-md">
+              <CardHeader>
+                <CardTitle className="text-lg font-medium">Trading Stats</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-center h-40 border border-dashed border-muted-foreground/50 rounded-md bg-muted/30">
+                  <p className="text-muted-foreground">Your trading statistics will appear here</p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-        
-        <CardFooter className="flex flex-col items-center justify-center gap-4">
-          <Button 
-            onClick={handleStartChat} 
-            size="lg" 
-            className="w-full sm:w-auto flex items-center gap-2"
-          >
-            {canCreateNewChat ? "Start New Session" : "Continue Current Session"}
-            <ArrowRight className="h-5 w-5" />
-          </Button>
-          
-          {!canCreateNewChat && (
-            <p className="text-sm text-muted-foreground">
-              You already have a session for today. 
-            </p>
-          )}
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };
