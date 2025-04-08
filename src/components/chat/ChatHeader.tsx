@@ -26,20 +26,21 @@ const ChatHeader = ({ toggleSettings, showSettings }: ChatHeaderProps) => {
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              className="mr-2 flex items-center gap-2" 
-              onClick={() => navigate("/welcome")}
-            >
-              <ChevronLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Dashboard</span>
-            </Button>
             <BarChart3 className="h-5 w-5 text-primary" />
             <span className="font-semibold text-lg">StockCoach.ai</span>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            className="mr-2 flex items-center gap-2" 
+            onClick={() => navigate("/welcome")}
+          >
+            <ChevronLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">Dashboard</span>
+          </Button>
+          
           {isAdmin && (
             <Button 
               variant="outline" 
