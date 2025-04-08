@@ -5,10 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { getWelcomeMessageContent } from "../services/welcomeMessageService";
+import { ChatProvider } from "@/context/ChatContext"; 
 import { useChat } from "@/context/ChatContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
-const WelcomePage = () => {
+const WelcomeContent = () => {
   const { user } = useAuth();
   const { clearMessages, canCreateNewChat } = useChat();
   const navigate = useNavigate();
@@ -83,6 +84,15 @@ const WelcomePage = () => {
         </CardFooter>
       </Card>
     </div>
+  );
+};
+
+// Wrapper component that provides the ChatProvider
+const WelcomePage = () => {
+  return (
+    <ChatProvider>
+      <WelcomeContent />
+    </ChatProvider>
   );
 };
 
