@@ -25,6 +25,8 @@ export const useChatState = () => {
   const { messages, setMessages, selectedDate, setSelectedDate } = useChatPersistence(user?.id);
   const { chatDates, filteredMessages, selectDate } = useChatDates(messages, selectedDate, setSelectedDate);
   
+  const [creatingSession, setCreatingSession] = useState(false);
+  
   // Set the message allocation limit
   const allocatedMessages = 100;
   
@@ -65,8 +67,6 @@ export const useChatState = () => {
     setMessages, 
     n8nWebhookUrl
   );
-
-  const [creatingSession, setCreatingSession] = useState(false);
 
   const todayDate = getCurrentDate();
   const canCreateNewChat = !chatDates.includes(todayDate);

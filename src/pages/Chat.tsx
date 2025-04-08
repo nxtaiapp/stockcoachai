@@ -58,8 +58,13 @@ const ChatPage = () => {
     );
   }
 
+  // Ensure we only render ChatProvider and ChatContainer when user is available
+  if (!user) {
+    return null; // Will redirect in the useEffect
+  }
+
   return (
-    <ChatProvider>
+    <>
       {isAdmin && (
         <div className="fixed top-20 right-4 z-50">
           <Button 
@@ -78,8 +83,10 @@ const ChatPage = () => {
           )}
         </div>
       )}
-      <ChatContainer />
-    </ChatProvider>
+      <ChatProvider>
+        <ChatContainer />
+      </ChatProvider>
+    </>
   );
 };
 
