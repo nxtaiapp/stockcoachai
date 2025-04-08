@@ -18,20 +18,26 @@ const ChatContainer = () => {
     hasTodayMessages,
     selectDate,
     chatDates,
+    selectedDate,
     userTimezone
   } = useChat();
   const [showSettings, setShowSettings] = useState(false);
   
   const toggleSettings = () => setShowSettings(!showSettings);
 
-  // When rendering for the first time and we have no messages for today,
-  // ensure we're showing today's session
+  // When the component first renders, if there are no messages for today,
+  // but there are previous chat sessions, don't automatically switch to today's date
   useEffect(() => {
-    if (!isTodaySession && !hasTodayMessages) {
-      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-      selectDate(today);
+    console.log("ChatContainer mounted", { selectedDate, chatDates });
+    
+    // If we're showing today's session but it doesn't have messages, 
+    // and user has previous sessions, show the most recent one by default
+    if (isTodaySession && !hasTodayMessages && chatDates.length > 0 && chatDates[0] !== selectedDate) {
+      // Select the most recent chat date (first in the array since they're sorted newest first)
+      console.log("Auto-selecting most recent date:", chatDates[0]);
+      selectDate(chatDates[0]);
     }
-  }, [isTodaySession, hasTodayMessages, selectDate]);
+  }, []);
 
   return (
     <SidebarProvider>

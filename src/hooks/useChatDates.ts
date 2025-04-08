@@ -1,5 +1,5 @@
 
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { Message } from '../types/chat';
 import { format } from 'date-fns';
 
@@ -16,15 +16,20 @@ export const useChatDates = (messages: Message[], selectedDate: string, setSelec
   // Filter messages by selected date
   const filteredMessages = useMemo(() => {
     if (!selectedDate) return [];
-    return messages.filter(message => 
+    
+    const filtered = messages.filter(message => 
       format(new Date(message.timestamp), 'yyyy-MM-dd') === selectedDate
     );
+    
+    console.log(`Filtered messages for ${selectedDate}:`, filtered.length);
+    return filtered;
   }, [messages, selectedDate]);
 
-  // Select a specific date
-  const selectDate = (date: string) => {
+  // Select a specific date - ensure we have a callback that preserves reference
+  const selectDate = useCallback((date: string) => {
+    console.log("Selecting date:", date);
     setSelectedDate(date);
-  };
+  }, [setSelectedDate]);
 
   return {
     chatDates,

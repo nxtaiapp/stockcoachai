@@ -82,16 +82,25 @@ const ChatSidebar = () => {
           <SidebarGroupLabel>Session History </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {chatDates.length === 0 ? <div className="text-sm text-muted-foreground px-4 py-2">
+              {chatDates.length === 0 ? (
+                <div className="text-sm text-muted-foreground px-4 py-2">
                   No chat history yet
-                </div> : chatDates.map(date => <SidebarMenuItem key={date}>
-                    <SidebarMenuButton isActive={date === selectedDate} onClick={() => selectDate(date)}>
+                </div>
+              ) : (
+                chatDates.map(date => (
+                  <SidebarMenuItem key={date}>
+                    <SidebarMenuButton 
+                      isActive={date === selectedDate} 
+                      onClick={() => selectDate(date)}
+                    >
                       <Calendar className="h-4 w-4" />
                       <span>
                         {formatChatDate(date)}
                       </span>
                     </SidebarMenuButton>
-                  </SidebarMenuItem>)}
+                  </SidebarMenuItem>
+                ))
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
