@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
 import { toast } from "sonner";
@@ -167,4 +166,3 @@ export const useChatState = () => {
     hasTodayMessages
   };
 };
-
