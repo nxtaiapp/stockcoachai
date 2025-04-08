@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useChat } from "../../context/ChatContext";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import ChatHeader from "./ChatHeader";
@@ -14,13 +14,12 @@ const ChatContainer = () => {
     loading, 
     sendMessage, 
     isTodaySession, 
-    canCreateNewChat, 
     hasTodayMessages,
     selectDate,
     chatDates,
-    selectedDate,
-    userTimezone
+    selectedDate
   } = useChat();
+  
   const [showSettings, setShowSettings] = useState(false);
   
   const toggleSettings = () => setShowSettings(!showSettings);

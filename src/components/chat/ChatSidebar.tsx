@@ -1,33 +1,16 @@
 
 import { format, parseISO } from "date-fns";
-import { Calendar, PlusCircle } from "lucide-react";
+import { Calendar } from "lucide-react";
 import { useChat } from "../../context/ChatContext";
 import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useState } from "react";
 
 const ChatSidebar = () => {
   const {
     chatDates,
     selectDate,
     selectedDate,
-    clearMessages,
-    userTimezone,
-    canCreateNewChat,
-    loading
+    userTimezone
   } = useChat();
-  
-  const [isCreatingSession, setIsCreatingSession] = useState(false);
-  
-  const handleNewChat = async () => {
-    setIsCreatingSession(true);
-    try {
-      await clearMessages();
-    } finally {
-      setIsCreatingSession(false);
-    }
-  };
 
   // Format date string considering user's timezone
   const formatChatDate = (dateString: string) => {
@@ -46,40 +29,12 @@ const ChatSidebar = () => {
   return (
     <Sidebar>
       <SidebarHeader className="px-4 py-6">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <Button 
-                  variant="outline" 
-                  className="w-full flex items-center justify-start gap-2" 
-                  onClick={handleNewChat} 
-                  disabled={!canCreateNewChat || loading || isCreatingSession}
-                >
-                  {(loading || isCreatingSession) ? (
-                    <>
-                      <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                      <span>Creating...</span>
-                    </>
-                  ) : (
-                    <>
-                      <PlusCircle className="h-4 w-4" />
-                      <span>New Session</span>
-                    </>
-                  )}
-                </Button>
-              </div>
-            </TooltipTrigger>
-            {!canCreateNewChat && <TooltipContent>
-                <p>You can only create one chat per day</p>
-              </TooltipContent>}
-          </Tooltip>
-        </TooltipProvider>
+        <h2 className="text-lg font-semibold">Trading Coach</h2>
       </SidebarHeader>
       
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Session History </SidebarGroupLabel>
+          <SidebarGroupLabel>Session History</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {chatDates.length === 0 ? (
