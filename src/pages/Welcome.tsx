@@ -160,7 +160,7 @@ const WelcomeContent = () => {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-center h-40 border border-dashed border-muted-foreground/50 rounded-md bg-muted/30">
-                  <p className="text-muted-foreground">Your trading statistics will appear here</p>
+                  <p className="text-muted-foreground">Coming Soon</p>
                 </div>
               </CardContent>
             </Card>
