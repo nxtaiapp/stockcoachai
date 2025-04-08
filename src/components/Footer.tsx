@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { BarChart3 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ContactForm } from "./ContactForm";
-
 const Footer = () => {
   const location = useLocation();
 
@@ -18,9 +17,7 @@ const Footer = () => {
               <BarChart3 className="w-6 h-6 text-primary" />
               <span className="font-semibold text-xl">StockCoach.ai</span>
             </Link>
-            <p className="text-muted-foreground text-sm mb-4">
-              Your AI-powered trading assistant, helping you make smarter investment decisions.
-            </p>
+            <p className="text-muted-foreground text-sm mb-4">Your AI-powered trading coach, helping you make smarter investment decisions.</p>
           </div>
           
           <div className="col-span-1 flex flex-col">
