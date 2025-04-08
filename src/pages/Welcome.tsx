@@ -8,7 +8,6 @@ import { ChatProvider } from "@/context/ChatContext";
 import { useChat } from "@/context/ChatContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-
 const WelcomeContent = () => {
   const {
     user
@@ -42,34 +41,27 @@ const WelcomeContent = () => {
   };
 
   // Quick action buttons for future feature expansion
-  const quickActions = [
-    {
-      icon: <LineChart className="h-4 w-4" />,
-      label: "Market Analysis",
-      comingSoon: true
-    },
-    {
-      icon: <PieChart className="h-4 w-4" />,
-      label: "Portfolio Overview",
-      comingSoon: true
-    },
-    {
-      icon: <Star className="h-4 w-4" />,
-      label: "Saved Strategies",
-      comingSoon: true
-    },
-    {
-      icon: <BookOpen className="h-4 w-4" />,
-      label: "Learning Resources",
-      comingSoon: true
-    },
-    {
-      icon: <Settings className="h-4 w-4" />,
-      label: "Settings",
-      comingSoon: true
-    }
-  ];
-  
+  const quickActions = [{
+    icon: <LineChart className="h-4 w-4" />,
+    label: "Market Analysis",
+    comingSoon: true
+  }, {
+    icon: <PieChart className="h-4 w-4" />,
+    label: "Portfolio Overview",
+    comingSoon: true
+  }, {
+    icon: <Star className="h-4 w-4" />,
+    label: "Saved Strategies",
+    comingSoon: true
+  }, {
+    icon: <BookOpen className="h-4 w-4" />,
+    label: "Learning Resources",
+    comingSoon: true
+  }, {
+    icon: <Settings className="h-4 w-4" />,
+    label: "Settings",
+    comingSoon: true
+  }];
   return <div className="min-h-screen bg-background pb-10">
       {/* Dashboard Header */}
       <div className="bg-card border-b border-border">
@@ -114,7 +106,7 @@ const WelcomeContent = () => {
               </CardContent>
               
               <CardFooter className="flex flex-col items-start pt-2">
-                <Button onClick={handleStartChat} size="lg" className="w-full sm:w-auto flex items-center gap-2">
+                <Button onClick={handleStartChat} size="lg" className="w-full sm:w-auto flex items-center gap-2 text-center">
                   {canCreateNewChat ? "Start New Session" : "Continue Current Session"}
                   <ArrowRight className="h-5 w-5" />
                 </Button>
@@ -184,5 +176,4 @@ const WelcomePage = () => {
       <WelcomeContent />
     </ChatProvider>;
 };
-
 export default WelcomePage;
