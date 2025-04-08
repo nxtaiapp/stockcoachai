@@ -1,8 +1,10 @@
 
 import React from "react";
 import { BarChart3 } from "lucide-react";
+import { Link } from "react-router-dom"; 
 import { useAuth } from "../../context/AuthContext";
 import { getWelcomeMessageContent } from "../../services/welcomeMessageService";
+import { Button } from "@/components/ui/button";
 
 const PromptSuggestions = () => {
   const {
@@ -30,7 +32,8 @@ const PromptSuggestions = () => {
     user?.experience_level
   );
   
-  return <div className="flex flex-col items-center justify-center p-10 max-w-3xl mx-auto">
+  return (
+    <div className="flex flex-col items-center justify-center p-10 max-w-3xl mx-auto">
       <div className="flex flex-col items-center mb-10">
         <div className="bg-primary/10 h-16 w-16 rounded-full flex items-center justify-center mb-4">
           <BarChart3 className="h-8 w-8 text-primary" />
@@ -39,11 +42,17 @@ const PromptSuggestions = () => {
         <p className="text-center text-muted-foreground max-w-md mb-2">
           Your AI-powered trading coach.
         </p>
-        <h2 className="text-xl text-center mb-4 text-[#8E9196] py-[100px]">
+        <h2 className="text-xl text-center mb-6 text-muted-foreground">
           {welcomeMessage}
         </h2>
+        <Link to="/welcome">
+          <Button variant="outline" size="sm">
+            Return to Welcome Screen
+          </Button>
+        </Link>
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default PromptSuggestions;

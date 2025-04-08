@@ -7,19 +7,27 @@ import ChatContainer from "../components/chat/ChatContainer";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
-import WelcomeScreen from "@/components/chat/WelcomeScreen";
 
 const ChatPage = () => {
   const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [checkingMessages, setCheckingMessages] = useState(false);
-  const [showChat, setShowChat] = useState(false);
 
   // Redirect if not logged in
   useEffect(() => {
-    if (!loading && !user) {
-      navigate("/signin");
+    if (!loading) {
+      if (!user) {
+        navigate("/signin");
+      } else {
+        // If user is logged in and hasn't been to the welcome page yet, 
+        // redirect to welcome
+        const hasVisitedWelcome = sessionStorage.getItem('visited_welcome');
+        if (!hasVisitedWelcome) {
+          sessionStorage.setItem('visited_welcome', 'true');
+          navigate("/welcome");
+        }
+      }
     }
   }, [user, loading, navigate]);
 
@@ -86,11 +94,7 @@ const ChatPage = () => {
         </div>
       )}
       <ChatProvider>
-        {showChat ? (
-          <ChatContainer />
-        ) : (
-          <WelcomeScreen onStartChat={() => setShowChat(true)} />
-        )}
+        <ChatContainer />
       </ChatProvider>
     </>
   );
