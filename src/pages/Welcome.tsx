@@ -1,20 +1,22 @@
-
 import React from "react";
 import { BarChart3, ArrowRight, LineChart, PieChart, Star, BookOpen, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { getWelcomeMessageContent } from "../services/welcomeMessageService";
-import { ChatProvider } from "@/context/ChatContext"; 
+import { ChatProvider } from "@/context/ChatContext";
 import { useChat } from "@/context/ChatContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-
 const WelcomeContent = () => {
-  const { user } = useAuth();
-  const { clearMessages, canCreateNewChat } = useChat();
+  const {
+    user
+  } = useAuth();
+  const {
+    clearMessages,
+    canCreateNewChat
+  } = useChat();
   const navigate = useNavigate();
-  
   const getUserFirstName = () => {
     if (!user) return "";
     if (user.name && !user.name.includes('-')) {
@@ -26,16 +28,10 @@ const WelcomeContent = () => {
     }
     return "";
   };
-  
   const firstName = getUserFirstName();
-  
-  // Use the getWelcomeMessageContent function from our service
-  const welcomeMessage = getWelcomeMessageContent(
-    firstName,
-    user?.skill_level,
-    user?.experience_level
-  );
 
+  // Use the getWelcomeMessageContent function from our service
+  const welcomeMessage = getWelcomeMessageContent(firstName, user?.skill_level, user?.experience_level);
   const handleStartChat = async () => {
     // If we can create a new session, clear messages to generate the welcome message
     if (canCreateNewChat) {
@@ -43,18 +39,30 @@ const WelcomeContent = () => {
     }
     navigate("/chat");
   };
-  
+
   // Quick action buttons for future feature expansion
-  const quickActions = [
-    { icon: <LineChart className="h-4 w-4" />, label: "Market Analysis", comingSoon: true },
-    { icon: <PieChart className="h-4 w-4" />, label: "Portfolio Overview", comingSoon: true },
-    { icon: <Star className="h-4 w-4" />, label: "Saved Strategies", comingSoon: true },
-    { icon: <BookOpen className="h-4 w-4" />, label: "Learning Resources", comingSoon: true },
-    { icon: <Settings className="h-4 w-4" />, label: "Settings", comingSoon: true },
-  ];
-  
-  return (
-    <div className="min-h-screen bg-background pb-10">
+  const quickActions = [{
+    icon: <LineChart className="h-4 w-4" />,
+    label: "Market Analysis",
+    comingSoon: true
+  }, {
+    icon: <PieChart className="h-4 w-4" />,
+    label: "Portfolio Overview",
+    comingSoon: true
+  }, {
+    icon: <Star className="h-4 w-4" />,
+    label: "Saved Strategies",
+    comingSoon: true
+  }, {
+    icon: <BookOpen className="h-4 w-4" />,
+    label: "Learning Resources",
+    comingSoon: true
+  }, {
+    icon: <Settings className="h-4 w-4" />,
+    label: "Settings",
+    comingSoon: true
+  }];
+  return <div className="min-h-screen bg-background pb-10">
       {/* Dashboard Header */}
       <div className="bg-card border-b border-border">
         <div className="container mx-auto px-4 py-6">
@@ -98,20 +106,14 @@ const WelcomeContent = () => {
               </CardContent>
               
               <CardFooter className="flex flex-col items-start pt-2">
-                <Button 
-                  onClick={handleStartChat} 
-                  size="lg" 
-                  className="w-full sm:w-auto flex items-center gap-2"
-                >
+                <Button onClick={handleStartChat} size="lg" className="w-full sm:w-auto flex items-center gap-2">
                   {canCreateNewChat ? "Start New Session" : "Continue Current Session"}
                   <ArrowRight className="h-5 w-5" />
                 </Button>
                 
-                {!canCreateNewChat && (
-                  <p className="text-sm text-muted-foreground mt-2">
+                {!canCreateNewChat && <p className="text-sm text-muted-foreground mt-2">
                     You already have a session for today.
-                  </p>
-                )}
+                  </p>}
               </CardFooter>
             </Card>
             
@@ -123,7 +125,7 @@ const WelcomeContent = () => {
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-center h-40 border border-dashed border-muted-foreground/50 rounded-md bg-muted/30">
-                  <p className="text-muted-foreground">Your recent trading activity will appear here</p>
+                  <p className="text-muted-foreground">Coming Soon</p>
                 </div>
               </CardContent>
             </Card>
@@ -137,26 +139,17 @@ const WelcomeContent = () => {
                 <CardTitle className="text-lg font-medium">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="grid gap-3">
-                {quickActions.map((action, index) => (
-                  <Button
-                    key={index}
-                    variant="outline" 
-                    className="justify-start h-auto py-3"
-                    disabled={action.comingSoon}
-                  >
+                {quickActions.map((action, index) => <Button key={index} variant="outline" className="justify-start h-auto py-3" disabled={action.comingSoon}>
                     <div className="flex items-center gap-3">
                       <div className="bg-primary/10 p-2 rounded-md">
                         {action.icon}
                       </div>
                       <div className="text-left">
                         <div className="font-medium">{action.label}</div>
-                        {action.comingSoon && (
-                          <span className="text-xs text-muted-foreground">Coming soon</span>
-                        )}
+                        {action.comingSoon && <span className="text-xs text-muted-foreground">Coming soon</span>}
                       </div>
                     </div>
-                  </Button>
-                ))}
+                  </Button>)}
               </CardContent>
             </Card>
             
@@ -174,17 +167,13 @@ const WelcomeContent = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
 
 // Wrapper component that provides the ChatProvider
 const WelcomePage = () => {
-  return (
-    <ChatProvider>
+  return <ChatProvider>
       <WelcomeContent />
-    </ChatProvider>
-  );
+    </ChatProvider>;
 };
-
 export default WelcomePage;
