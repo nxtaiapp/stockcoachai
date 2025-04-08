@@ -8,6 +8,7 @@ import { ChatProvider } from "@/context/ChatContext";
 import { useChat } from "@/context/ChatContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+
 const WelcomeContent = () => {
   const {
     user
@@ -41,27 +42,34 @@ const WelcomeContent = () => {
   };
 
   // Quick action buttons for future feature expansion
-  const quickActions = [{
-    icon: <LineChart className="h-4 w-4" />,
-    label: "Market Analysis",
-    comingSoon: true
-  }, {
-    icon: <PieChart className="h-4 w-4" />,
-    label: "Portfolio Overview",
-    comingSoon: true
-  }, {
-    icon: <Star className="h-4 w-4" />,
-    label: "Saved Strategies",
-    comingSoon: true
-  }, {
-    icon: <BookOpen className="h-4 w-4" />,
-    label: "Learning Resources",
-    comingSoon: true
-  }, {
-    icon: <Settings className="h-4 w-4" />,
-    label: "Settings",
-    comingSoon: true
-  }];
+  const quickActions = [
+    {
+      icon: <LineChart className="h-4 w-4" />,
+      label: "Market Analysis",
+      comingSoon: true
+    },
+    {
+      icon: <PieChart className="h-4 w-4" />,
+      label: "Portfolio Overview",
+      comingSoon: true
+    },
+    {
+      icon: <Star className="h-4 w-4" />,
+      label: "Saved Strategies",
+      comingSoon: true
+    },
+    {
+      icon: <BookOpen className="h-4 w-4" />,
+      label: "Learning Resources",
+      comingSoon: true
+    },
+    {
+      icon: <Settings className="h-4 w-4" />,
+      label: "Settings",
+      comingSoon: true
+    }
+  ];
+  
   return <div className="min-h-screen bg-background pb-10">
       {/* Dashboard Header */}
       <div className="bg-card border-b border-border">
@@ -176,4 +184,5 @@ const WelcomePage = () => {
       <WelcomeContent />
     </ChatProvider>;
 };
+
 export default WelcomePage;
