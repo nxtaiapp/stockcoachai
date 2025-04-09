@@ -22,7 +22,7 @@ export const useChatState = () => {
   const navigate = useNavigate();
   
   // Default webhook URL
-  const defaultWebhookUrl = "https://n8n-hyib.onrender.com/webhook-test/06598a09-d8be-4e1b-8916-d5123a6cac6d";
+  const defaultWebhookUrl = "https://n8n-hyib.onrender.com/webhook/06598a09-d8be-4e1b-8916-d5123a6cac6d";
   
   const { userTimezone, getCurrentDate } = useTimezone();
   const { messages, setMessages, selectedDate, setSelectedDate } = useChatPersistence(user?.id);

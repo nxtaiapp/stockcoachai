@@ -57,7 +57,7 @@ const AudioRecorder = ({ onTranscriptionComplete, disabled = false }: AudioRecor
           formData.append('file', audioBlob, 'recording.webm');
           
           // Use the configured transcription webhook URL or fall back to the default
-          const webhookUrl = transcriptionWebhookUrl || "https://n8n-hyib.onrender.com/webhook-test/06598a09-d8be-4e1b-8916-d5123a6cac6d";
+          const webhookUrl = transcriptionWebhookUrl || "https://n8n-hyib.onrender.com/webhook/06598a09-d8be-4e1b-8916-d5123a6cac6d";
           
           // Send to the transcription webhook
           const response = await fetch(webhookUrl, {

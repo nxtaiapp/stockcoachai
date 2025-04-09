@@ -31,7 +31,7 @@ export const useMessageSender = (
   const allocatedMessages = 100;
   
   // Default webhook URL if none is provided
-  const defaultWebhookUrl = "https://n8n-hyib.onrender.com/webhook-test/06598a09-d8be-4e1b-8916-d5123a6cac6d";
+  const defaultWebhookUrl = "https://n8n-hyib.onrender.com/webhook/06598a09-d8be-4e1b-8916-d5123a6cac6d";
 
   // Fetch the current message count for this user
   const { data: messageCount = 0 } = useQuery({
