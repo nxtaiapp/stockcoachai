@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { getWelcomeMessageContent } from "../../services/welcomeMessageService";
 import { useChat } from "@/context/ChatContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 interface WelcomeScreenProps {
   onStartChat: () => void;
@@ -14,6 +15,7 @@ interface WelcomeScreenProps {
 const WelcomeScreen = ({ onStartChat }: WelcomeScreenProps) => {
   const { user } = useAuth();
   const { clearMessages, canCreateNewChat } = useChat();
+  const navigate = useNavigate();
   
   const getUserFirstName = () => {
     if (!user) return "";
@@ -40,6 +42,10 @@ const WelcomeScreen = ({ onStartChat }: WelcomeScreenProps) => {
     // If we can create a new session, clear messages to generate the welcome message
     if (canCreateNewChat) {
       await clearMessages();
+    } else {
+      // If continuing existing session, navigate directly to chat without creating a new session
+      navigate("/chat");
+      return;
     }
     onStartChat();
   };

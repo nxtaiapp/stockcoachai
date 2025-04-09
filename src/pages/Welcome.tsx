@@ -1,3 +1,4 @@
+
 import React from "react";
 import { BarChart3, ArrowRight, LineChart, PieChart, Star, BookOpen, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -32,6 +33,10 @@ const WelcomeContent = () => {
   const handleStartChat = async () => {
     if (canCreateNewChat) {
       await clearMessages();
+    } else {
+      // If continuing existing session, navigate directly to chat without creating a new session
+      navigate("/chat");
+      return;
     }
     navigate("/chat");
   };

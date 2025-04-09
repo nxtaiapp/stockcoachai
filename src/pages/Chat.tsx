@@ -17,10 +17,13 @@ const ChatContent = () => {
   const [checkingMessages, setCheckingMessages] = useState(false);
   const { canCreateNewChat, clearMessages, hasTodayMessages } = useChat();
 
-  // Auto-create session when component mounts if needed
+  // Auto-create session when component mounts but ONLY if needed and user doesn't have an existing session
   useEffect(() => {
     const createSessionIfNeeded = async () => {
-      // If we can create a new chat and don't have any messages for today, create a new session
+      // Only create a new session if:
+      // 1. We can create a new chat (haven't created one today)
+      // 2. Don't have messages for today
+      // 3. Don't have existing sessions we can use
       if (canCreateNewChat && !hasTodayMessages) {
         console.log("Auto-creating new session for today");
         try {
