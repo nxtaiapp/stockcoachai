@@ -105,7 +105,7 @@ const Index = () => {
                   <LineChart className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Plan Development</h3>
-                <p className="text-muted-foreground">Build and refine your trading strategies with AI-powered recommendations.</p>
+                <p className="text-muted-foreground">Create a clear, personalized trading plan built around your goals, risk tolerance, and strategy so you trade with purpose, not guesswork.</p>
               </div>
               <div className="premium-card p-8 rounded-lg animate-slide-up" style={{
               animationDelay: "0.3s"
