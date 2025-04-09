@@ -96,9 +96,7 @@ const Index = () => {
                   <TrendingUp className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Trade Analysis</h3>
-                <p className="text-muted-foreground">
-                  Get real-time market insights and analysis to make informed trading decisions based on current trends.
-                </p>
+                <p className="text-muted-foreground">Uncover what’s working and what’s not. Get deep, AI-powered insights into your trades so you can fine-tune your strategy and improve faster.</p>
               </div>
               <div className="premium-card p-8 rounded-lg animate-slide-up" style={{
               animationDelay: "0.2s"
