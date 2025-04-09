@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -96,7 +95,7 @@ const Index = () => {
                 <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
                   <TrendingUp className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Market Analysis</h3>
+                <h3 className="text-xl font-semibold mb-3">Trade Analysis</h3>
                 <p className="text-muted-foreground">
                   Get real-time market insights and analysis to make informed trading decisions based on current trends.
                 </p>
