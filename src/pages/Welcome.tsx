@@ -1,6 +1,5 @@
-
 import React from "react";
-import { BarChart3, ArrowRight, LineChart, PieChart, Star, BookOpen, Settings } from "lucide-react";
+import { BarChart3, ArrowRight, LineChart, PieChart, Star, BookOpen, Settings, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -9,9 +8,10 @@ import { ChatProvider } from "@/context/ChatContext";
 import { useChat } from "@/context/ChatContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import Header from "../components/Header";
 
 const WelcomeContent = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { clearMessages, canCreateNewChat } = useChat();
   const navigate = useNavigate();
   
@@ -34,7 +34,6 @@ const WelcomeContent = () => {
     if (canCreateNewChat) {
       await clearMessages();
     } else {
-      // If continuing existing session, navigate directly to chat without creating a new session
       navigate("/chat");
       return;
     }
@@ -66,9 +65,21 @@ const WelcomeContent = () => {
   
   return <div className="min-h-screen bg-background pb-10">
       <div className="bg-card border-b border-border">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back, {firstName || "Trader"}</p>
+        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold">Dashboard</h1>
+            <p className="text-muted-foreground">Welcome back, {firstName || "Trader"}</p>
+          </div>
+          {user && (
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2" 
+              onClick={signOut}
+            >
+              <LogOut size={16} />
+              Sign Out
+            </Button>
+          )}
         </div>
       </div>
       

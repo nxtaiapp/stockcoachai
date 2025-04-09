@@ -1,6 +1,6 @@
 
 import React from "react";
-import { BarChart3, ArrowRight } from "lucide-react";
+import { BarChart3, ArrowRight, LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { getWelcomeMessageContent } from "../../services/welcomeMessageService";
@@ -13,7 +13,7 @@ interface WelcomeScreenProps {
 }
 
 const WelcomeScreen = ({ onStartChat }: WelcomeScreenProps) => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { clearMessages, canCreateNewChat } = useChat();
   const navigate = useNavigate();
   
@@ -54,6 +54,19 @@ const WelcomeScreen = ({ onStartChat }: WelcomeScreenProps) => {
     <div className="min-h-screen pt-16 flex flex-col items-center justify-center px-4">
       <Card className="max-w-3xl w-full animate-fade-in">
         <CardHeader className="text-center">
+          <div className="flex justify-end w-full">
+            {user && (
+              <Button 
+                variant="outline" 
+                className="flex items-center gap-2" 
+                onClick={signOut}
+                size="sm"
+              >
+                <LogOut size={16} />
+                Sign Out
+              </Button>
+            )}
+          </div>
           <div className="mx-auto bg-primary/10 h-20 w-20 rounded-full flex items-center justify-center mb-6">
             <BarChart3 className="h-10 w-10 text-primary" />
           </div>
