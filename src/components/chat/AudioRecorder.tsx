@@ -57,7 +57,7 @@ const AudioRecorder = ({ onTranscriptionComplete, disabled = false }: AudioRecor
           formData.append('file', audioBlob, 'recording.webm');
           
           // Use the configured transcription webhook URL or fall back to the default
-          const webhookUrl = transcriptionWebhookUrl || "https://nxtaisolutions.app.n8n.cloud/webhook-test/c749cf70-e75b-4620-8a95-2e3f69e77f61";
+          const webhookUrl = transcriptionWebhookUrl || "https://n8n-hyib.onrender.com/webhook-test/06598a09-d8be-4e1b-8916-d5123a6cac6d";
           
           // Send to the transcription webhook
           const response = await fetch(webhookUrl, {

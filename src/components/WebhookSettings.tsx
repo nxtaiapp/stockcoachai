@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import { useChat } from "@/context/ChatContext";
 import { toast } from "sonner";
-import { useAuth } from "@/context/AuthContext";
 
 const WebhookSettings = () => {
   const { isAdmin, n8nWebhookUrl, setN8nWebhookUrl, transcriptionWebhookUrl, setTranscriptionWebhookUrl } = useChat();
@@ -48,7 +47,7 @@ const WebhookSettings = () => {
           <Input
             value={aiUrl}
             onChange={(e) => setAiUrl(e.target.value)}
-            placeholder="https://your-n8n-instance.com/webhook/path"
+            placeholder="https://n8n-hyib.onrender.com/webhook-test/06598a09-d8be-4e1b-8916-d5123a6cac6d"
             className="flex-1"
           />
           <Button onClick={handleSaveAI} className="shrink-0">
