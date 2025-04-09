@@ -7,38 +7,30 @@ import ChatContainer from "../components/chat/ChatContainer";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { supabase } from "@/lib/supabase";
-import { useChat } from "../context/ChatContext";
 
-// Component wrapped with ChatProvider that handles auto-session creation
-const ChatContent = () => {
+// Main Chat page component
+const ChatPage = () => {
   const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [checkingMessages, setCheckingMessages] = useState(false);
-  const { canCreateNewChat, clearMessages, hasTodayMessages } = useChat();
 
-  // Auto-create session when component mounts but ONLY if needed and user doesn't have an existing session
+  // Redirect if not logged in
   useEffect(() => {
-    const createSessionIfNeeded = async () => {
-      // Only create a new session if:
-      // 1. We can create a new chat (haven't created one today)
-      // 2. Don't have messages for today
-      // 3. Don't have existing sessions we can use
-      if (canCreateNewChat && !hasTodayMessages) {
-        console.log("Auto-creating new session for today");
-        try {
-          await clearMessages();
-          toast.success("Started a new trading session for today");
-        } catch (error) {
-          console.error("Failed to auto-create session:", error);
+    if (!loading) {
+      if (!user) {
+        navigate("/signin");
+      } else {
+        // If user is logged in and hasn't been to the welcome page yet, 
+        // redirect to welcome
+        const hasVisitedWelcome = sessionStorage.getItem('visited_welcome');
+        if (!hasVisitedWelcome) {
+          sessionStorage.setItem('visited_welcome', 'true');
+          navigate("/welcome");
         }
       }
-    };
-
-    if (user && !loading) {
-      createSessionIfNeeded();
     }
-  }, [user, loading, canCreateNewChat, hasTodayMessages, clearMessages]);
+  }, [user, loading, navigate]);
 
   const checkSupabaseMessages = async () => {
     if (!user?.id) return;
@@ -77,69 +69,34 @@ const ChatContent = () => {
     );
   }
 
-  // Ensure we only render ChatContainer when user is available
+  // Ensure we only render content when user is available
   if (!user) {
-    return null; // Will redirect in the parent component's useEffect
-  }
-
-  return (
-    <>
-      {isAdmin && (
-        <div className="fixed top-20 right-4 z-50">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={checkSupabaseMessages}
-            disabled={checkingMessages}
-            className="bg-background/80 backdrop-blur-sm"
-          >
-            {checkingMessages ? 'Checking...' : 'Debug Messages'}
-          </Button>
-          {debugInfo && (
-            <div className="mt-2 p-3 bg-background/90 backdrop-blur-sm border border-border rounded-md text-sm max-w-[300px] overflow-auto">
-              {debugInfo}
-            </div>
-          )}
-        </div>
-      )}
-      <ChatContainer />
-    </>
-  );
-};
-
-// Main Chat page component
-const ChatPage = () => {
-  const { user, loading } = useAuth();
-  const navigate = useNavigate();
-
-  // Redirect if not logged in
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        navigate("/signin");
-      } else {
-        // If user is logged in and hasn't been to the welcome page yet, 
-        // redirect to welcome
-        const hasVisitedWelcome = sessionStorage.getItem('visited_welcome');
-        if (!hasVisitedWelcome) {
-          sessionStorage.setItem('visited_welcome', 'true');
-          navigate("/welcome");
-        }
-      }
-    }
-  }, [user, loading, navigate]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="h-8 w-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
+    return null; // Will redirect in useEffect
   }
 
   return (
     <ChatProvider>
-      <ChatContent />
+      <>
+        {isAdmin && (
+          <div className="fixed top-20 right-4 z-50">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={checkSupabaseMessages}
+              disabled={checkingMessages}
+              className="bg-background/80 backdrop-blur-sm"
+            >
+              {checkingMessages ? 'Checking...' : 'Debug Messages'}
+            </Button>
+            {debugInfo && (
+              <div className="mt-2 p-3 bg-background/90 backdrop-blur-sm border border-border rounded-md text-sm max-w-[300px] overflow-auto">
+                {debugInfo}
+              </div>
+            )}
+          </div>
+        )}
+        <ChatContainer />
+      </>
     </ChatProvider>
   );
 };
