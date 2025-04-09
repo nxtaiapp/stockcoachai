@@ -21,6 +21,9 @@ export const useChatState = () => {
   const [transcriptionWebhookUrl, setTranscriptionWebhookUrl] = useLocalStorage<string>('transcription_webhook_url', '');
   const navigate = useNavigate();
   
+  // Default webhook URL
+  const defaultWebhookUrl = "https://n8n-hyib.onrender.com/webhook-test/06598a09-d8be-4e1b-8916-d5123a6cac6d";
+  
   const { userTimezone, getCurrentDate } = useTimezone();
   const { messages, setMessages, selectedDate, setSelectedDate } = useChatPersistence(user?.id);
   const { chatDates, filteredMessages, selectDate } = useChatDates(messages, selectedDate, setSelectedDate);
@@ -107,10 +110,14 @@ export const useChatState = () => {
       
       let welcomeContent = "";
       
-      if (n8nWebhookUrl) {
+      // Use provided webhook URL or fall back to the default one
+      const webhookUrl = n8nWebhookUrl || defaultWebhookUrl;
+      
+      if (webhookUrl) {
         try {
+          console.log("Using webhook URL for welcome message:", webhookUrl);
           welcomeContent = await sendMessageToWebhook(
-            n8nWebhookUrl,
+            webhookUrl,
             "Hello, I'd like to start a new session.",
             user.id,
             user.name || 'User',

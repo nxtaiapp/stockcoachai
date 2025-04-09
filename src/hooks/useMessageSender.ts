@@ -29,6 +29,9 @@ export const useMessageSender = (
   
   // Set the message allocation limit
   const allocatedMessages = 100;
+  
+  // Default webhook URL if none is provided
+  const defaultWebhookUrl = "https://n8n-hyib.onrender.com/webhook-test/06598a09-d8be-4e1b-8916-d5123a6cac6d";
 
   // Fetch the current message count for this user
   const { data: messageCount = 0 } = useQuery({
@@ -102,8 +105,11 @@ export const useMessageSender = (
         messageToSend += `\n[Image: ${imageUrl}]`;
       }
       
-      if (!n8nWebhookUrl) {
-        // Fallback to mock response if no webhook URL is provided
+      // Use provided webhook URL or fall back to the default one
+      const webhookUrl = n8nWebhookUrl || defaultWebhookUrl;
+      
+      if (!webhookUrl) {
+        // Fallback to mock response if no webhook URL is available
         console.log("No webhook URL provided, using mock response");
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 1500));
@@ -111,9 +117,10 @@ export const useMessageSender = (
       } else {
         try {
           console.log("Sending message to webhook with type:", messageType);
+          console.log("Using webhook URL:", webhookUrl);
           // Wait for the actual API response
           responseContent = await sendMessageToWebhook(
-            n8nWebhookUrl, 
+            webhookUrl, 
             messageToSend, 
             userId, 
             userName || 'User', 
