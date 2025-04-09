@@ -106,7 +106,7 @@ const Index = () => {
                 <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center mb-6">
                   <LineChart className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Strategy Development</h3>
+                <h3 className="text-xl font-semibold mb-3">Plan Development</h3>
                 <p className="text-muted-foreground">Build and refine your trading strategies with AI-powered recommendations.</p>
               </div>
               <div className="premium-card p-8 rounded-lg animate-slide-up" style={{
