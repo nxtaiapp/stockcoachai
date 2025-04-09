@@ -116,9 +116,7 @@ const Index = () => {
                   <Shield className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Motivation &amp; Discipline</h3>
-                <p className="text-muted-foreground">
-                  Learn effective risk management techniques to protect your capital and maximize returns.
-                </p>
+                <p className="text-muted-foreground">Build the mindset of a consistently successful trader. Strengthen your discipline, stay motivated, and stick to your trading plan.</p>
               </div>
             </div>
           </div>
