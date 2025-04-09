@@ -108,30 +108,22 @@ export const useMessageSender = (
       // Use provided webhook URL or fall back to the default one
       const webhookUrl = n8nWebhookUrl || defaultWebhookUrl;
       
-      if (!webhookUrl) {
-        // Fallback to mock response if no webhook URL is available
-        console.log("No webhook URL provided, using mock response");
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        responseContent = getMockResponse();
-      } else {
-        try {
-          console.log("Sending message to webhook with type:", messageType);
-          console.log("Using webhook URL:", webhookUrl);
-          // Wait for the actual API response
-          responseContent = await sendMessageToWebhook(
-            webhookUrl, 
-            messageToSend, 
-            userId, 
-            userName || 'User', 
-            userEmail || '',
-            messageType
-          );
-          console.log("Received response from webhook:", responseContent);
-        } catch (error) {
-          console.error("Error sending message to webhook:", error);
-          responseContent = "Aw, Snap! Alexandra lost connection to her trading brain. Could be a hiccup in the signal—try refreshing or retrying, and let's get back to chart domination!";
-        }
+      try {
+        console.log("Sending message to webhook with type:", messageType);
+        console.log("Using webhook URL:", webhookUrl);
+        // Wait for the actual API response
+        responseContent = await sendMessageToWebhook(
+          webhookUrl, 
+          messageToSend, 
+          userId, 
+          userName || 'User', 
+          userEmail || '',
+          messageType
+        );
+        console.log("Received response from webhook:", responseContent);
+      } catch (error) {
+        console.error("Error sending message to webhook:", error);
+        responseContent = "Aw, Snap! Alexandra lost connection to her trading brain. Could be a hiccup in the signal—try refreshing or retrying, and let's get back to chart domination!";
       }
       
       // Only add the AI message after we have a response

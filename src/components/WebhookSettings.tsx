@@ -8,8 +8,8 @@ import { toast } from "sonner";
 
 const WebhookSettings = () => {
   const { isAdmin, n8nWebhookUrl, setN8nWebhookUrl, transcriptionWebhookUrl, setTranscriptionWebhookUrl } = useChat();
-  const [aiUrl, setAiUrl] = useState(n8nWebhookUrl);
-  const [transcriptionUrl, setTranscriptionUrl] = useState(transcriptionWebhookUrl);
+  const [aiUrl, setAiUrl] = useState(n8nWebhookUrl || "https://n8n-hyib.onrender.com/webhook/06598a09-d8be-4e1b-8916-d5123a6cac6d");
+  const [transcriptionUrl, setTranscriptionUrl] = useState(transcriptionWebhookUrl || "https://n8n-hyib.onrender.com/webhook/06598a09-d8be-4e1b-8916-d5123a6cac6d");
 
   const handleSaveAI = () => {
     if (!isAdmin) {
@@ -79,7 +79,7 @@ const WebhookSettings = () => {
           <Input
             value={transcriptionUrl}
             onChange={(e) => setTranscriptionUrl(e.target.value)}
-            placeholder="https://your-transcription-api.com/webhook/path"
+            placeholder="https://n8n-hyib.onrender.com/webhook/06598a09-d8be-4e1b-8916-d5123a6cac6d"
             className="flex-1"
           />
           <Button onClick={handleSaveTranscription} className="shrink-0">

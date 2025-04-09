@@ -44,8 +44,8 @@ export async function sendMessageToWebhook(
     
     return responseContent;
   } catch (error) {
-    console.error('Error calling n8n webhook:', error);
-    toast.error("Failed to connect to n8n webhook. Please check the URL and try again.");
+    console.error('Error calling webhook:', error);
+    toast.error("Failed to connect to webhook. Please check the URL and try again.");
     throw error;
   }
 }

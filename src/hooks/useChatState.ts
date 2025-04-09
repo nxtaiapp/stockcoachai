@@ -113,29 +113,20 @@ export const useChatState = () => {
       // Use provided webhook URL or fall back to the default one
       const webhookUrl = n8nWebhookUrl || defaultWebhookUrl;
       
-      if (webhookUrl) {
-        try {
-          console.log("Using webhook URL for welcome message:", webhookUrl);
-          welcomeContent = await sendMessageToWebhook(
-            webhookUrl,
-            "Hello, I'd like to start a new session.",
-            user.id,
-            user.name || 'User',
-            user.email || '',
-            'New'
-          );
-          console.log("Received welcome message from webhook:", welcomeContent);
-        } catch (error) {
-          console.error("Error getting welcome message from webhook:", error);
-          welcomeContent = "Aw, Snap! Alexandra lost connection to her trading brain. Could be a hiccup in the signal—try refreshing or retrying, and let's get back to chart domination!";
-        }
-      } else {
-        const defaultWelcome = getWelcomeMessage(
-          user.name || 'User', 
-          user.skill_level,
-          user.experience_level
+      try {
+        console.log("Using webhook URL for welcome message:", webhookUrl);
+        welcomeContent = await sendMessageToWebhook(
+          webhookUrl,
+          "Hello, I'd like to start a new session.",
+          user.id,
+          user.name || 'User',
+          user.email || '',
+          'New'
         );
-        welcomeContent = defaultWelcome.content;
+        console.log("Received welcome message from webhook:", welcomeContent);
+      } catch (error) {
+        console.error("Error getting welcome message from webhook:", error);
+        welcomeContent = "Aw, Snap! Alexandra lost connection to her trading brain. Could be a hiccup in the signal—try refreshing or retrying, and let's get back to chart domination!";
       }
       
       const welcomeMessage = createAIMessage(welcomeContent);
