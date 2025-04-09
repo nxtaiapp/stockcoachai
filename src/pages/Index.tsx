@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -49,12 +50,12 @@ const Index = () => {
         <section className="py-20 px-6">
           <div className="max-w-7xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight animate-fade-in">
-              Your AI-Powered <span className="text-primary">Trading</span> Coach
+              Your <span className="text-primary">Personal</span> Trading Coach
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-10 animate-fade-in" style={{
             animationDelay: "0.1s"
           }}>
-              Improve your trading decisions with personalized AI guidance, market insights, and expert strategies.
+              Accelerate your growth with AI-powered trade reviews and performance insights — customized just for you.
             </p>
             <div className="flex justify-center animate-fade-in" style={{
             animationDelay: "0.2s"
