@@ -6,26 +6,18 @@ import { Button } from "@/components/ui/button";
 import { BarChart3, ArrowRight, TrendingUp, LineChart, Shield, Zap, LogIn } from "lucide-react";
 
 const Index = () => {
+  const {
+    user
+  } = useAuth();
   const navigate = useNavigate();
-  let user = null;
-  
-  try {
-    // Wrap in try/catch to prevent error on first render before AuthProvider is available
-    const auth = useAuth();
-    user = auth.user;
-  } catch (error) {
-    console.log("Auth context not available yet");
-  }
 
-  // If user is already logged in, redirect to welcome page instead of chat
+  // If user is already logged in, redirect to chat
   useEffect(() => {
     if (user) {
-      navigate("/welcome");
+      navigate("/chat");
     }
   }, [user, navigate]);
-
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <header className="w-full py-4 px-6 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -126,8 +118,6 @@ const Index = () => {
           </div>
         </section>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;

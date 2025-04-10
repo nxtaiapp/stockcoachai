@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase"; // Fixed import path
+import { supabase } from "@/integrations/supabase/client";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
 import { AlertCircle } from "lucide-react";
 
@@ -36,14 +36,6 @@ export const GeoRestriction = ({ children }: { children: React.ReactNode }) => {
           return;
         }
 
-        // Skip the actual location check for now to avoid errors
-        // This is a temporary fix to get the app working
-        console.log("Bypassing location check temporarily");
-        setLocationData({ allowed: true, country: "Unknown", message: "Location check bypassed" });
-        localStorage.setItem("geo-check-timestamp", now.toString());
-        
-        // Comment out the actual Supabase function call for now
-        /*
         console.log("Checking user location...");
         const { data, error } = await supabase.functions.invoke("check-location");
         
@@ -55,13 +47,9 @@ export const GeoRestriction = ({ children }: { children: React.ReactNode }) => {
         setLocationData(data as LocationCheckResult);
         localStorage.setItem("geo-check-timestamp", now.toString());
         console.log("Location check result:", data);
-        */
-        
       } catch (err) {
         console.error("Error checking location:", err);
-        // Provide a fallback to allow the application to continue
-        setLocationData({ allowed: true, country: "Unknown", message: "Location check error, allowing access" });
-        setError(null); // Don't show error to user
+        setError("Failed to verify your location. Please try again later.");
       } finally {
         setLoading(false);
       }

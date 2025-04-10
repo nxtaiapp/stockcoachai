@@ -24,12 +24,12 @@ const SignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Redirect if user is already logged in - this is now handled by useAuthState
+  // Redirect if user is already logged in
   useEffect(() => {
     if (user) {
-      // Navigation will be handled in useAuthState based on onboarding status
+      navigate('/chat');
     }
-  }, [user]);
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +43,7 @@ const SignIn = () => {
     try {
       setIsLoading(true);
       await signIn(email, password);
-      // Navigation is handled in the auth state change listener in useAuthState
+      // Navigation is handled in the AuthContext after successful sign-in
     } catch (err) {
       console.error("Sign in error:", err);
       setError("Invalid email or password. Please try again.");

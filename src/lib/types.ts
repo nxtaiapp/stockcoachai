@@ -9,8 +9,6 @@ export type UserProfile = {
   experience_level?: string;
   trading_style?: string;
   skill_level?: string;
-  trading_goals?: string;
-  trading_plan?: string;
   created_at?: string;
   updated_at?: string;
 }

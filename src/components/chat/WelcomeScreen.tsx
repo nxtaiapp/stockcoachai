@@ -39,20 +39,15 @@ const WelcomeScreen = ({ onStartChat }: WelcomeScreenProps) => {
   );
 
   const handleStartChat = async () => {
-    try {
-      // If we can create a new session, clear messages to generate the welcome message
-      if (canCreateNewChat) {
-        await clearMessages();
-      }
-      
-      // Set session storage flag to prevent redirect loop
-      sessionStorage.setItem('visited_welcome', 'true');
-      
-      // Navigate directly to the chat page
+    // If we can create a new session, clear messages to generate the welcome message
+    if (canCreateNewChat) {
+      await clearMessages();
+    } else {
+      // If continuing existing session, navigate directly to chat without creating a new session
       navigate("/chat");
-    } catch (error) {
-      console.error("Error starting chat session:", error);
+      return;
     }
+    onStartChat();
   };
   
   return (
