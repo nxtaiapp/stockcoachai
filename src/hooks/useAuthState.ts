@@ -4,11 +4,13 @@ import { supabase } from '@/lib/supabase';
 import type { UserProfile } from '@/lib/types';
 import { fetchUserProfile } from '@/services/authService';
 import { User } from '@supabase/supabase-js';
+import { useNavigate } from 'react-router-dom';
 
 export const useAuthState = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
 
   // Initialize auth state from Supabase session
   useEffect(() => {
@@ -30,6 +32,12 @@ export const useAuthState = () => {
           
           setUser(profile);
           setIsAdmin(userIsAdmin);
+
+          // Check if this is a new user requiring onboarding
+          // If trading_goals or experience_level aren't set, direct to onboarding
+          if (profile && (!profile.trading_goals || !profile.experience_level)) {
+            navigate('/onboarding');
+          }
         } else {
           setUser(null);
           setIsAdmin(false);
@@ -58,6 +66,14 @@ export const useAuthState = () => {
           
           setUser(profile);
           setIsAdmin(userIsAdmin);
+
+          // Check if this is a new user or session that needs onboarding
+          if (event === 'SIGNED_IN' && profile && (!profile.trading_goals || !profile.experience_level)) {
+            navigate('/onboarding');
+          } else if (event === 'SIGNED_IN') {
+            // If user has completed onboarding, send to chat
+            navigate('/chat');
+          }
         } else {
           setUser(null);
           setIsAdmin(false);
@@ -69,7 +85,7 @@ export const useAuthState = () => {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [navigate]);
 
   return { user, isAdmin, loading, setUser };
 };
