@@ -1,4 +1,3 @@
-
 import { createContext, useContext, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
@@ -30,7 +29,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await signUpUser(email, password, name, experience, tradingStyle, skillLevel);
       toast.success("Account created successfully!");
-      // Store email in localStorage for the confirmation page
       localStorage.setItem("signupEmail", email);
       navigate('/email-confirmation');
     } catch (error) {
@@ -47,8 +45,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signIn = async (email: string, password: string) => {
     try {
       await signInUser(email, password);
-      // Success toast and navigation is done after authentication state changes
-      // The profile fetching is handled by the auth state change listener
     } catch (error) {
       console.error('Error signing in:', error);
       if (error instanceof AuthError) {
@@ -72,21 +68,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     try {
-      // Even if there's no active session, we'll always clear local state
-      // This ensures the user is signed out from the application perspective
       setUser(null);
-      
-      // Then try to sign out from Supabase
       await signOutUser();
       toast.success("Signed out successfully");
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
-      
-      // If we already cleared the local state, we can still consider this a successful sign out
-      // from the user's perspective, even if the backend failed
       if (error instanceof AuthError && error.message.includes('session')) {
-        // The user is effectively signed out locally, so still show success and redirect
         toast.success("Signed out successfully");
         navigate('/');
       } else {
@@ -96,24 +84,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const setUserData = async (data: Partial<typeof user>) => {
-    if (!user) return;
+  const setUserData = async (data: Partial<typeof user>): Promise<boolean> => {
+    if (!user) return false;
 
     try {
       console.log("Updating user profile with data:", data);
       const success = await updateUserProfile(user.id, data);
       
       if (success) {
-        // Update local state
         setUser({ ...user, ...data });
         toast.success("Profile updated successfully");
+        return true;
       } else {
         throw new Error("Failed to update profile");
       }
     } catch (error) {
       console.error('Error updating user data:', error);
       toast.error("Failed to update profile data");
-      throw error;
+      return false;
     }
   };
 
