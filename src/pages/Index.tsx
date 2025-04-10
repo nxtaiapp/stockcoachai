@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -11,10 +10,10 @@ const Index = () => {
   } = useAuth();
   const navigate = useNavigate();
 
-  // If user is already logged in, redirect to chat
+  // If user is already logged in, redirect to welcome page instead of chat
   useEffect(() => {
     if (user) {
-      navigate("/chat");
+      navigate("/welcome");
     }
   }, [user, navigate]);
   return <div className="min-h-screen flex flex-col">

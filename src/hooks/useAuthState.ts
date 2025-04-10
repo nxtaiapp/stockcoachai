@@ -71,8 +71,8 @@ export const useAuthState = () => {
           if (event === 'SIGNED_IN' && profile && (!profile.trading_goals || !profile.experience_level)) {
             navigate('/onboarding');
           } else if (event === 'SIGNED_IN') {
-            // If user has completed onboarding, send to chat
-            navigate('/chat');
+            // Direct users to welcome/dashboard page instead of chat
+            navigate('/welcome');
           }
         } else {
           setUser(null);

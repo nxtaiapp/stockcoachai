@@ -1,4 +1,3 @@
-
 import React from "react";
 import { BarChart3, ArrowRight, LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
