@@ -230,24 +230,20 @@ const Onboarding = () => {
                         Do you currently have a trading plan?
                       </FormLabel>
                       <div className="flex gap-4 mt-2">
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem 
-                            id="has-plan-yes" 
-                            value="yes" 
-                            checked={field.value === true}
-                            onClick={() => form.setValue("has_trading_plan", true)}
-                          />
-                          <Label htmlFor="has-plan-yes">Yes</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem 
-                            id="has-plan-no" 
-                            value="no" 
-                            checked={field.value === false}
-                            onClick={() => form.setValue("has_trading_plan", false)}
-                          />
-                          <Label htmlFor="has-plan-no">No</Label>
-                        </div>
+                        <RadioGroup
+                          value={field.value ? "yes" : "no"}
+                          onValueChange={(value) => form.setValue("has_trading_plan", value === "yes")}
+                          className="flex gap-4"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem id="has-plan-yes" value="yes" />
+                            <Label htmlFor="has-plan-yes">Yes</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem id="has-plan-no" value="no" />
+                            <Label htmlFor="has-plan-no">No</Label>
+                          </div>
+                        </RadioGroup>
                       </div>
                       <FormMessage />
                     </FormItem>
