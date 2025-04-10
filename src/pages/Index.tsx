@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { BarChart3, ArrowRight, TrendingUp, LineChart, Shield, Zap } from "lucide-react";
+import { BarChart3, ArrowRight, TrendingUp, LineChart, Shield, Zap, LogIn } from "lucide-react";
 
 const Index = () => {
   const {
@@ -26,8 +26,12 @@ const Index = () => {
             <span className="font-semibold text-xl">StockCoach.ai</span>
           </div>
           <div className="flex items-center gap-4">
+            <Button variant="outline" onClick={() => navigate("/signin")} className="gap-2">
+              <LogIn className="h-4 w-4" />
+              Sign In
+            </Button>
             <Button onClick={() => navigate("/signup")}>
-              Sign up for Free Beta
+              Get Free Early Access
             </Button>
           </div>
         </div>
@@ -49,7 +53,7 @@ const Index = () => {
             animationDelay: "0.2s"
           }}>
               <Button size="lg" className="gap-2 text-lg" onClick={() => navigate("/signup")}>
-                Sign up for Free Beta <ArrowRight className="h-5 w-5" />
+                Get Free Early Access <ArrowRight className="h-5 w-5" />
               </Button>
             </div>
             <p className="text-sm text-muted-foreground mt-4 animate-fade-in" style={{
@@ -105,7 +109,7 @@ const Index = () => {
             </p>
             <div className="flex justify-center">
               <Button size="lg" className="gap-2 text-lg" onClick={() => navigate("/signup")}>
-                Sign up for Free Beta <Zap className="h-5 w-5" />
+                Get Free Early Access <Zap className="h-5 w-5" />
               </Button>
             </div>
             <p className="text-sm text-muted-foreground mt-4">
