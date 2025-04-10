@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -10,26 +9,24 @@ import { supabase } from "@/lib/supabase";
 
 // Main Chat page component
 const ChatPage = () => {
-  const { user, loading, isAdmin } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [debugInfo, setDebugInfo] = useState<string | null>(null);
   const [checkingMessages, setCheckingMessages] = useState(false);
+  const { isAdmin } = useAuth();
 
   // Redirect if not logged in
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        navigate("/signin");
-      } else {
-        // If user is logged in and hasn't been to the welcome page yet, 
-        // redirect to welcome
-        const hasVisitedWelcome = sessionStorage.getItem('visited_welcome');
-        if (!hasVisitedWelcome) {
-          sessionStorage.setItem('visited_welcome', 'true');
-          navigate("/welcome");
+    const checkAuth = async () => {
+      if (!loading) {
+        if (!user) {
+          // User is not authenticated, redirect to signin
+          navigate("/signin");
         }
       }
-    }
+    };
+    
+    checkAuth();
   }, [user, loading, navigate]);
 
   const checkSupabaseMessages = async () => {

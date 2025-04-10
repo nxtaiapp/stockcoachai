@@ -31,13 +31,17 @@ const WelcomeContent = () => {
   const welcomeMessage = getWelcomeMessageContent(firstName, user?.skill_level, user?.experience_level);
   
   const handleStartChat = async () => {
-    if (canCreateNewChat) {
-      await clearMessages();
-    } else {
+    try {
+      if (canCreateNewChat) {
+        await clearMessages();
+      }
+      // Set session storage flag to prevent redirect loop
+      sessionStorage.setItem('visited_welcome', 'true');
+      // Navigate to chat page
       navigate("/chat");
-      return;
+    } catch (error) {
+      console.error("Error starting chat session:", error);
     }
-    navigate("/chat");
   };
 
   const quickActions = [{
