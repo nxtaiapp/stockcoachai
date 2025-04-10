@@ -1,10 +1,10 @@
+
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { BarChart3, ArrowRight, TrendingUp, LineChart, Shield, Zap } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { WaitlistForm } from "@/components/WaitlistForm";
+
 const Index = () => {
   const {
     user
@@ -26,20 +26,9 @@ const Index = () => {
             <span className="font-semibold text-xl">StockCoach.ai</span>
           </div>
           <div className="flex items-center gap-4">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button>Join Waitlist</Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[550px] max-h-[90vh]">
-                <DialogHeader>
-                  <DialogTitle>Join Our Waitlist</DialogTitle>
-                  <DialogDescription>
-                    Thanks for your interest in StockCoach.ai! We're currently in closed beta. Fill out this form to join our waitlist.
-                  </DialogDescription>
-                </DialogHeader>
-                <WaitlistForm />
-              </DialogContent>
-            </Dialog>
+            <Button onClick={() => navigate("/signup")}>
+              Sign up for Free Beta
+            </Button>
           </div>
         </div>
       </header>
@@ -59,27 +48,14 @@ const Index = () => {
             <div className="flex justify-center animate-fade-in" style={{
             animationDelay: "0.2s"
           }}>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button size="lg" className="gap-2 text-lg">
-                    Join Our Waitlist <ArrowRight className="h-5 w-5" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[550px] max-h-[90vh]">
-                  <DialogHeader>
-                    <DialogTitle>Join Our Waitlist</DialogTitle>
-                    <DialogDescription>
-                      We're currently in closed beta. Fill out this form to join our waitlist and be notified when spots become available.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <WaitlistForm />
-                </DialogContent>
-              </Dialog>
+              <Button size="lg" className="gap-2 text-lg" onClick={() => navigate("/signup")}>
+                Sign up for Free Beta <ArrowRight className="h-5 w-5" />
+              </Button>
             </div>
             <p className="text-sm text-muted-foreground mt-4 animate-fade-in" style={{
             animationDelay: "0.3s"
           }}>
-              Limited spots available. Join the waitlist today.
+              Limited spots available. Sign up today.
             </p>
           </div>
         </section>
@@ -96,7 +72,7 @@ const Index = () => {
                   <TrendingUp className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Trade Analysis</h3>
-                <p className="text-muted-foreground">Uncover what’s working and what’s not. Get deep, AI-powered insights into your trades so you can fine-tune your strategy and improve faster.</p>
+                <p className="text-muted-foreground">Uncover what's working and what's not. Get deep, AI-powered insights into your trades so you can fine-tune your strategy and improve faster.</p>
               </div>
               <div className="premium-card p-8 rounded-lg animate-slide-up" style={{
               animationDelay: "0.2s"
@@ -120,9 +96,6 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Testimonials */}
-        
-
         {/* CTA */}
         <section className="py-20 px-6 bg-primary/5">
           <div className="max-w-3xl mx-auto text-center">
@@ -131,22 +104,9 @@ const Index = () => {
               Join thousands of traders who are improving their skills and results with StockCoach.ai
             </p>
             <div className="flex justify-center">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button size="lg" className="gap-2 text-lg">
-                    Join Our Waitlist <Zap className="h-5 w-5" />
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[550px] max-h-[90vh]">
-                  <DialogHeader>
-                    <DialogTitle>Join Our Waitlist</DialogTitle>
-                    <DialogDescription>
-                      StockCoach.ai is currently available by invitation only. Fill out this form to join our waitlist.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <WaitlistForm />
-                </DialogContent>
-              </Dialog>
+              <Button size="lg" className="gap-2 text-lg" onClick={() => navigate("/signup")}>
+                Sign up for Free Beta <Zap className="h-5 w-5" />
+              </Button>
             </div>
             <p className="text-sm text-muted-foreground mt-4">
               Limited availability. Priority access for serious traders.
