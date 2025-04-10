@@ -4,14 +4,13 @@ import { supabase } from '@/lib/supabase';
 import type { UserProfile } from '@/lib/types';
 import { fetchUserProfile } from '@/services/authService';
 import { User } from '@supabase/supabase-js';
-import { useNavigate } from 'react-router-dom';
+import { NavigateFunction } from 'react-router-dom';
 import { toast } from 'sonner';
 
-export const useAuthState = () => {
+export const useAuthState = (navigate?: NavigateFunction) => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const navigate = useNavigate();
 
   // Initialize auth state from Supabase session
   useEffect(() => {
@@ -63,7 +62,7 @@ export const useAuthState = () => {
           setIsAdmin(userIsAdmin);
 
           // Handle newly signed in user or session changes
-          if (event === 'SIGNED_IN') {
+          if (event === 'SIGNED_IN' && navigate) {
             // If profile exists but doesn't have experience_level, direct to onboarding
             if (profile && !profile.experience_level) {
               navigate('/onboarding');

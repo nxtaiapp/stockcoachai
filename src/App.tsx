@@ -34,8 +34,8 @@ const App = () => {
         <Toaster />
         <Sonner />
         <GeoRestriction>
-          <BrowserRouter>
-            <AuthProvider>
+          <AuthProvider>
+            <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/signin" element={<SignIn />} />
@@ -54,8 +54,8 @@ const App = () => {
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Footer />
-            </AuthProvider>
-          </BrowserRouter>
+            </BrowserRouter>
+          </AuthProvider>
         </GeoRestriction>
       </TooltipProvider>
     </QueryClientProvider>

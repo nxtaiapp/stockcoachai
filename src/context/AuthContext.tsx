@@ -1,3 +1,4 @@
+
 import { createContext, useContext, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
@@ -15,8 +16,8 @@ import { AuthError } from '@supabase/supabase-js';
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { user, isAdmin, loading, setUser } = useAuthState();
   const navigate = useNavigate();
+  const { user, isAdmin, loading, setUser } = useAuthState(navigate);
 
   const signUp = async (
     email: string, 
