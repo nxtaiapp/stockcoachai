@@ -11,13 +11,15 @@ const Index = () => {
   } = useAuth();
   const navigate = useNavigate();
 
-  // If user is already logged in, redirect to chat
+  // If user is already logged in, redirect to welcome dashboard instead of chat
   useEffect(() => {
     if (user) {
-      navigate("/chat");
+      navigate("/welcome");
     }
   }, [user, navigate]);
-  return <div className="min-h-screen flex flex-col">
+  
+  return (
+    <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
       <header className="w-full py-4 px-6 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -118,6 +120,7 @@ const Index = () => {
           </div>
         </section>
       </main>
-    </div>;
+    </div>
+  );
 };
 export default Index;

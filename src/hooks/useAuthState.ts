@@ -3,12 +3,13 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import type { UserProfile } from '@/lib/types';
 import { fetchUserProfile } from '@/services/authService';
-import { User } from '@supabase/supabase-js';
+import { useNavigate } from 'react-router-dom';
 
 export const useAuthState = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
 
   // Initialize auth state from Supabase session
   useEffect(() => {
@@ -30,6 +31,12 @@ export const useAuthState = () => {
           
           setUser(profile);
           setIsAdmin(userIsAdmin);
+          
+          // If the user was on signin or signup page, redirect to welcome dashboard
+          const currentPath = window.location.pathname;
+          if (currentPath === "/signin" || currentPath === "/signup") {
+            navigate("/welcome");
+          }
         } else {
           setUser(null);
           setIsAdmin(false);
@@ -48,7 +55,7 @@ export const useAuthState = () => {
     // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (session?.user) {
+        if (event === 'SIGNED_IN' && session?.user) {
           const { profile, isAdmin: userIsAdmin } = await fetchUserProfile(session.user);
           
           // Same name validation as above
@@ -58,18 +65,22 @@ export const useAuthState = () => {
           
           setUser(profile);
           setIsAdmin(userIsAdmin);
-        } else {
+          setLoading(false);
+          
+          // Redirect to welcome page on successful sign in
+          navigate("/welcome");
+        } else if (event === 'SIGNED_OUT') {
           setUser(null);
           setIsAdmin(false);
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [navigate]);
 
   return { user, isAdmin, loading, setUser };
 };

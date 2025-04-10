@@ -27,7 +27,7 @@ const SignIn = () => {
   // Redirect if user is already logged in
   useEffect(() => {
     if (user) {
-      navigate('/chat');
+      navigate('/welcome');
     }
   }, [user, navigate]);
 
@@ -43,7 +43,7 @@ const SignIn = () => {
     try {
       setIsLoading(true);
       await signIn(email, password);
-      // Navigation is handled in the AuthContext after successful sign-in
+      // Navigation is handled in the AuthContext after successful sign-in to /welcome
     } catch (err) {
       console.error("Sign in error:", err);
       setError("Invalid email or password. Please try again.");

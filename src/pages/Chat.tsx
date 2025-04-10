@@ -20,14 +20,6 @@ const ChatPage = () => {
     if (!loading) {
       if (!user) {
         navigate("/signin");
-      } else {
-        // If user is logged in and hasn't been to the welcome page yet, 
-        // redirect to welcome
-        const hasVisitedWelcome = sessionStorage.getItem('visited_welcome');
-        if (!hasVisitedWelcome) {
-          sessionStorage.setItem('visited_welcome', 'true');
-          navigate("/welcome");
-        }
       }
     }
   }, [user, loading, navigate]);
