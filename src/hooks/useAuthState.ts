@@ -33,12 +33,6 @@ export const useAuthState = () => {
           
           setUser(profile);
           setIsAdmin(userIsAdmin);
-
-          // Check if this is a new user requiring onboarding
-          // If experience_level isn't set, direct to onboarding
-          if (profile && !profile.experience_level) {
-            navigate('/onboarding');
-          }
         } else {
           setUser(null);
           setIsAdmin(false);
@@ -68,12 +62,15 @@ export const useAuthState = () => {
           setUser(profile);
           setIsAdmin(userIsAdmin);
 
-          // Check if this is a new user or session that needs onboarding
-          if (event === 'SIGNED_IN' && profile && !profile.experience_level) {
-            navigate('/onboarding');
-          } else if (event === 'SIGNED_IN') {
-            // Direct users to welcome/dashboard page instead of chat
-            navigate('/welcome');
+          // Handle newly signed in user or session changes
+          if (event === 'SIGNED_IN') {
+            // If profile exists but doesn't have experience_level, direct to onboarding
+            if (profile && !profile.experience_level) {
+              navigate('/onboarding');
+            } else {
+              // User has completed onboarding, direct to dashboard
+              navigate('/welcome');
+            }
           }
         } else {
           setUser(null);

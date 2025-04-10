@@ -46,12 +46,17 @@ export const OnboardingForm = () => {
       console.log('Submitting profile data:', profileData);
       
       // Update user profile with form data
-      await setUserData(profileData);
+      const success = await setUserData(profileData);
+      
+      if (!success) {
+        throw new Error("Failed to save onboarding data");
+      }
       
       // Navigate based on trading plan selection
       if (values.has_trading_plan) {
         navigate("/trading-plan");
       } else {
+        // After onboarding, always redirect to the welcome dashboard
         navigate("/welcome");
       }
     } catch (err) {

@@ -1,3 +1,4 @@
+
 import React from "react";
 import { BarChart3, ArrowRight, LineChart, PieChart, Star, BookOpen, Settings, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +9,6 @@ import { ChatProvider } from "@/context/ChatContext";
 import { useChat } from "@/context/ChatContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import Header from "../components/Header";
 
 const WelcomeContent = () => {
   const { user, signOut } = useAuth();
@@ -63,7 +63,8 @@ const WelcomeContent = () => {
     onClick: () => navigate("/profile")
   }];
   
-  return <div className="min-h-screen bg-background pb-10">
+  return (
+    <div className="min-h-screen bg-background pb-10">
       <div className="bg-card border-b border-border">
         <div className="container mx-auto px-4 py-6 flex justify-between items-center">
           <div>
@@ -122,9 +123,11 @@ const WelcomeContent = () => {
                   <ArrowRight className="h-5 w-5" />
                 </Button>
                 
-                {!canCreateNewChat && <p className="text-sm text-muted-foreground mt-2">
+                {!canCreateNewChat && (
+                  <p className="text-sm text-muted-foreground mt-2">
                     You already have a session for today.
-                  </p>}
+                  </p>
+                )}
               </CardFooter>
             </Card>
             
@@ -182,13 +185,16 @@ const WelcomeContent = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
 
 const WelcomePage = () => {
-  return <ChatProvider>
+  return (
+    <ChatProvider>
       <WelcomeContent />
-    </ChatProvider>;
+    </ChatProvider>
+  );
 };
 
 export default WelcomePage;

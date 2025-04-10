@@ -24,11 +24,10 @@ const SignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Redirect if user is already logged in
+  // Redirect if user is already logged in - this is now handled by useAuthState
   useEffect(() => {
     if (user) {
-      // Navigation to specific routes now handled in useAuthState
-      // based on user onboarding status
+      // Navigation will be handled in useAuthState based on onboarding status
     }
   }, [user]);
 
@@ -44,7 +43,7 @@ const SignIn = () => {
     try {
       setIsLoading(true);
       await signIn(email, password);
-      // Navigation is now handled in the auth state change listener
+      // Navigation is handled in the auth state change listener in useAuthState
     } catch (err) {
       console.error("Sign in error:", err);
       setError("Invalid email or password. Please try again.");
