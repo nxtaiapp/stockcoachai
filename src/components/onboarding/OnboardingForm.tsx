@@ -39,17 +39,14 @@ export const OnboardingForm = () => {
       const profileData = {
         experience_level: values.experience_level,
         trading_style: values.trading_style,
-        skill_level: values.experience_level // Map experience_level to skill_level for consistency
+        skill_level: values.experience_level, // Map experience_level to skill_level for consistency
+        trading_goals: values.trading_goals // Include trading_goals
       };
       
       console.log('Submitting profile data:', profileData);
       
       // Update user profile with form data
-      const success = await setUserData(profileData);
-      
-      if (!success) {
-        throw new Error('Failed to save your preferences');
-      }
+      await setUserData(profileData);
       
       // Navigate based on trading plan selection
       if (values.has_trading_plan) {

@@ -16,7 +16,7 @@ export interface AuthContextType {
   ) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  setUserData: (data: Partial<UserProfile>) => Promise<void>;
+  setUserData: (data: Partial<UserProfile>) => Promise<boolean>;
   resendVerificationEmail: (email: string) => Promise<boolean>;
 }
 
