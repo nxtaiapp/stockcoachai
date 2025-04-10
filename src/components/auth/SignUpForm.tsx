@@ -10,7 +10,6 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { UserInfoForm } from "./UserInfoForm";
-import { ExperienceForm } from "./ExperienceForm";
 import { SignUpFormFooter } from "./SignUpFormFooter";
 
 export const SignUpForm = () => {
@@ -20,9 +19,6 @@ export const SignUpForm = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [experience, setExperience] = useState("");
-  const [tradingStyle, setTradingStyle] = useState("");
-  const [skillLevel, setSkillLevel] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -30,7 +26,7 @@ export const SignUpForm = () => {
     e.preventDefault();
     setError("");
     
-    if (!firstName || !lastName || !email || !password || !experience || !tradingStyle || !skillLevel) {
+    if (!firstName || !lastName || !email || !password) {
       setError("Please fill in all fields");
       return;
     }
@@ -38,7 +34,12 @@ export const SignUpForm = () => {
     try {
       setIsLoading(true);
       const fullName = `${firstName} ${lastName}`.trim();
-      await signUp(email, password, fullName, experience, tradingStyle, skillLevel);
+      // Default values for the removed fields
+      const defaultExperience = "beginner";
+      const defaultTradingStyle = "long-term";
+      const defaultSkillLevel = "beginner";
+      
+      await signUp(email, password, fullName, defaultExperience, defaultTradingStyle, defaultSkillLevel);
       // Navigate is handled in the AuthContext after successful sign-up
     } catch (err) {
       setError("An error occurred during registration. Please try again.");
@@ -51,7 +52,7 @@ export const SignUpForm = () => {
       <CardHeader>
         <CardTitle className="text-2xl">Create your account</CardTitle>
         <CardDescription>
-          Start your 14-day free trial. No credit card required.
+          No credit card required.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -71,15 +72,6 @@ export const SignUpForm = () => {
             setLastName={setLastName}
             setEmail={setEmail}
             setPassword={setPassword}
-          />
-          
-          <ExperienceForm
-            experience={experience}
-            tradingStyle={tradingStyle}
-            skillLevel={skillLevel}
-            setExperience={setExperience}
-            setTradingStyle={setTradingStyle}
-            setSkillLevel={setSkillLevel}
           />
           
           <SignUpFormFooter isLoading={isLoading} />
