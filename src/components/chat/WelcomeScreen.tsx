@@ -1,3 +1,4 @@
+
 import React from "react";
 import { BarChart3, ArrowRight, LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
@@ -47,8 +48,8 @@ const WelcomeScreen = ({ onStartChat }: WelcomeScreenProps) => {
       // Set session storage flag to prevent redirect loop
       sessionStorage.setItem('visited_welcome', 'true');
       
-      // Call the onStartChat handler or navigate directly
-      onStartChat();
+      // Navigate directly to the chat page
+      navigate("/chat");
     } catch (error) {
       console.error("Error starting chat session:", error);
     }

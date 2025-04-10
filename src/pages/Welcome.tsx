@@ -35,9 +35,11 @@ const WelcomeContent = () => {
       if (canCreateNewChat) {
         await clearMessages();
       }
+      
       // Set session storage flag to prevent redirect loop
       sessionStorage.setItem('visited_welcome', 'true');
-      // Navigate to chat page
+      
+      // Navigate to chat page with flag to ensure we don't get redirected back
       navigate("/chat");
     } catch (error) {
       console.error("Error starting chat session:", error);
