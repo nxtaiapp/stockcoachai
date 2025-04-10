@@ -1,3 +1,4 @@
+
 import { supabase } from '@/lib/supabase';
 import type { UserProfile } from '@/lib/types';
 import { User } from '@supabase/supabase-js';
@@ -145,6 +146,16 @@ export const signUpUser = async (
 
   if (error) throw error;
   return authUser || null;
+};
+
+// Resend verification email
+export const resendVerificationEmail = async (email: string): Promise<void> => {
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email
+  });
+  
+  if (error) throw error;
 };
 
 // Sign in an existing user

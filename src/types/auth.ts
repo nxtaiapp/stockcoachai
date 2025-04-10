@@ -17,6 +17,7 @@ export interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   setUserData: (data: Partial<UserProfile>) => Promise<void>;
+  resendVerificationEmail: (email: string) => Promise<boolean>;
 }
 
 export type AuthActionError = AuthError | Error | unknown;
