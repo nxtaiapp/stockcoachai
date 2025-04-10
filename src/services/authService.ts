@@ -19,6 +19,7 @@ export const createProfile = async (authUser: User): Promise<UserProfile | null>
         experience_level: userData.experience_level || 'beginner',
         trading_style: userData.trading_style || 'long-term',
         skill_level: userData.skill_level || 'beginner',
+        trading_goals: userData.trading_goals || '',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       });
@@ -99,7 +100,10 @@ export const fetchUserProfile = async (authUser: User): Promise<{
 // Update user profile data
 export const updateUserProfile = async (userId: string, data: Partial<UserProfile>): Promise<boolean> => {
   try {
-    const { error } = await supabase
+    console.log('Updating user profile with data:', data);
+    
+    // Check which fields exist in the profiles table before updating
+    const { error: updateError } = await supabase
       .from('profiles')
       .update({
         ...data,
@@ -107,7 +111,11 @@ export const updateUserProfile = async (userId: string, data: Partial<UserProfil
       })
       .eq('id', userId);
 
-    if (error) throw error;
+    if (updateError) {
+      console.error('Error updating user profile:', updateError);
+      throw updateError;
+    }
+    
     return true;
   } catch (error) {
     console.error('Error updating user profile:', error);

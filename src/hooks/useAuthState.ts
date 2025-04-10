@@ -5,6 +5,7 @@ import type { UserProfile } from '@/lib/types';
 import { fetchUserProfile } from '@/services/authService';
 import { User } from '@supabase/supabase-js';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export const useAuthState = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -34,8 +35,8 @@ export const useAuthState = () => {
           setIsAdmin(userIsAdmin);
 
           // Check if this is a new user requiring onboarding
-          // If trading_goals or experience_level aren't set, direct to onboarding
-          if (profile && (!profile.trading_goals || !profile.experience_level)) {
+          // If experience_level isn't set, direct to onboarding
+          if (profile && !profile.experience_level) {
             navigate('/onboarding');
           }
         } else {
@@ -68,7 +69,7 @@ export const useAuthState = () => {
           setIsAdmin(userIsAdmin);
 
           // Check if this is a new user or session that needs onboarding
-          if (event === 'SIGNED_IN' && profile && (!profile.trading_goals || !profile.experience_level)) {
+          if (event === 'SIGNED_IN' && profile && !profile.experience_level) {
             navigate('/onboarding');
           } else if (event === 'SIGNED_IN') {
             // Direct users to welcome/dashboard page instead of chat

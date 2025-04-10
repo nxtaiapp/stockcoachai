@@ -35,20 +35,31 @@ export const OnboardingForm = () => {
     try {
       setIsSubmitting(true);
       
-      await setUserData({
+      // Only include fields that are actually in the database schema
+      const profileData = {
+        experience_level: values.experience_level,
         trading_style: values.trading_style,
-        skill_level: values.experience_level,
-        trading_goals: values.trading_goals
-      });
+        skill_level: values.experience_level // Map experience_level to skill_level for consistency
+      };
       
+      console.log('Submitting profile data:', profileData);
+      
+      // Update user profile with form data
+      const success = await setUserData(profileData);
+      
+      if (!success) {
+        throw new Error('Failed to save your preferences');
+      }
+      
+      // Navigate based on trading plan selection
       if (values.has_trading_plan) {
         navigate("/trading-plan");
       } else {
         navigate("/welcome");
       }
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to save your preferences");
+      console.error('Error submitting form:', err);
+      toast.error("Failed to save your preferences. Please try again.");
       setIsSubmitting(false);
     }
   };
