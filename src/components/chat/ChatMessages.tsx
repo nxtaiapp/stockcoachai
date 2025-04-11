@@ -1,11 +1,13 @@
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import { Message } from "../../context/ChatContext";
 import ChatMessage from "../ChatMessage";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, Bug } from "lucide-react";
 import { useChat } from "../../context/ChatContext";
 import PromptSuggestions from "./PromptSuggestions";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface ChatMessagesProps {
   messages: Message[];
@@ -13,8 +15,15 @@ interface ChatMessagesProps {
 }
 
 const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
-  const { selectedDate, isTodaySession, hasTodayMessages } = useChat();
+  const { 
+    selectedDate, 
+    isTodaySession, 
+    hasTodayMessages,
+    selectDate,
+    chatDates 
+  } = useChat();
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [showDebug, setShowDebug] = useState(false);
   
   // Filter messages by selected date
   const filteredMessages = messages.filter(message => {
@@ -29,12 +38,20 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
     }
   }, [filteredMessages]);
   
+  const showTodaysChat = () => {
+    const todayDate = new Date().toISOString().split('T')[0];
+    console.log("Manually selecting today's date:", todayDate);
+    selectDate(todayDate);
+    toast.success("Showing today's chat");
+  };
+  
   console.log("ChatMessages rendering with:", { 
     isTodaySession,
     hasTodayMessages,
     selectedDate,
     filteredMessagesLength: filteredMessages.length,
-    showWelcomeScreen: isTodaySession && filteredMessages.length === 0
+    showWelcomeScreen: isTodaySession && filteredMessages.length === 0,
+    availableDates: chatDates
   });
 
   return (
@@ -44,9 +61,26 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
       style={{ overscrollBehavior: "none" }}
     >
       {filteredMessages.length === 0 ? (
-        <EmptyChatState />
+        <EmptyChatState showDebug={showDebug} setShowDebug={setShowDebug} showTodaysChat={showTodaysChat} />
       ) : (
         <div className="max-w-3xl mx-auto">
+          {showDebug && (
+            <div className="bg-yellow-100 p-3 rounded-md mb-4 text-sm">
+              <p>Current date: {selectedDate}</p>
+              <p>Today's session: {isTodaySession ? "Yes" : "No"}</p>
+              <p>Has messages today: {hasTodayMessages ? "Yes" : "No"}</p>
+              <p>Available dates: {chatDates.join(', ')}</p>
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                className="mt-2"
+                onClick={showTodaysChat}
+              >
+                Show Today's Chat
+              </Button>
+            </div>
+          )}
+          
           {filteredMessages.map((message, index) => (
             <ChatMessage 
               key={message.id} 
@@ -61,18 +95,54 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
   );
 };
 
-const EmptyChatState = () => {
-  const { isTodaySession, hasTodayMessages, selectedDate } = useChat();
+const EmptyChatState = ({ showDebug, setShowDebug, showTodaysChat }: {
+  showDebug: boolean;
+  setShowDebug: (value: boolean) => void;
+  showTodaysChat: () => void;
+}) => {
+  const { isTodaySession, hasTodayMessages, selectedDate, chatDates } = useChat();
   
   console.log("EmptyChatState rendering with:", { 
     isTodaySession, 
     hasTodayMessages,
-    selectedDate
+    selectedDate,
+    availableDates: chatDates
   });
   
   // Show prompt suggestions when viewing today's session and there are no messages
   if (isTodaySession) {
-    return <PromptSuggestions />;
+    return (
+      <>
+        {showDebug && (
+          <div className="max-w-3xl mx-auto bg-yellow-100 p-3 rounded-md mb-4 text-sm">
+            <p>Current date: {selectedDate}</p>
+            <p>Today's session: {isTodaySession ? "Yes" : "No"}</p>
+            <p>Has messages today: {hasTodayMessages ? "Yes" : "No"}</p>
+            <p>Available dates: {chatDates.join(', ')}</p>
+            <Button 
+              variant="secondary" 
+              size="sm" 
+              className="mt-2"
+              onClick={showTodaysChat}
+            >
+              Show Today's Chat
+            </Button>
+          </div>
+        )}
+        <PromptSuggestions />
+        <div className="fixed bottom-24 right-4">
+          <Button 
+            variant="outline" 
+            size="icon" 
+            onClick={() => setShowDebug(!showDebug)}
+            className="bg-background/80 backdrop-blur-sm"
+            title="Toggle Debug Mode"
+          >
+            <Bug size={16} />
+          </Button>
+        </div>
+      </>
+    );
   }
   
   // Show generic welcome message for previous days' chats
@@ -83,6 +153,35 @@ const EmptyChatState = () => {
       <p className="text-center text-muted-foreground max-w-md">
         Your AI-powered trading coach. This chat session doesn't have any messages yet.
       </p>
+      
+      <div className="mt-6">
+        <Button 
+          variant="outline" 
+          size="icon" 
+          onClick={() => setShowDebug(!showDebug)}
+          className="bg-background/80 backdrop-blur-sm"
+          title="Toggle Debug Mode"
+        >
+          <Bug size={16} />
+        </Button>
+      </div>
+      
+      {showDebug && (
+        <div className="mt-4 bg-yellow-100 p-3 rounded-md text-sm">
+          <p>Current date: {selectedDate}</p>
+          <p>Today's session: {isTodaySession ? "Yes" : "No"}</p>
+          <p>Has messages today: {hasTodayMessages ? "Yes" : "No"}</p>
+          <p>Available dates: {chatDates.join(', ')}</p>
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            className="mt-2"
+            onClick={showTodaysChat}
+          >
+            Show Today's Chat
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

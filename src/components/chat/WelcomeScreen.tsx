@@ -1,3 +1,4 @@
+
 import React from "react";
 import { BarChart3, ArrowRight, LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
@@ -6,6 +7,7 @@ import { getWelcomeMessageContent } from "../../services/welcomeMessageService";
 import { useChat } from "@/context/ChatContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 interface WelcomeScreenProps {
   onStartChat: () => void;
@@ -39,12 +41,20 @@ const WelcomeScreen = ({ onStartChat }: WelcomeScreenProps) => {
 
   const handleStartChat = async () => {
     try {
-      // If we can create a new session, clear messages to generate the welcome message
       if (canCreateNewChat) {
         console.log("Creating new chat session");
-        await clearMessages();
-        // Navigate to chat with a query parameter indicating it's a new session
-        navigate("/chat?new=true");
+        const success = await clearMessages();
+        
+        if (success) {
+          // Force navigate to chat with new=true parameter to ensure today's date is selected
+          console.log("Successfully created new session, navigating to chat with new=true");
+          navigate("/chat?new=true");
+          toast.success("Started a new chat session");
+        } else {
+          console.log("Failed to create new session, navigating to chat anyway");
+          navigate("/chat");
+          toast.error("Could not create new session");
+        }
       } else {
         // Otherwise just navigate to the chat page
         console.log("Navigating to existing chat session");

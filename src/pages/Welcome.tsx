@@ -8,6 +8,7 @@ import { ChatProvider } from "@/context/ChatContext";
 import { useChat } from "@/context/ChatContext";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 import Header from "../components/Header";
 
 const WelcomeContent = () => {
@@ -32,12 +33,20 @@ const WelcomeContent = () => {
   
   const handleStartChat = async () => {
     try {
-      // If we can create a new session, clear messages to generate the welcome message
       if (canCreateNewChat) {
         console.log("Creating new chat session from dashboard");
-        await clearMessages();
-        // Navigate to chat with a query parameter indicating it's a new session
-        navigate("/chat?new=true");
+        const success = await clearMessages();
+        
+        if (success) {
+          // Force navigate to chat with new=true parameter
+          console.log("Successfully created new session, navigating to chat with new=true");
+          navigate("/chat?new=true");
+          toast.success("Started a new chat session");
+        } else {
+          console.log("Failed to create new session, navigating to chat anyway");
+          navigate("/chat");
+          toast.error("Could not create new session");
+        }
       } else {
         // Otherwise just navigate to the chat page
         console.log("Navigating to existing chat session from dashboard");

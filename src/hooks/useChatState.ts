@@ -97,18 +97,18 @@ export const useChatState = () => {
     // Check if user has reached message limit
     if (messageCount >= allocatedMessages && !isAdmin) {
       navigate('/message-limit');
-      return;
+      return false;
     }
     
     if (!user) {
       toast.error("You must be logged in to create a new session");
-      return;
+      return false;
     }
     
     // Allow admins to create new sessions anytime
     if (!isAdmin && !canCreateNewChat) {
       toast.error("You can only create one chat per day");
-      return;
+      return false;
     }
     
     setCreatingSession(true);
@@ -154,10 +154,12 @@ export const useChatState = () => {
       // Force select today's date
       setSelectedDate(todayDate);
       
-      toast.success("Started a new chat session");
+      console.log("Successfully created new session for today:", todayDate);
+      return true;
     } catch (error) {
       console.error("Error creating new session:", error);
       toast.error("Failed to create a new session");
+      return false;
     } finally {
       setCreatingSession(false);
     }

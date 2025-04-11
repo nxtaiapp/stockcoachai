@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useChat } from "../../context/ChatContext";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -23,26 +24,29 @@ const ChatContainer = () => {
   
   const toggleSettings = () => setShowSettings(!showSettings);
 
-  // When the component first renders, if there are chat dates available
-  // and the URL includes a "new=true" parameter, switch to today's date
+  // When the component first renders, check URL parameters
   useEffect(() => {
     console.log("ChatContainer mounted", { selectedDate, chatDates });
     
     const urlParams = new URLSearchParams(window.location.search);
     const isNewSession = urlParams.get('new') === 'true';
+    const todayDate = new Date().toISOString().split('T')[0];
     
-    if (isNewSession && chatDates.includes(new Date().toISOString().split('T')[0])) {
-      // Select today's date if it exists in chat dates and we're creating a new session
-      const todayDate = new Date().toISOString().split('T')[0];
-      console.log("Auto-selecting today's date:", todayDate);
+    if (isNewSession) {
+      // Always select today's date when creating a new session
+      console.log("Creating new session - forcing today's date:", todayDate);
       selectDate(todayDate);
+      
+      // Clear the URL parameter after processing
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
     } else if (isTodaySession && !hasTodayMessages && chatDates.length > 0 && chatDates[0] !== selectedDate) {
       // Otherwise, if we're showing today's session but it doesn't have messages, 
       // and user has previous sessions, show the most recent one by default
       console.log("Auto-selecting most recent date:", chatDates[0]);
       selectDate(chatDates[0]);
     }
-  }, []);
+  }, [chatDates, selectDate, selectedDate, isTodaySession, hasTodayMessages]);
 
   return (
     <SidebarProvider>
