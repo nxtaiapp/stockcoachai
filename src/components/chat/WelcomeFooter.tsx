@@ -1,26 +1,19 @@
+
 import React from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { useChat } from "@/context/ChatContext";
 
 interface WelcomeFooterProps {
   onStartChat: () => void;
 }
 
 const WelcomeFooter = ({ onStartChat }: WelcomeFooterProps) => {
-  const { canCreateNewChat, hasTodayMessages } = useChat();
   const navigate = useNavigate();
   
   const handleButtonClick = () => {
-    if (hasTodayMessages) {
-      // If there's already a session today, navigate directly without webhook
-      navigate("/chat");
-    } else {
-      // Otherwise, start a new session with webhook
-      onStartChat();
-    }
+    // Simply navigate to the chat page
+    navigate("/chat");
   };
   
   return (
@@ -30,15 +23,9 @@ const WelcomeFooter = ({ onStartChat }: WelcomeFooterProps) => {
         size="lg" 
         className="w-full sm:w-auto flex items-center gap-2"
       >
-        {!hasTodayMessages ? "Start New Session" : "Continue Current Session"}
+        Start Coaching Session
         <ArrowRight className="h-5 w-5" />
       </Button>
-      
-      {!canCreateNewChat && hasTodayMessages && (
-        <p className="text-sm text-muted-foreground">
-          You already have a session for today. 
-        </p>
-      )}
     </div>
   );
 };

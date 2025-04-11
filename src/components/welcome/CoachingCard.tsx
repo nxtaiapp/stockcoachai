@@ -1,17 +1,15 @@
+
 import React from "react";
 import { BarChart3, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { useAuth } from "../../context/AuthContext";
-import { useChat } from "@/context/ChatContext";
 import { getWelcomeMessageContent } from "../../services/welcomeMessageService";
 
 const CoachingCard = () => {
   const { user } = useAuth();
-  const { clearMessages, canCreateNewChat, hasTodayMessages } = useChat();
   const navigate = useNavigate();
   
   const getUserFirstName = () => {
@@ -28,25 +26,9 @@ const CoachingCard = () => {
   const firstName = getUserFirstName();
   const welcomeMessage = getWelcomeMessageContent(firstName, user?.skill_level, user?.experience_level);
   
-  const handleStartChat = async () => {
-    try {
-      if (!hasTodayMessages) {
-        console.log("Creating new chat session from dashboard");
-        
-        await clearMessages();
-        
-        console.log("Successfully created new session, navigating to chat with new=true");
-        navigate("/chat?new=true");
-        toast.success("Started a new chat session");
-      } else {
-        console.log("Navigating to existing chat session from dashboard");
-        navigate("/chat");
-      }
-    } catch (error) {
-      console.error("Error starting chat from dashboard:", error);
-      toast.error("Could not create new session");
-      navigate("/chat");
-    }
+  const handleStartChat = () => {
+    // Simply navigate to the chat page
+    navigate("/chat");
   };
 
   return (
@@ -82,15 +64,9 @@ const CoachingCard = () => {
       
       <CardFooter className="flex flex-col items-start pt-2">
         <Button onClick={handleStartChat} size="lg" className="w-full sm:w-auto flex items-center gap-2 text-center">
-          {!hasTodayMessages ? "Start New Session" : "Continue Current Session"}
+          Start Coaching Session
           <ArrowRight className="h-5 w-5" />
         </Button>
-        
-        {!canCreateNewChat && hasTodayMessages && (
-          <p className="text-sm text-muted-foreground mt-2">
-            You already have a session for today.
-          </p>
-        )}
       </CardFooter>
     </Card>
   );
