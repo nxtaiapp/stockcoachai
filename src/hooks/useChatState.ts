@@ -72,7 +72,9 @@ export const useChatState = () => {
   );
 
   const todayDate = getCurrentDate();
-  const canCreateNewChat = !chatDates.includes(todayDate);
+  
+  // Force canCreateNewChat to be true if the user is an admin
+  const canCreateNewChat = isAdmin || !chatDates.includes(todayDate);
   
   const isTodaySession = selectedDate === todayDate;
   
@@ -85,6 +87,8 @@ export const useChatState = () => {
     selectedDate, 
     isTodaySession, 
     hasTodayMessages,
+    canCreateNewChat,
+    isAdmin,
     messagesCount: messages.length,
     todayMessagesCount: messages.filter(m => format(new Date(m.timestamp), 'yyyy-MM-dd') === todayDate).length
   });
@@ -96,10 +100,14 @@ export const useChatState = () => {
       return;
     }
     
-    if (!user || !canCreateNewChat) {
-      if (!canCreateNewChat) {
-        toast.error("You can only create one chat per day");
-      }
+    if (!user) {
+      toast.error("You must be logged in to create a new session");
+      return;
+    }
+    
+    // Allow admins to create new sessions anytime
+    if (!isAdmin && !canCreateNewChat) {
+      toast.error("You can only create one chat per day");
       return;
     }
     

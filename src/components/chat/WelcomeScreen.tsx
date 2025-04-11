@@ -42,11 +42,8 @@ const WelcomeScreen = ({ onStartChat }: WelcomeScreenProps) => {
     // If we can create a new session, clear messages to generate the welcome message
     if (canCreateNewChat) {
       await clearMessages();
-    } else {
-      // If continuing existing session, navigate directly to chat without creating a new session
-      navigate("/chat");
-      return;
     }
+    // Always call onStartChat to navigate to the chat page
     onStartChat();
   };
   

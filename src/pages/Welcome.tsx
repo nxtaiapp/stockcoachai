@@ -33,9 +33,6 @@ const WelcomeContent = () => {
   const handleStartChat = async () => {
     if (canCreateNewChat) {
       await clearMessages();
-    } else {
-      navigate("/chat");
-      return;
     }
     navigate("/chat");
   };
