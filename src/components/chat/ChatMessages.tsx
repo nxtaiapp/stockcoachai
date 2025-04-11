@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import { Message } from "../../context/ChatContext";
 import ChatMessage from "../ChatMessage";
-import { BarChart3, Bug } from "lucide-react";
+import { BarChart3, Bug, Calendar, RefreshCw } from "lucide-react";
 import { useChat } from "../../context/ChatContext";
 import PromptSuggestions from "./PromptSuggestions";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,9 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
     isTodaySession, 
     hasTodayMessages,
     selectDate,
-    chatDates 
+    chatDates,
+    canCreateNewChat,
+    clearMessages
   } = useChat();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [showDebug, setShowDebug] = useState(false);
@@ -45,13 +47,30 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
     toast.success("Showing today's chat");
   };
   
+  const handleStartNewSession = async () => {
+    if (!canCreateNewChat) {
+      toast.error("You can only create one chat per day");
+      return;
+    }
+    
+    console.log("Manually creating new session");
+    const success = await clearMessages();
+    
+    if (success) {
+      toast.success("Created new chat session");
+    } else {
+      toast.error("Failed to create new session");
+    }
+  };
+  
   console.log("ChatMessages rendering with:", { 
     isTodaySession,
     hasTodayMessages,
     selectedDate,
     filteredMessagesLength: filteredMessages.length,
     showWelcomeScreen: isTodaySession && filteredMessages.length === 0,
-    availableDates: chatDates
+    availableDates: chatDates,
+    canCreateNewChat
   });
 
   return (
@@ -61,7 +80,12 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
       style={{ overscrollBehavior: "none" }}
     >
       {filteredMessages.length === 0 ? (
-        <EmptyChatState showDebug={showDebug} setShowDebug={setShowDebug} showTodaysChat={showTodaysChat} />
+        <EmptyChatState 
+          showDebug={showDebug} 
+          setShowDebug={setShowDebug} 
+          showTodaysChat={showTodaysChat}
+          handleStartNewSession={handleStartNewSession} 
+        />
       ) : (
         <div className="max-w-3xl mx-auto">
           {showDebug && (
@@ -69,15 +93,28 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
               <p>Current date: {selectedDate}</p>
               <p>Today's session: {isTodaySession ? "Yes" : "No"}</p>
               <p>Has messages today: {hasTodayMessages ? "Yes" : "No"}</p>
+              <p>Can create new chat: {canCreateNewChat ? "Yes" : "No"}</p>
               <p>Available dates: {chatDates.join(', ')}</p>
-              <Button 
-                variant="secondary" 
-                size="sm" 
-                className="mt-2"
-                onClick={showTodaysChat}
-              >
-                Show Today's Chat
-              </Button>
+              <div className="flex gap-2 mt-2">
+                <Button 
+                  variant="secondary" 
+                  size="sm"
+                  onClick={showTodaysChat}
+                >
+                  <Calendar className="h-4 w-4 mr-1" />
+                  Show Today
+                </Button>
+                
+                <Button 
+                  variant="secondary" 
+                  size="sm"
+                  onClick={handleStartNewSession}
+                  disabled={!canCreateNewChat}
+                >
+                  <RefreshCw className="h-4 w-4 mr-1" />
+                  New Session
+                </Button>
+              </div>
             </div>
           )}
           
@@ -95,18 +132,25 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
   );
 };
 
-const EmptyChatState = ({ showDebug, setShowDebug, showTodaysChat }: {
+const EmptyChatState = ({ 
+  showDebug, 
+  setShowDebug, 
+  showTodaysChat,
+  handleStartNewSession 
+}: {
   showDebug: boolean;
   setShowDebug: (value: boolean) => void;
   showTodaysChat: () => void;
+  handleStartNewSession: () => void;
 }) => {
-  const { isTodaySession, hasTodayMessages, selectedDate, chatDates } = useChat();
+  const { isTodaySession, hasTodayMessages, selectedDate, chatDates, canCreateNewChat } = useChat();
   
   console.log("EmptyChatState rendering with:", { 
     isTodaySession, 
     hasTodayMessages,
     selectedDate,
-    availableDates: chatDates
+    availableDates: chatDates,
+    canCreateNewChat
   });
   
   // Show prompt suggestions when viewing today's session and there are no messages
@@ -118,18 +162,33 @@ const EmptyChatState = ({ showDebug, setShowDebug, showTodaysChat }: {
             <p>Current date: {selectedDate}</p>
             <p>Today's session: {isTodaySession ? "Yes" : "No"}</p>
             <p>Has messages today: {hasTodayMessages ? "Yes" : "No"}</p>
+            <p>Can create new chat: {canCreateNewChat ? "Yes" : "No"}</p>
             <p>Available dates: {chatDates.join(', ')}</p>
-            <Button 
-              variant="secondary" 
-              size="sm" 
-              className="mt-2"
-              onClick={showTodaysChat}
-            >
-              Show Today's Chat
-            </Button>
+            <div className="flex gap-2 mt-2">
+              <Button 
+                variant="secondary" 
+                size="sm"
+                onClick={showTodaysChat}
+              >
+                <Calendar className="h-4 w-4 mr-1" />
+                Show Today
+              </Button>
+              
+              <Button 
+                variant="secondary" 
+                size="sm"
+                onClick={handleStartNewSession}
+                disabled={!canCreateNewChat}
+              >
+                <RefreshCw className="h-4 w-4 mr-1" />
+                New Session
+              </Button>
+            </div>
           </div>
         )}
+        
         <PromptSuggestions />
+        
         <div className="fixed bottom-24 right-4">
           <Button 
             variant="outline" 
@@ -154,7 +213,7 @@ const EmptyChatState = ({ showDebug, setShowDebug, showTodaysChat }: {
         Your AI-powered trading coach. This chat session doesn't have any messages yet.
       </p>
       
-      <div className="mt-6">
+      <div className="mt-6 space-x-2">
         <Button 
           variant="outline" 
           size="icon" 
@@ -164,6 +223,17 @@ const EmptyChatState = ({ showDebug, setShowDebug, showTodaysChat }: {
         >
           <Bug size={16} />
         </Button>
+        
+        {canCreateNewChat && (
+          <Button 
+            variant="outline" 
+            onClick={handleStartNewSession}
+            className="bg-background/80 backdrop-blur-sm"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Start New Session
+          </Button>
+        )}
       </div>
       
       {showDebug && (
@@ -171,15 +241,28 @@ const EmptyChatState = ({ showDebug, setShowDebug, showTodaysChat }: {
           <p>Current date: {selectedDate}</p>
           <p>Today's session: {isTodaySession ? "Yes" : "No"}</p>
           <p>Has messages today: {hasTodayMessages ? "Yes" : "No"}</p>
+          <p>Can create new chat: {canCreateNewChat ? "Yes" : "No"}</p>
           <p>Available dates: {chatDates.join(', ')}</p>
-          <Button 
-            variant="secondary" 
-            size="sm" 
-            className="mt-2"
-            onClick={showTodaysChat}
-          >
-            Show Today's Chat
-          </Button>
+          <div className="flex gap-2 mt-2">
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={showTodaysChat}
+            >
+              <Calendar className="h-4 w-4 mr-1" />
+              Show Today
+            </Button>
+            
+            <Button 
+              variant="secondary" 
+              size="sm"
+              onClick={handleStartNewSession}
+              disabled={!canCreateNewChat}
+            >
+              <RefreshCw className="h-4 w-4 mr-1" />
+              New Session
+            </Button>
+          </div>
         </div>
       )}
     </div>

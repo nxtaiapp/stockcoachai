@@ -68,6 +68,9 @@ export const useTimezone = () => {
     // Create a date object for the current time
     const now = new Date();
     
+    // For testing purposes, let's ensure we're getting the actual current date
+    console.log("Raw current date:", now);
+    
     // If we have the user's timezone, use it to format the date
     if (userTimezone) {
       // Use the browser's built-in functionality to format the date in the user's timezone
@@ -86,11 +89,15 @@ export const useTimezone = () => {
       const day = parts.find(part => part.type === 'day')?.value || '';
       
       // Format as yyyy-MM-dd
-      return `${year}-${month}-${day}`;
+      const formattedDate = `${year}-${month}-${day}`;
+      console.log("Formatted date with timezone:", formattedDate, "Timezone:", userTimezone);
+      return formattedDate;
     }
     
     // Fallback to format without timezone
-    return format(now, 'yyyy-MM-dd');
+    const formatted = format(now, 'yyyy-MM-dd');
+    console.log("Formatted date without timezone:", formatted);
+    return formatted;
   };
 
   return {
