@@ -1,4 +1,3 @@
-
 import React from "react";
 import { BarChart3, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -31,25 +30,21 @@ const CoachingCard = () => {
   
   const handleStartChat = async () => {
     try {
-      if (canCreateNewChat && !hasTodayMessages) {
+      if (!hasTodayMessages) {
         console.log("Creating new chat session from dashboard");
         
-        // Call clearMessages but don't check its return value directly
         await clearMessages();
         
-        // Force navigate to chat with new=true parameter
         console.log("Successfully created new session, navigating to chat with new=true");
         navigate("/chat?new=true");
         toast.success("Started a new chat session");
       } else {
-        // Otherwise just navigate to the chat page
         console.log("Navigating to existing chat session from dashboard");
         navigate("/chat");
       }
     } catch (error) {
       console.error("Error starting chat from dashboard:", error);
       toast.error("Could not create new session");
-      // In case of error, still try to navigate to chat
       navigate("/chat");
     }
   };
@@ -78,9 +73,9 @@ const CoachingCard = () => {
           <h3 className="font-medium mb-2">How Alexandra helps you:</h3>
           <ul className="list-disc list-inside space-y-1 text-muted-foreground pl-2">
             <li>Analyze your trading patterns and decisions</li>
+            <li>Learn from your past trades</li>
             <li>Understand market movements and trends</li>
             <li>Develop and refine your trading strategy</li>
-            <li>Learn from your past trades</li>
           </ul>
         </div>
       </CardContent>

@@ -1,4 +1,3 @@
-
 import React from "react";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,11 +11,22 @@ interface WelcomeFooterProps {
 
 const WelcomeFooter = ({ onStartChat }: WelcomeFooterProps) => {
   const { canCreateNewChat, hasTodayMessages } = useChat();
+  const navigate = useNavigate();
+  
+  const handleButtonClick = () => {
+    if (hasTodayMessages) {
+      // If there's already a session today, navigate directly without webhook
+      navigate("/chat");
+    } else {
+      // Otherwise, start a new session with webhook
+      onStartChat();
+    }
+  };
   
   return (
     <div className="flex flex-col items-center justify-center gap-4">
       <Button 
-        onClick={onStartChat} 
+        onClick={handleButtonClick} 
         size="lg" 
         className="w-full sm:w-auto flex items-center gap-2"
       >
