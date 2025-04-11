@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Message } from '../types/chat';
 import { format } from 'date-fns';
@@ -23,25 +24,10 @@ export const useChatPersistence = (userId: string | undefined) => {
           if (supabaseMessages.length > 0) {
             setMessages(supabaseMessages);
             
-            // Check if we have messages for today
+            // Always default to showing today's date first, regardless of message history
             const todayDate = format(new Date(), 'yyyy-MM-dd');
-            const hasTodayMessages = supabaseMessages.some(message => 
-              format(new Date(message.timestamp), 'yyyy-MM-dd') === todayDate
-            );
-            
-            // If we have messages for today, select today's date
-            // Otherwise, select the most recent message date
-            if (hasTodayMessages) {
-              setSelectedDate(todayDate);
-              console.log('Selected today\'s date:', todayDate);
-            } else {
-              const mostRecentDate = format(
-                new Date(supabaseMessages[supabaseMessages.length - 1].timestamp), 
-                'yyyy-MM-dd'
-              );
-              setSelectedDate(mostRecentDate);
-              console.log('Selected most recent date:', mostRecentDate);
-            }
+            setSelectedDate(todayDate);
+            console.log('Selected today\'s date:', todayDate);
           } else {
             console.log('No messages found in Supabase, checking localStorage');
             // If no messages in Supabase, check localStorage as fallback
@@ -52,22 +38,17 @@ export const useChatPersistence = (userId: string | undefined) => {
                 console.log('Found messages in localStorage:', parsedMessages.length);
                 setMessages(parsedMessages);
                 
-                // Select the most recent date by default
-                if (parsedMessages.length > 0) {
-                  const mostRecentDate = format(
-                    new Date(parsedMessages[parsedMessages.length - 1].timestamp), 
-                    'yyyy-MM-dd'
-                  );
-                  setSelectedDate(mostRecentDate);
-                  console.log('Selected date from localStorage:', mostRecentDate);
-                }
+                // Always default to today's date
+                const todayDate = format(new Date(), 'yyyy-MM-dd');
+                setSelectedDate(todayDate);
+                console.log('Selected today\'s date:', todayDate);
               } catch (e) {
                 console.error('Error parsing stored messages:', e);
                 
                 // If parsing fails, start with welcome message
                 const welcomeMessage = getWelcomeMessage(userId);
                 setMessages([welcomeMessage]);
-                setSelectedDate(format(new Date(welcomeMessage.timestamp), 'yyyy-MM-dd'));
+                setSelectedDate(format(new Date(), 'yyyy-MM-dd'));
                 console.log('Added welcome message due to parse error');
               }
             } else {
@@ -75,7 +56,7 @@ export const useChatPersistence = (userId: string | undefined) => {
               console.log('No messages found in localStorage, adding welcome message');
               const welcomeMessage = getWelcomeMessage(userId);
               setMessages([welcomeMessage]);
-              setSelectedDate(format(new Date(welcomeMessage.timestamp), 'yyyy-MM-dd'));
+              setSelectedDate(format(new Date(), 'yyyy-MM-dd'));
             }
           }
         })
@@ -91,26 +72,22 @@ export const useChatPersistence = (userId: string | undefined) => {
               console.log('Fallback to localStorage messages:', parsedMessages.length);
               setMessages(parsedMessages);
               
-              if (parsedMessages.length > 0) {
-                const mostRecentDate = format(
-                  new Date(parsedMessages[parsedMessages.length - 1].timestamp), 
-                  'yyyy-MM-dd'
-                );
-                setSelectedDate(mostRecentDate);
-              }
+              // Always default to today's date
+              const todayDate = format(new Date(), 'yyyy-MM-dd');
+              setSelectedDate(todayDate);
             } catch (e) {
               console.error('Error parsing stored messages:', e);
               
               // If all else fails, start with welcome message
               const welcomeMessage = getWelcomeMessage(userId);
               setMessages([welcomeMessage]);
-              setSelectedDate(format(new Date(welcomeMessage.timestamp), 'yyyy-MM-dd'));
+              setSelectedDate(format(new Date(), 'yyyy-MM-dd'));
             }
           } else {
             // Add a welcome message for new users
             const welcomeMessage = getWelcomeMessage(userId);
             setMessages([welcomeMessage]);
-            setSelectedDate(format(new Date(welcomeMessage.timestamp), 'yyyy-MM-dd'));
+            setSelectedDate(format(new Date(), 'yyyy-MM-dd'));
           }
         })
         .finally(() => {

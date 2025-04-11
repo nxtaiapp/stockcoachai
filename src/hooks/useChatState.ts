@@ -81,6 +81,27 @@ export const useChatState = () => {
   
   const isTodaySession = selectedDate === todayDate;
 
+  // Effect to force navigation to today's session when entering the chat
+  useEffect(() => {
+    // When loading is done and we have messages, make sure today's session is shown
+    if (!loading && messages.length > 0) {
+      // If no today's session exists, but we're on the chat page, create one
+      if (!hasTodayMessages && window.location.pathname === '/chat') {
+        console.log("No messages for today, scheduling new session creation");
+        // Set a short timeout to allow other effects to complete
+        const timer = setTimeout(() => {
+          clearMessages();
+        }, 0);
+        return () => clearTimeout(timer);
+      } 
+      // If there are today's messages but we're not showing them, switch to today
+      else if (hasTodayMessages && !isTodaySession) {
+        console.log("Have messages for today but showing different date, switching to today");
+        selectDate(todayDate);
+      }
+    }
+  }, [loading, messages.length, hasTodayMessages, isTodaySession, window.location.pathname]);
+
   console.log("Current state:", { 
     todayDate, 
     selectedDate, 

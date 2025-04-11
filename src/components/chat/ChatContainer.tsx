@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useChat } from "../../context/ChatContext";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -27,7 +26,7 @@ const ChatContainer = () => {
   
   const toggleSettings = () => setShowSettings(!showSettings);
 
-  // When the component first renders, check URL parameters
+  // When the component first renders, check URL parameters and session status
   useEffect(() => {
     console.log("ChatContainer mounted", { 
       selectedDate, 
@@ -42,28 +41,35 @@ const ChatContainer = () => {
     
     console.log("URL params check:", { isNewSession });
     
-    const createNewSession = async () => {
-      console.log("Attempting to create new session");
-      await clearMessages();
-      console.log("New session created successfully");
-    };
-    
-    if (isNewSession && canCreateNewChat && !hasTodayMessages) {
-      // Only create a new session if explicitly requested with the 'new' parameter
-      // AND we can create a new chat AND there are no messages for today
-      console.log("Creating new session - calling createNewSession()");
-      createNewSession();
+    // Always force create a new session when explicitly requested
+    if (isNewSession && canCreateNewChat) {
+      console.log("Creating new session via URL parameter");
+      clearMessages();
       
       // Clear the URL parameter after processing
       const newUrl = window.location.pathname;
       window.history.replaceState({}, document.title, newUrl);
-    } else if (!isTodaySession && !hasTodayMessages && chatDates.length > 0) {
-      // If we're not showing today's session and there are no messages for today,
-      // but we have previous sessions, ensure we're showing the most recent one
+      return;
+    }
+    
+    // If there are no messages for today and we can create a new chat, do it automatically
+    if (!hasTodayMessages && canCreateNewChat && !loading) {
+      console.log("No messages for today, automatically creating new session");
+      clearMessages();
+    }
+    // If we're not showing today's session but there are messages for today, switch to today
+    else if (!isTodaySession && hasTodayMessages) {
+      console.log("Switching to today's session with existing messages");
+      const todayDate = new Date().toISOString().split('T')[0];
+      selectDate(todayDate);
+    }
+    // Otherwise, if we're not showing today's session and there are previous sessions,
+    // ensure we're showing the most recent one
+    else if (!isTodaySession && !hasTodayMessages && chatDates.length > 0) {
       console.log("Not today's session, selecting most recent date:", chatDates[0]);
       selectDate(chatDates[0]);
     }
-  }, [chatDates, selectDate, selectedDate, isTodaySession, hasTodayMessages, canCreateNewChat, clearMessages]);
+  }, [chatDates, selectDate, selectedDate, isTodaySession, hasTodayMessages, canCreateNewChat, clearMessages, loading]);
 
   return (
     <SidebarProvider>
