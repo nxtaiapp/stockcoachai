@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
@@ -113,31 +112,12 @@ export const useChatState = () => {
     try {
       const todayDate = getCurrentDate();
       
-      let welcomeContent = "";
+      // Modified: Don't add a welcome message, start with empty chat
+      // This creates an empty array of messages for the new session
+      const updatedMessages = [...messages.filter(msg => 
+        format(new Date(msg.timestamp), 'yyyy-MM-dd') !== todayDate
+      )];
       
-      const webhookUrl = n8nWebhookUrl || defaultWebhookUrl;
-      
-      try {
-        console.log("Using webhook URL for welcome message:", webhookUrl);
-        welcomeContent = await sendMessageToWebhook(
-          webhookUrl,
-          "Hello, I'd like to start a new session.",
-          user.id,
-          user.name || 'User',
-          user.email || '',
-          'New'
-        );
-        console.log("Received welcome message from webhook:", welcomeContent);
-      } catch (error) {
-        console.error("Error getting welcome message from webhook:", error);
-        welcomeContent = "Aw, Snap! Alexandra lost connection to her trading brain. Could be a hiccup in the signal—try refreshing or retrying, and let's get back to chart domination!";
-      }
-      
-      const welcomeMessage = createAIMessage(welcomeContent);
-      welcomeMessage.timestamp = new Date();
-      
-      // Preserve all existing messages and add the welcome message for the new session
-      const updatedMessages = [...messages, welcomeMessage];
       setMessages(updatedMessages);
       
       // Explicitly save to storage to ensure persistence across navigation
@@ -145,7 +125,7 @@ export const useChatState = () => {
       
       setSelectedDate(todayDate);
       
-      console.log("Successfully created new session for today:", todayDate);
+      console.log("Successfully created new empty session for today:", todayDate);
     } catch (error) {
       console.error("Error creating new session:", error);
       toast.error("Failed to create a new session");
@@ -174,4 +154,3 @@ export const useChatState = () => {
     hasTodayMessages
   };
 };
-

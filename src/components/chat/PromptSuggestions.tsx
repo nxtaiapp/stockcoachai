@@ -33,7 +33,7 @@ const PromptSuggestions = () => {
   
   const firstName = getUserFirstName();
   
-  // Use the getWelcomeMessageContent function from our service
+  // Get welcome message for display, but don't add it to the chat
   const welcomeMessage = getWelcomeMessageContent(
     firstName,
     user?.skill_level,
