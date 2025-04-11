@@ -20,7 +20,7 @@ const MessageList = ({ messages }: MessageListProps) => {
   return (
     <div
       ref={chatContainerRef}
-      className="max-w-3xl mx-auto"
+      className="max-w-3xl mx-auto overflow-y-auto flex-grow h-full"
     >
       {messages.map((message, index) => (
         <ChatMessage 

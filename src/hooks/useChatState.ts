@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
@@ -68,13 +69,17 @@ export const useChatState = () => {
 
   const todayDate = getCurrentDate();
   
-  const canCreateNewChat = isAdmin || !chatDates.includes(todayDate);
-  
-  const isTodaySession = selectedDate === todayDate;
-  
-  const hasTodayMessages = messages.some(message => 
+  // Calculate if we have messages for today directly
+  const todaysMessages = messages.filter(message => 
     format(new Date(message.timestamp), 'yyyy-MM-dd') === todayDate
   );
+  
+  const hasTodayMessages = todaysMessages.length > 0;
+  
+  // You can create a new chat if you're admin or if there are no messages for today
+  const canCreateNewChat = isAdmin || !hasTodayMessages;
+  
+  const isTodaySession = selectedDate === todayDate;
 
   console.log("Current state:", { 
     todayDate, 
@@ -84,7 +89,7 @@ export const useChatState = () => {
     canCreateNewChat,
     isAdmin,
     messagesCount: messages.length,
-    todayMessagesCount: messages.filter(m => format(new Date(m.timestamp), 'yyyy-MM-dd') === todayDate).length
+    todayMessagesCount: todaysMessages.length
   });
 
   const clearMessages = async (): Promise<void> => {
@@ -131,6 +136,7 @@ export const useChatState = () => {
       const welcomeMessage = createAIMessage(welcomeContent);
       welcomeMessage.timestamp = new Date();
       
+      // Preserve all existing messages and add the welcome message for the new session
       const updatedMessages = [...messages, welcomeMessage];
       setMessages(updatedMessages);
       

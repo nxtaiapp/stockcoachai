@@ -1,3 +1,4 @@
+
 import React from "react";
 import { BarChart3, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +12,7 @@ import { getWelcomeMessageContent } from "../../services/welcomeMessageService";
 
 const CoachingCard = () => {
   const { user } = useAuth();
-  const { clearMessages, canCreateNewChat } = useChat();
+  const { clearMessages, canCreateNewChat, hasTodayMessages } = useChat();
   const navigate = useNavigate();
   
   const getUserFirstName = () => {
@@ -30,7 +31,7 @@ const CoachingCard = () => {
   
   const handleStartChat = async () => {
     try {
-      if (canCreateNewChat) {
+      if (canCreateNewChat && !hasTodayMessages) {
         console.log("Creating new chat session from dashboard");
         
         // Call clearMessages but don't check its return value directly
@@ -86,11 +87,11 @@ const CoachingCard = () => {
       
       <CardFooter className="flex flex-col items-start pt-2">
         <Button onClick={handleStartChat} size="lg" className="w-full sm:w-auto flex items-center gap-2 text-center">
-          {canCreateNewChat ? "Start New Session" : "Continue Current Session"}
+          {!hasTodayMessages ? "Start New Session" : "Continue Current Session"}
           <ArrowRight className="h-5 w-5" />
         </Button>
         
-        {!canCreateNewChat && (
+        {!canCreateNewChat && hasTodayMessages && (
           <p className="text-sm text-muted-foreground mt-2">
             You already have a session for today.
           </p>

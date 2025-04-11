@@ -11,7 +11,7 @@ interface WelcomeFooterProps {
 }
 
 const WelcomeFooter = ({ onStartChat }: WelcomeFooterProps) => {
-  const { canCreateNewChat } = useChat();
+  const { canCreateNewChat, hasTodayMessages } = useChat();
   
   return (
     <div className="flex flex-col items-center justify-center gap-4">
@@ -20,11 +20,11 @@ const WelcomeFooter = ({ onStartChat }: WelcomeFooterProps) => {
         size="lg" 
         className="w-full sm:w-auto flex items-center gap-2"
       >
-        {canCreateNewChat ? "Start New Session" : "Continue Current Session"}
+        {!hasTodayMessages ? "Start New Session" : "Continue Current Session"}
         <ArrowRight className="h-5 w-5" />
       </Button>
       
-      {!canCreateNewChat && (
+      {!canCreateNewChat && hasTodayMessages && (
         <p className="text-sm text-muted-foreground">
           You already have a session for today. 
         </p>
