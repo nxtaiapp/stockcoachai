@@ -93,7 +93,7 @@ export const useChatState = () => {
     todayMessagesCount: messages.filter(m => format(new Date(m.timestamp), 'yyyy-MM-dd') === todayDate).length
   });
 
-  const clearMessages = async () => {
+  const clearMessages = async (): Promise<boolean> => {
     // Check if user has reached message limit
     if (messageCount >= allocatedMessages && !isAdmin) {
       navigate('/message-limit');
