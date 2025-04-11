@@ -7,6 +7,18 @@ export const createProfile = async (authUser: User): Promise<UserProfile | null>
   try {
     const userData = authUser.user_metadata || {};
     
+    // First check if profile already exists to avoid duplicates
+    const { data: existingProfile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', authUser.id)
+      .maybeSingle();
+      
+    if (existingProfile) {
+      console.log('Profile already exists for user', authUser.id);
+      return existingProfile as UserProfile;
+    }
+    
     const { error } = await supabase
       .from('profiles')
       .insert({
@@ -41,8 +53,8 @@ export const createProfile = async (authUser: User): Promise<UserProfile | null>
   }
 };
 
-// Fetch user profile from profiles table
-export const fetchUserProfile = async (authUser: User): Promise<{ 
+// Fetch user profile from profiles table with retry mechanism
+export const fetchUserProfile = async (authUser: User, retryCount = 2): Promise<{ 
   profile: UserProfile | null; 
   isAdmin: boolean;
 }> => {
@@ -74,6 +86,13 @@ export const fetchUserProfile = async (authUser: User): Promise<{
         };
       }
       
+      // Retry fetching the profile in case of transient errors
+      if (retryCount > 0) {
+        console.log(`Retrying profile fetch, attempts remaining: ${retryCount}`);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+        return fetchUserProfile(authUser, retryCount - 1);
+      }
+      
       return { profile: null, isAdmin: false };
     }
 
@@ -91,6 +110,14 @@ export const fetchUserProfile = async (authUser: User): Promise<{
     };
   } catch (error) {
     console.error('Error in fetchUserProfile:', error);
+    
+    // Retry fetching the profile in case of transient errors
+    if (retryCount > 0) {
+      console.log(`Retrying profile fetch after error, attempts remaining: ${retryCount}`);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+      return fetchUserProfile(authUser, retryCount - 1);
+    }
+    
     return { profile: null, isAdmin: false };
   }
 };

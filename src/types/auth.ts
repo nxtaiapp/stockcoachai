@@ -6,6 +6,7 @@ export interface AuthContextType {
   user: UserProfile | null;
   loading: boolean;
   isAdmin: boolean;
+  sessionChecked: boolean; // New property to track if session check is complete
   signUp: (
     email: string, 
     password: string, 

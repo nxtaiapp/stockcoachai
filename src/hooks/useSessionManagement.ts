@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { format } from 'date-fns';
 import { useTimezone } from './useTimezone';
 import { toast } from 'sonner';
@@ -18,6 +18,7 @@ export const useSessionManagement = (
   saveMessagesToStorage: (messages: Message[], userId: string) => void
 ) => {
   const [creatingSession, setCreatingSession] = useState(false);
+  const [sessionError, setSessionError] = useState<string | null>(null);
   const { getCurrentDate } = useTimezone();
   
   // Calculate if we have messages for today
@@ -32,19 +33,22 @@ export const useSessionManagement = (
   const canCreateNewChat = isAdmin || !hasTodayMessages;
   const isTodaySession = selectedDate === todayDate;
 
-  const clearMessages = async (): Promise<void> => {
+  const clearMessages = useCallback(async (): Promise<boolean> => {
     if (!userId) {
       toast.error("You must be logged in to create a new session");
-      return;
+      setSessionError("Authentication required");
+      return false;
     }
 
     // Allow creating a new chat if admin or no messages for today
     if (!isAdmin && hasTodayMessages) {
       toast.error("You can only create one chat per day");
-      return;
+      setSessionError("Daily limit reached");
+      return false;
     }
 
     setCreatingSession(true);
+    setSessionError(null);
     
     try {
       const todayDate = getCurrentDate();
@@ -65,19 +69,30 @@ export const useSessionManagement = (
       setSelectedDate(todayDate);
       
       console.log("Successfully created new empty session for today:", todayDate);
+      return true;
     } catch (error) {
       console.error("Error creating new session:", error);
       toast.error("Failed to create a new session");
+      setSessionError("Session creation failed");
+      return false;
     } finally {
       setCreatingSession(false);
     }
-  };
+  }, [userId, isAdmin, hasTodayMessages, getCurrentDate, messages, setMessages, saveMessagesToStorage, setSelectedDate]);
+
+  // Function to retry session creation if it failed
+  const retrySessionCreation = useCallback(async (): Promise<boolean> => {
+    setSessionError(null);
+    return clearMessages();
+  }, [clearMessages]);
 
   return {
     creatingSession,
     clearMessages,
+    retrySessionCreation,
     hasTodayMessages,
     canCreateNewChat,
-    isTodaySession
+    isTodaySession,
+    sessionError
   };
 };

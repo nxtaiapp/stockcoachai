@@ -1,5 +1,5 @@
 
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
 import type { AuthContextType } from '@/types/auth';
@@ -16,10 +16,10 @@ import { AuthError } from '@supabase/supabase-js';
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { user, isAdmin, loading, setUser } = useAuthState();
+  const { user, isAdmin, loading, setUser, sessionChecked } = useAuthState();
   const navigate = useNavigate();
 
-  const signUp = async (
+  const signUp = useCallback(async (
     email: string, 
     password: string, 
     name: string, 
@@ -41,13 +41,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       throw error;
     }
-  };
+  }, [navigate]);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
       await signInUser(email, password);
+      localStorage.removeItem("authError"); // Clear any previous auth errors
     } catch (error) {
       console.error('Error signing in:', error);
+      // Store auth error details for recovery attempts
+      localStorage.setItem("authError", JSON.stringify({
+        timestamp: new Date().toISOString(),
+        message: error instanceof AuthError ? error.message : "Unknown error"
+      }));
+      
       if (error instanceof AuthError) {
         toast.error(error.message);
       } else {
@@ -55,9 +62,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       throw error;
     }
-  };
+  }, []);
 
-  const resendVerificationEmail = async (email: string) => {
+  const resendVerificationEmail = useCallback(async (email: string) => {
     try {
       await resendEmail(email);
       return true;
@@ -65,33 +72,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('Error resending verification email:', error);
       throw error;
     }
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     try {
       console.log("Signing out...");
       // Clear user data first to prevent UI flashes
       setUser(null);
       
-      // Try to sign out from Supabase - but don't wait for it to complete
-      // This prevents issues where a failed signOut API call blocks navigation
+      // Create a copy of current path before navigation
+      const previousPath = window.location.pathname;
+      
+      // Always navigate to sign-in page first, even if the API call fails
+      navigate('/signin', { replace: true });
+      
+      // Try to sign out from Supabase in the background
       signOutUser().catch(error => {
         console.error('Background sign out error:', error);
         // We still continue with local logout regardless of API errors
+      }).finally(() => {
+        toast.success("Signed out successfully");
+        
+        // Clear any stored session data
+        localStorage.removeItem("supabase.auth.token");
+        sessionStorage.removeItem("supabase.auth.token");
+        
+        // Store the previous path for potential future use
+        if (previousPath && previousPath !== '/signin') {
+          sessionStorage.setItem('previousPath', previousPath);
+        }
       });
-      
-      toast.success("Signed out successfully");
-      
-      // Always navigate to sign-in page, even if the API call fails
-      navigate('/signin', { replace: true });
     } catch (error) {
       console.error('Error in signOut function:', error);
       toast.error("There was an issue during sign out, but you've been logged out");
       navigate('/signin', { replace: true });
     }
-  };
+  }, [navigate, setUser]);
 
-  const setUserData = async (data: Partial<typeof user>) => {
+  const setUserData = useCallback(async (data: Partial<typeof user>) => {
     if (!user) return;
 
     try {
@@ -109,7 +127,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       toast.error("Failed to update profile data");
       throw error;
     }
-  };
+  }, [user, setUser]);
 
   return (
     <AuthContext.Provider value={{ 
@@ -120,7 +138,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn, 
       signOut, 
       setUserData,
-      resendVerificationEmail
+      resendVerificationEmail,
+      sessionChecked
     }}>
       {children}
     </AuthContext.Provider>
