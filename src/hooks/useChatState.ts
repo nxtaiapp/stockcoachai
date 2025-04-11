@@ -29,7 +29,8 @@ export const useChatState = () => {
     setMessages, 
     selectedDate, 
     setSelectedDate, 
-    isLoading: persistenceLoading
+    isLoading: persistenceLoading,
+    saveMessagesToStorage
   } = useChatPersistence(user?.id);
   
   const { chatDates, filteredMessages, selectDate } = useChatDates(messages, selectedDate, setSelectedDate);
@@ -139,6 +140,9 @@ export const useChatState = () => {
       const updatedMessages = [...messages, welcomeMessage];
       setMessages(updatedMessages);
       
+      // Explicitly save to storage to ensure persistence across navigation
+      saveMessagesToStorage(updatedMessages, user.id);
+      
       setSelectedDate(todayDate);
       
       console.log("Successfully created new session for today:", todayDate);
@@ -170,3 +174,4 @@ export const useChatState = () => {
     hasTodayMessages
   };
 };
+

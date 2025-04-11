@@ -11,6 +11,14 @@ export const useChatPersistence = (userId: string | undefined) => {
   const [isLoading, setIsLoading] = useState(true);
   const [messagesLoaded, setMessagesLoaded] = useState(false);
   
+  // Function to save messages to localStorage
+  const saveMessagesToStorage = (messagesToSave: Message[], uid: string) => {
+    if (uid && messagesToSave.length > 0) {
+      localStorage.setItem(`stockcoach_messages_${uid}`, JSON.stringify(messagesToSave));
+      console.log('Explicitly saved messages to localStorage:', messagesToSave.length);
+    }
+  };
+
   // Load messages from Supabase when component mounts or userId changes
   useEffect(() => {
     if (userId && !messagesLoaded) {
@@ -128,7 +136,7 @@ export const useChatPersistence = (userId: string | undefined) => {
   // Save messages to localStorage as a backup
   useEffect(() => {
     if (userId && messages.length > 0) {
-      localStorage.setItem(`stockcoach_messages_${userId}`, JSON.stringify(messages));
+      saveMessagesToStorage(messages, userId);
     }
   }, [userId, messages]);
 
@@ -143,6 +151,8 @@ export const useChatPersistence = (userId: string | undefined) => {
     selectedDate,
     setSelectedDate,
     isLoading,
-    resetLoadedState
+    resetLoadedState,
+    saveMessagesToStorage
   };
 };
+
