@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useChat } from "../../context/ChatContext";
 import PromptSuggestions from "./PromptSuggestions";
 import DebugPanel from "./DebugPanel";
+import { toast } from "sonner";
 
 interface EmptyChatStateProps {
   showDebug: boolean;

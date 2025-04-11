@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useCallback } from "react";
 import { useChat } from "../../context/ChatContext";
 import { useAuth } from "../../context/AuthContext";
@@ -47,14 +48,20 @@ const ChatContainer = () => {
       // Force create a new session when explicitly requested via URL
       if (isNewSession && canCreateNewChat) {
         console.log("Creating new session via URL parameter");
-        clearMessages().catch(error => {
+        clearMessages().then(() => {
+          // Clear the URL parameter after processing
+          const newUrl = window.location.pathname;
+          window.history.replaceState({}, document.title, newUrl);
+        }).catch(error => {
           console.error("Failed to create new session from URL parameter:", error);
           toast.error("Could not create a new session");
         });
-        
-        // Clear the URL parameter after processing
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, document.title, newUrl);
+      } else {
+        // Clear the URL parameter if we're not creating a new session
+        if (isNewSession) {
+          const newUrl = window.location.pathname;
+          window.history.replaceState({}, document.title, newUrl);
+        }
       }
       
       setProcessingUrlParams(false);

@@ -16,7 +16,7 @@ export interface ChatContextType {
   setN8nWebhookUrl: (url: string) => void;
   setTranscriptionWebhookUrl: (url: string) => void;
   sendMessage: (message: string, imageFile?: File) => Promise<void>;
-  clearMessages: () => void;
+  clearMessages: () => Promise<boolean>;
   isAdmin: boolean;
   chatDates: string[];
   selectedDate: string;

@@ -38,8 +38,17 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
     }
     
     console.log("Manually creating new session");
-    await clearMessages();
-    toast.success("Created new chat session");
+    try {
+      const success = await clearMessages();
+      if (success) {
+        toast.success("Created new chat session");
+      } else {
+        toast.error("Failed to create new session");
+      }
+    } catch (error) {
+      console.error("Error creating new session:", error);
+      toast.error("An error occurred while creating a new session");
+    }
   };
 
   return (
