@@ -27,7 +27,7 @@ const CoachingCard = () => {
   const welcomeMessage = getWelcomeMessageContent(firstName, user?.skill_level, user?.experience_level);
   
   const handleStartChat = () => {
-    // Simply navigate to the chat page
+    // Simply navigate to the chat page without any additional parameters
     navigate("/chat");
   };
 

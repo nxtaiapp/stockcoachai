@@ -39,9 +39,8 @@ const ChatContainer = () => {
     
     const urlParams = new URLSearchParams(window.location.search);
     const isNewSession = urlParams.get('new') === 'true';
-    const todayDate = new Date().toISOString().split('T')[0];
     
-    console.log("URL params check:", { isNewSession, todayDate });
+    console.log("URL params check:", { isNewSession });
     
     const createNewSession = async () => {
       console.log("Attempting to create new session");
@@ -49,8 +48,9 @@ const ChatContainer = () => {
       console.log("New session created successfully");
     };
     
-    if (isNewSession) {
-      // Always select today's date when creating a new session
+    if (isNewSession && canCreateNewChat && !hasTodayMessages) {
+      // Only create a new session if explicitly requested with the 'new' parameter
+      // AND we can create a new chat AND there are no messages for today
       console.log("Creating new session - calling createNewSession()");
       createNewSession();
       
@@ -62,10 +62,6 @@ const ChatContainer = () => {
       // but we have previous sessions, ensure we're showing the most recent one
       console.log("Not today's session, selecting most recent date:", chatDates[0]);
       selectDate(chatDates[0]);
-    } else if (isTodaySession && !hasTodayMessages && canCreateNewChat) {
-      // If we're showing today's empty session and can create a new one, create it
-      console.log("Today's session is empty, creating new session");
-      createNewSession();
     }
   }, [chatDates, selectDate, selectedDate, isTodaySession, hasTodayMessages, canCreateNewChat, clearMessages]);
 
