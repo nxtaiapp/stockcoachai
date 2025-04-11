@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
@@ -21,7 +20,6 @@ export const useChatState = () => {
   const [transcriptionWebhookUrl, setTranscriptionWebhookUrl] = useLocalStorage<string>('transcription_webhook_url', '');
   const navigate = useNavigate();
   
-  // Default webhook URL
   const defaultWebhookUrl = "https://n8n-hyib.onrender.com/webhook/06598a09-d8be-4e1b-8916-d5123a6cac6d";
   
   const { userTimezone, getCurrentDate } = useTimezone();
@@ -30,10 +28,8 @@ export const useChatState = () => {
   
   const [creatingSession, setCreatingSession] = useState(false);
   
-  // Set the message allocation limit
   const allocatedMessages = 100;
   
-  // Fetch the current message count for this user
   const { data: messageCount = 0 } = useQuery({
     queryKey: ['messageCount', user?.id],
     queryFn: async () => {
@@ -55,7 +51,6 @@ export const useChatState = () => {
     enabled: !!user?.id
   });
   
-  // Check if user has reached message limit and redirect if necessary
   useEffect(() => {
     if (messageCount >= allocatedMessages && !isAdmin) {
       navigate('/message-limit');
@@ -73,7 +68,6 @@ export const useChatState = () => {
 
   const todayDate = getCurrentDate();
   
-  // Force canCreateNewChat to be true if the user is an admin
   const canCreateNewChat = isAdmin || !chatDates.includes(todayDate);
   
   const isTodaySession = selectedDate === todayDate;
@@ -93,22 +87,20 @@ export const useChatState = () => {
     todayMessagesCount: messages.filter(m => format(new Date(m.timestamp), 'yyyy-MM-dd') === todayDate).length
   });
 
-  const clearMessages = async (): Promise<boolean> => {
-    // Check if user has reached message limit
+  const clearMessages = async (): Promise<void> => {
     if (messageCount >= allocatedMessages && !isAdmin) {
       navigate('/message-limit');
-      return false;
+      return;
     }
     
     if (!user) {
       toast.error("You must be logged in to create a new session");
-      return false;
+      return;
     }
     
-    // Allow admins to create new sessions anytime
     if (!isAdmin && !canCreateNewChat) {
       toast.error("You can only create one chat per day");
-      return false;
+      return;
     }
     
     setCreatingSession(true);
@@ -118,7 +110,6 @@ export const useChatState = () => {
       
       let welcomeContent = "";
       
-      // Use provided webhook URL or fall back to the default one
       const webhookUrl = n8nWebhookUrl || defaultWebhookUrl;
       
       try {
@@ -139,11 +130,8 @@ export const useChatState = () => {
       
       const welcomeMessage = createAIMessage(welcomeContent);
       
-      // Force the welcome message to have today's date
       welcomeMessage.timestamp = new Date();
       
-      // Create a new array with only today's welcome message
-      // This effectively clears the previous messages for today
       const todayMessages = messages.filter(msg => 
         format(new Date(msg.timestamp), 'yyyy-MM-dd') !== todayDate
       );
@@ -151,15 +139,12 @@ export const useChatState = () => {
       const updatedMessages = [...todayMessages, welcomeMessage];
       setMessages(updatedMessages);
       
-      // Force select today's date
       setSelectedDate(todayDate);
       
       console.log("Successfully created new session for today:", todayDate);
-      return true;
     } catch (error) {
       console.error("Error creating new session:", error);
       toast.error("Failed to create a new session");
-      return false;
     } finally {
       setCreatingSession(false);
     }

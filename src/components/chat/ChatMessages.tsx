@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import { Message } from "../../context/ChatContext";
@@ -54,13 +53,8 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
     }
     
     console.log("Manually creating new session");
-    const success = await clearMessages();
-    
-    if (success) {
-      toast.success("Created new chat session");
-    } else {
-      toast.error("Failed to create new session");
-    }
+    await clearMessages();
+    toast.success("Created new chat session");
   };
   
   console.log("ChatMessages rendering with:", { 

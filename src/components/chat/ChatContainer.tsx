@@ -45,18 +45,10 @@ const ChatContainer = () => {
     
     const createNewSession = async () => {
       console.log("Attempting to create new session");
-      const success = await clearMessages();
-      
-      if (success) {
-        console.log("New session created successfully");
-        // The clearMessages function should have already selected today's date
-      } else {
-        console.log("Failed to create new session, selecting most recent date");
-        // If we can't create a new session, select the most recent date
-        if (chatDates.length > 0) {
-          selectDate(chatDates[0]);
-        }
-      }
+      // Fix: Don't check the return value directly since clearMessages returns Promise<void>
+      await clearMessages();
+      console.log("New session created successfully");
+      // The clearMessages function should have already selected today's date
     };
     
     if (isNewSession) {
