@@ -1,6 +1,6 @@
 
-import React from "react";
-import { BarChart3, RefreshCw } from "lucide-react";
+import React, { useState } from "react";
+import { BarChart3, RefreshCw, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom"; 
 import { useAuth } from "../../context/AuthContext";
 import { useChat } from "../../context/ChatContext";
@@ -8,6 +8,8 @@ import { getWelcomeMessageContent } from "../../services/welcomeMessageService";
 import { Button } from "@/components/ui/button";
 
 const PromptSuggestions = () => {
+  const [isCreatingSession, setIsCreatingSession] = useState(false);
+  
   const {
     user
   } = useAuth();
@@ -39,7 +41,13 @@ const PromptSuggestions = () => {
   );
 
   const handleStartNewSession = async () => {
-    await clearMessages();
+    setIsCreatingSession(true);
+    try {
+      await clearMessages();
+    } finally {
+      // In case there's an error, we still want to reset the loading state
+      setIsCreatingSession(false);
+    }
   };
   
   return (
@@ -61,14 +69,24 @@ const PromptSuggestions = () => {
               variant="default" 
               size="sm"
               onClick={handleStartNewSession}
+              disabled={isCreatingSession}
               className="flex items-center gap-2"
             >
-              <RefreshCw className="h-4 w-4" />
-              Start New Session
+              {isCreatingSession ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Creating Session...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-4 w-4" />
+                  Start New Session
+                </>
+              )}
             </Button>
           )}
           <Link to="/welcome">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" disabled={isCreatingSession}>
               Return to Welcome Screen
             </Button>
           </Link>
