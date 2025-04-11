@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import type { UserProfile } from '@/lib/types';
 import { User } from '@supabase/supabase-js';
@@ -174,7 +173,18 @@ export const signOutUser = async (): Promise<void> => {
   try {
     console.log('Signing out user from Supabase...');
     
-    // Force sign out without checking for active session first
+    // Try to get the current session first
+    const { data } = await supabase.auth.getSession();
+    
+    if (!data.session) {
+      console.log('No active session found during sign out');
+      // Clean up local storage as a precaution even without a session
+      localStorage.removeItem('supabase.auth.token');
+      sessionStorage.removeItem('supabase.auth.token');
+      return; // Exit early since there's no session to sign out from
+    }
+    
+    // If we have a session, proceed with sign out
     const { error } = await supabase.auth.signOut();
     
     if (error) {
@@ -189,7 +199,8 @@ export const signOutUser = async (): Promise<void> => {
     sessionStorage.removeItem('supabase.auth.token');
   } catch (error) {
     console.error('Error during sign out process:', error);
-    throw error;
+    // Don't throw error here, which would prevent navigation to sign-in page
+    // Instead, we'll force-clear the auth state regardless of errors
   }
 };
 

@@ -1,3 +1,4 @@
+
 import { createContext, useContext, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from "sonner";
@@ -69,13 +70,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     try {
       console.log("Signing out...");
+      // Clear user data first to prevent UI flashes
       setUser(null);
       
-      await signOutUser();
+      // Try to sign out from Supabase - but don't wait for it to complete
+      // This prevents issues where a failed signOut API call blocks navigation
+      signOutUser().catch(error => {
+        console.error('Background sign out error:', error);
+        // We still continue with local logout regardless of API errors
+      });
+      
       toast.success("Signed out successfully");
+      
+      // Always navigate to sign-in page, even if the API call fails
       navigate('/signin', { replace: true });
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error('Error in signOut function:', error);
       toast.error("There was an issue during sign out, but you've been logged out");
       navigate('/signin', { replace: true });
     }

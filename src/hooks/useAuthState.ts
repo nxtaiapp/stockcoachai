@@ -66,19 +66,24 @@ export const useAuthState = () => {
         console.log("Auth state changed:", event);
         
         if (event === 'SIGNED_IN' && session?.user) {
-          const { profile, isAdmin: userIsAdmin } = await fetchUserProfile(session.user);
-          
-          // Same name validation as above
-          if (profile && (!profile.name || profile.name.includes('-'))) {
-            profile.name = profile.email?.split('@')[0] || 'User';
+          try {
+            const { profile, isAdmin: userIsAdmin } = await fetchUserProfile(session.user);
+            
+            // Same name validation as above
+            if (profile && (!profile.name || profile.name.includes('-'))) {
+              profile.name = profile.email?.split('@')[0] || 'User';
+            }
+            
+            setUser(profile);
+            setIsAdmin(userIsAdmin);
+            
+            // Redirect to welcome page on successful sign in
+            navigate("/welcome");
+          } catch (error) {
+            console.error("Error handling sign in:", error);
+          } finally {
+            setLoading(false);
           }
-          
-          setUser(profile);
-          setIsAdmin(userIsAdmin);
-          setLoading(false);
-          
-          // Redirect to welcome page on successful sign in
-          navigate("/welcome");
         } else if (event === 'SIGNED_OUT') {
           // Clear user state and redirect to sign in page
           console.log("Signed out event received");
