@@ -41,11 +41,12 @@ const PromptSuggestions = () => {
   );
 
   const handleStartNewSession = async () => {
+    if (isCreatingSession) return; // Prevent multiple clicks
+    
     setIsCreatingSession(true);
     try {
       await clearMessages();
     } finally {
-      // In case there's an error, we still want to reset the loading state
       setIsCreatingSession(false);
     }
   };
@@ -71,6 +72,7 @@ const PromptSuggestions = () => {
               onClick={handleStartNewSession}
               disabled={isCreatingSession}
               className="flex items-center gap-2"
+              aria-disabled={isCreatingSession}
             >
               {isCreatingSession ? (
                 <>
