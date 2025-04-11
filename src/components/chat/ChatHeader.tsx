@@ -1,12 +1,15 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { BarChart3, ChevronLeft, Menu, User, LogOut, Settings } from "lucide-react";
+
 interface ChatHeaderProps {
   toggleSettings: () => void;
   showSettings: boolean;
 }
+
 const ChatHeader = ({
   toggleSettings,
   showSettings
@@ -18,8 +21,17 @@ const ChatHeader = ({
   } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
+  
+  const handleSignOut = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log("Sign out button clicked in ChatHeader");
+    closeMenu();
+    await signOut();
+  };
+  
   return <>
       <header className="bg-background border-b border-border z-10 py-3 px-4 md:px-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -46,7 +58,7 @@ const ChatHeader = ({
           {user && <div className="flex items-center gap-2">
               <div className="hidden md:flex gap-4">
                 
-                <Button variant="outline" className="flex items-center gap-2" onClick={signOut}>
+                <Button variant="outline" className="flex items-center gap-2" onClick={handleSignOut}>
                   <LogOut size={16} />
                   Sign Out
                 </Button>
@@ -83,10 +95,7 @@ const ChatHeader = ({
                   <User size={16} className="mr-2" />
                   Profile
                 </Button>
-                <Button variant="outline" className="flex items-center gap-2 justify-start" onClick={() => {
-            signOut();
-            closeMenu();
-          }}>
+                <Button variant="outline" className="flex items-center gap-2 justify-start" onClick={handleSignOut}>
                   <LogOut size={16} />
                   Sign Out
                 </Button>
@@ -95,4 +104,5 @@ const ChatHeader = ({
         </div>}
     </>;
 };
+
 export default ChatHeader;

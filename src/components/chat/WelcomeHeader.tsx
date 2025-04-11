@@ -11,13 +11,19 @@ interface WelcomeHeaderProps {
 const WelcomeHeader = ({ title }: WelcomeHeaderProps) => {
   const { signOut, user } = useAuth();
   
+  const handleSignOut = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log("Sign out button clicked");
+    await signOut();
+  };
+  
   return (
     <div className="flex justify-end w-full">
       {user && (
         <Button 
           variant="outline" 
           className="flex items-center gap-2" 
-          onClick={signOut}
+          onClick={handleSignOut}
           size="sm"
         >
           <LogOut size={16} />

@@ -19,6 +19,13 @@ const Header = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
+  
+  const handleSignOut = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log("Sign out button clicked in main Header");
+    closeMenu();
+    await signOut();
+  };
 
   // Don't show the header on the landing page or during auth
   if (["/", "/signin", "/signup"].includes(location.pathname)) {
@@ -47,7 +54,7 @@ const Header = () => {
               <Button 
                 variant="outline" 
                 className="flex items-center gap-2" 
-                onClick={signOut}
+                onClick={handleSignOut}
               >
                 <LogOut size={16} />
                 Sign Out
@@ -93,7 +100,7 @@ const Header = () => {
                 <Button 
                   variant="outline" 
                   className="flex items-center gap-2 justify-start" 
-                  onClick={() => { signOut(); closeMenu(); }}
+                  onClick={handleSignOut}
                 >
                   <LogOut size={16} />
                   Sign Out

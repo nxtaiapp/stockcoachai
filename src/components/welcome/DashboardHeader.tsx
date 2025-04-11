@@ -20,6 +20,12 @@ const DashboardHeader = () => {
   
   const firstName = getUserFirstName();
   
+  const handleSignOut = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log("Sign out button clicked in DashboardHeader");
+    await signOut();
+  };
+  
   return (
     <div className="bg-card border-b border-border">
       <div className="container mx-auto px-4 py-6 flex justify-between items-center">
@@ -31,7 +37,7 @@ const DashboardHeader = () => {
           <Button 
             variant="outline" 
             className="flex items-center gap-2" 
-            onClick={signOut}
+            onClick={handleSignOut}
           >
             <LogOut size={16} />
             Sign Out
