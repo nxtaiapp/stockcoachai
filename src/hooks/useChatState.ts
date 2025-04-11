@@ -24,14 +24,21 @@ export const useChatState = () => {
   const defaultWebhookUrl = "https://n8n-hyib.onrender.com/webhook/06598a09-d8be-4e1b-8916-d5123a6cac6d";
 
   const { userTimezone, getCurrentDate } = useTimezone();
-  const { messages, setMessages, selectedDate, setSelectedDate } = useChatPersistence(user?.id);
+  const { 
+    messages, 
+    setMessages, 
+    selectedDate, 
+    setSelectedDate, 
+    isLoading: persistenceLoading
+  } = useChatPersistence(user?.id);
+  
   const { chatDates, filteredMessages, selectDate } = useChatDates(messages, selectedDate, setSelectedDate);
   
   const [creatingSession, setCreatingSession] = useState(false);
   
   const allocatedMessages = 100;
   
-  const { data: messageCount = 0 } = useQuery({
+  const { data: messageCount = 0, isLoading: countLoading } = useQuery({
     queryKey: ['messageCount', user?.id],
     queryFn: async () => {
       if (!user?.id) return 0;
@@ -58,7 +65,7 @@ export const useChatState = () => {
     }
   }, [messageCount, allocatedMessages, navigate, isAdmin]);
   
-  const { loading, sendMessage } = useMessageSender(
+  const { loading: sendLoading, sendMessage } = useMessageSender(
     user?.id, 
     user?.name, 
     user?.email, 
@@ -67,9 +74,12 @@ export const useChatState = () => {
     n8nWebhookUrl
   );
 
+  // Overall loading state combines all loading states
+  const loading = persistenceLoading || countLoading || sendLoading || creatingSession;
+
   const todayDate = getCurrentDate();
   
-  // Calculate if we have messages for today directly
+  // Calculate if we have messages for today
   const todaysMessages = messages.filter(message => 
     format(new Date(message.timestamp), 'yyyy-MM-dd') === todayDate
   );
@@ -80,38 +90,6 @@ export const useChatState = () => {
   const canCreateNewChat = isAdmin || !hasTodayMessages;
   
   const isTodaySession = selectedDate === todayDate;
-
-  // Effect to force navigation to today's session when entering the chat
-  useEffect(() => {
-    // When loading is done and we have messages, make sure today's session is shown
-    if (!loading && messages.length > 0) {
-      // If no today's session exists, but we're on the chat page, create one
-      if (!hasTodayMessages && window.location.pathname === '/chat') {
-        console.log("No messages for today, scheduling new session creation");
-        // Set a short timeout to allow other effects to complete
-        const timer = setTimeout(() => {
-          clearMessages();
-        }, 0);
-        return () => clearTimeout(timer);
-      } 
-      // If there are today's messages but we're not showing them, switch to today
-      else if (hasTodayMessages && !isTodaySession) {
-        console.log("Have messages for today but showing different date, switching to today");
-        selectDate(todayDate);
-      }
-    }
-  }, [loading, messages.length, hasTodayMessages, isTodaySession, window.location.pathname]);
-
-  console.log("Current state:", { 
-    todayDate, 
-    selectedDate, 
-    isTodaySession, 
-    hasTodayMessages,
-    canCreateNewChat,
-    isAdmin,
-    messagesCount: messages.length,
-    todayMessagesCount: todaysMessages.length
-  });
 
   const clearMessages = async (): Promise<void> => {
     if (messageCount >= allocatedMessages && !isAdmin) {
@@ -175,7 +153,7 @@ export const useChatState = () => {
   return {
     messages: filteredMessages,
     allMessages: messages,
-    loading: loading || creatingSession,
+    loading,
     n8nWebhookUrl,
     transcriptionWebhookUrl,
     setN8nWebhookUrl,

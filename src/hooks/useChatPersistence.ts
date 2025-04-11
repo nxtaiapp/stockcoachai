@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Message } from '../types/chat';
 import { format } from 'date-fns';
@@ -8,10 +9,11 @@ export const useChatPersistence = (userId: string | undefined) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>(format(new Date(), 'yyyy-MM-dd')); // Default to today
   const [isLoading, setIsLoading] = useState(true);
+  const [messagesLoaded, setMessagesLoaded] = useState(false);
   
-  // Load messages from Supabase when component mounts
+  // Load messages from Supabase when component mounts or userId changes
   useEffect(() => {
-    if (userId) {
+    if (userId && !messagesLoaded) {
       setIsLoading(true);
       console.log('Loading messages for user:', userId);
       
@@ -52,22 +54,20 @@ export const useChatPersistence = (userId: string | undefined) => {
               } catch (e) {
                 console.error('Error parsing stored messages:', e);
                 
-                // If parsing fails, start with welcome message
-                // getWelcomeMessage is not defined in this file, so I'm removing it
-                // const welcomeMessage = getWelcomeMessage(userId);
-                // setMessages([welcomeMessage]);
+                // If parsing fails, start with empty messages
+                setMessages([]);
                 setSelectedDate(format(new Date(), 'yyyy-MM-dd'));
-                console.log('Added welcome message due to parse error');
+                console.log('Starting with empty messages due to parse error');
               }
             } else {
-              // Add a welcome message for new users
-              console.log('No messages found in localStorage, adding welcome message');
-              // getWelcomeMessage is not defined in this file, so I'm removing it
-              // const welcomeMessage = getWelcomeMessage(userId);
-              // setMessages([welcomeMessage]);
+              // Start with empty messages for new users
+              console.log('No messages found in localStorage, starting with empty state');
+              setMessages([]);
               setSelectedDate(format(new Date(), 'yyyy-MM-dd'));
             }
           }
+          
+          setMessagesLoaded(true);
         })
         .catch((error) => {
           console.error('Error fetching messages from Supabase:', error);
@@ -81,31 +81,42 @@ export const useChatPersistence = (userId: string | undefined) => {
               console.log('Fallback to localStorage messages:', parsedMessages.length);
               setMessages(parsedMessages);
               
-              // Always default to today's date
-              const todayDate = format(new Date(), 'yyyy-MM-dd');
-              setSelectedDate(todayDate);
+              // Check localStorage for the last selected date
+              const storedSelectedDate = localStorage.getItem(`stockcoach_selected_date_${userId}`);
+              
+              if (storedSelectedDate) {
+                console.log('Found stored selected date:', storedSelectedDate);
+                setSelectedDate(storedSelectedDate);
+              } else {
+                // Default to today's date if no stored date
+                const todayDate = format(new Date(), 'yyyy-MM-dd');
+                setSelectedDate(todayDate);
+              }
             } catch (e) {
               console.error('Error parsing stored messages:', e);
               
-              // If all else fails, start with welcome message
-              // getWelcomeMessage is not defined in this file, so I'm removing it
-              // const welcomeMessage = getWelcomeMessage(userId);
-              // setMessages([welcomeMessage]);
+              // If all else fails, start with empty messages
+              setMessages([]);
               setSelectedDate(format(new Date(), 'yyyy-MM-dd'));
             }
           } else {
             // Add a welcome message for new users
-            // getWelcomeMessage is not defined in this file, so I'm removing it
-            // const welcomeMessage = getWelcomeMessage(userId);
-            // setMessages([welcomeMessage]);
+            setMessages([]);
             setSelectedDate(format(new Date(), 'yyyy-MM-dd'));
           }
+          
+          setMessagesLoaded(true);
         })
         .finally(() => {
           setIsLoading(false);
         });
+    } else if (!userId) {
+      // Reset state when userId is undefined/null
+      setMessages([]);
+      setSelectedDate(format(new Date(), 'yyyy-MM-dd'));
+      setIsLoading(false);
     }
-  }, [userId]);
+  }, [userId, messagesLoaded]);
 
   // Save selected date to localStorage when it changes
   useEffect(() => {
@@ -114,18 +125,24 @@ export const useChatPersistence = (userId: string | undefined) => {
     }
   }, [userId, selectedDate]);
 
-  // Still save messages to localStorage as a backup
+  // Save messages to localStorage as a backup
   useEffect(() => {
     if (userId && messages.length > 0) {
       localStorage.setItem(`stockcoach_messages_${userId}`, JSON.stringify(messages));
     }
   }, [userId, messages]);
 
+  // Function to reset the loaded state (useful when user logs out)
+  const resetLoadedState = () => {
+    setMessagesLoaded(false);
+  };
+
   return {
     messages,
     setMessages,
     selectedDate,
     setSelectedDate,
-    isLoading
+    isLoading,
+    resetLoadedState
   };
 };
