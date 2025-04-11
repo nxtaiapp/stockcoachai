@@ -1,8 +1,9 @@
 
 import React from "react";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom"; 
 import { useAuth } from "../../context/AuthContext";
+import { useChat } from "../../context/ChatContext";
 import { getWelcomeMessageContent } from "../../services/welcomeMessageService";
 import { Button } from "@/components/ui/button";
 
@@ -10,6 +11,11 @@ const PromptSuggestions = () => {
   const {
     user
   } = useAuth();
+  
+  const {
+    clearMessages,
+    canCreateNewChat
+  } = useChat();
   
   const getUserFirstName = () => {
     if (!user) return "";
@@ -31,6 +37,10 @@ const PromptSuggestions = () => {
     user?.skill_level,
     user?.experience_level
   );
+
+  const handleStartNewSession = async () => {
+    await clearMessages();
+  };
   
   return (
     <div className="flex flex-col items-center justify-center p-10 max-w-3xl mx-auto">
@@ -45,11 +55,24 @@ const PromptSuggestions = () => {
         <h2 className="text-xl text-center mb-6 text-muted-foreground">
           {welcomeMessage}
         </h2>
-        <Link to="/welcome">
-          <Button variant="outline" size="sm">
-            Return to Welcome Screen
-          </Button>
-        </Link>
+        <div className="flex flex-wrap gap-3 justify-center">
+          {canCreateNewChat && (
+            <Button 
+              variant="default" 
+              size="sm"
+              onClick={handleStartNewSession}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Start New Session
+            </Button>
+          )}
+          <Link to="/welcome">
+            <Button variant="outline" size="sm">
+              Return to Welcome Screen
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
