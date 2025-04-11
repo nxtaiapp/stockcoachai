@@ -19,9 +19,9 @@ export const useChatState = () => {
   const [n8nWebhookUrl, setN8nWebhookUrl] = useLocalStorage<string>('n8n_webhook_url', '');
   const [transcriptionWebhookUrl, setTranscriptionWebhookUrl] = useLocalStorage<string>('transcription_webhook_url', '');
   const navigate = useNavigate();
-  
+
   const defaultWebhookUrl = "https://n8n-hyib.onrender.com/webhook/06598a09-d8be-4e1b-8916-d5123a6cac6d";
-  
+
   const { userTimezone, getCurrentDate } = useTimezone();
   const { messages, setMessages, selectedDate, setSelectedDate } = useChatPersistence(user?.id);
   const { chatDates, filteredMessages, selectDate } = useChatDates(messages, selectedDate, setSelectedDate);
@@ -34,7 +34,7 @@ export const useChatState = () => {
     queryKey: ['messageCount', user?.id],
     queryFn: async () => {
       if (!user?.id) return 0;
-      
+
       const { count, error } = await supabase
         .from('chat_messages')
         .select('*', { count: 'exact', head: true })
@@ -50,7 +50,7 @@ export const useChatState = () => {
     },
     enabled: !!user?.id
   });
-  
+
   useEffect(() => {
     if (messageCount >= allocatedMessages && !isAdmin) {
       navigate('/message-limit');
@@ -92,17 +92,17 @@ export const useChatState = () => {
       navigate('/message-limit');
       return;
     }
-    
+
     if (!user) {
       toast.error("You must be logged in to create a new session");
       return;
     }
-    
+
     if (!isAdmin && !canCreateNewChat) {
       toast.error("You can only create one chat per day");
       return;
     }
-    
+
     setCreatingSession(true);
     
     try {
@@ -129,14 +129,9 @@ export const useChatState = () => {
       }
       
       const welcomeMessage = createAIMessage(welcomeContent);
-      
       welcomeMessage.timestamp = new Date();
       
-      const todayMessages = messages.filter(msg => 
-        format(new Date(msg.timestamp), 'yyyy-MM-dd') !== todayDate
-      );
-      
-      const updatedMessages = [...todayMessages, welcomeMessage];
+      const updatedMessages = [...messages, welcomeMessage];
       setMessages(updatedMessages);
       
       setSelectedDate(todayDate);

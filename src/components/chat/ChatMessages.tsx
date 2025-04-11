@@ -26,18 +26,12 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [showDebug, setShowDebug] = useState(false);
   
-  // Filter messages by selected date
-  const filteredMessages = messages.filter(message => {
-    const messageDate = format(new Date(message.timestamp), 'yyyy-MM-dd');
-    return messageDate === selectedDate;
-  });
-  
   // Scroll to bottom when new messages arrive
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
-  }, [filteredMessages]);
+  }, [messages]);
   
   const showTodaysChat = () => {
     const todayDate = new Date().toISOString().split('T')[0];
@@ -61,8 +55,8 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
     isTodaySession,
     hasTodayMessages,
     selectedDate,
-    filteredMessagesLength: filteredMessages.length,
-    showWelcomeScreen: isTodaySession && filteredMessages.length === 0,
+    filteredMessagesLength: messages.length,
+    showWelcomeScreen: isTodaySession && messages.length === 0,
     availableDates: chatDates,
     canCreateNewChat
   });
@@ -73,7 +67,7 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
       className="absolute inset-0 overflow-y-auto pb-20"
       style={{ overscrollBehavior: "none" }}
     >
-      {filteredMessages.length === 0 ? (
+      {messages.length === 0 ? (
         <EmptyChatState 
           showDebug={showDebug} 
           setShowDebug={setShowDebug} 
@@ -112,16 +106,28 @@ const ChatMessages = ({ messages, loading }: ChatMessagesProps) => {
             </div>
           )}
           
-          {filteredMessages.map((message, index) => (
+          {messages.map((message, index) => (
             <ChatMessage 
               key={message.id} 
               message={message}
-              isLatest={index === filteredMessages.length - 1}
+              isLatest={index === messages.length - 1}
             />
           ))}
           {loading && <LoadingIndicator />}
         </div>
       )}
+      
+      <div className="fixed bottom-24 right-4">
+        <Button 
+          variant="outline" 
+          size="icon" 
+          onClick={() => setShowDebug(!showDebug)}
+          className="bg-background/80 backdrop-blur-sm"
+          title="Toggle Debug Mode"
+        >
+          <Bug size={16} />
+        </Button>
+      </div>
     </div>
   );
 };
@@ -147,7 +153,6 @@ const EmptyChatState = ({
     canCreateNewChat
   });
   
-  // Show prompt suggestions when viewing today's session and there are no messages
   if (isTodaySession) {
     return (
       <>
@@ -198,7 +203,6 @@ const EmptyChatState = ({
     );
   }
   
-  // Show generic welcome message for previous days' chats
   return (
     <div className="h-full flex flex-col items-center justify-center p-4 md:p-8">
       <BarChart3 className="h-16 w-16 text-muted-foreground mb-4" />
