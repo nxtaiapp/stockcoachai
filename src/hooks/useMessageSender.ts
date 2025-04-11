@@ -12,9 +12,6 @@ import {
   sendMessageToWebhook,
   getMockResponse
 } from '../services/aiService';
-import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
 
 export const useMessageSender = (
   userId: string | undefined, 
@@ -22,38 +19,13 @@ export const useMessageSender = (
   userEmail: string | undefined,
   messages: Message[], 
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
-  n8nWebhookUrl: string
+  n8nWebhookUrl: string,
+  checkMessageLimit: () => boolean
 ) => {
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  
-  // Set the message allocation limit
-  const allocatedMessages = 100;
   
   // Default webhook URL if none is provided
   const defaultWebhookUrl = "https://n8n-hyib.onrender.com/webhook/06598a09-d8be-4e1b-8916-d5123a6cac6d";
-
-  // Fetch the current message count for this user
-  const { data: messageCount = 0 } = useQuery({
-    queryKey: ['messageCount', userId],
-    queryFn: async () => {
-      if (!userId) return 0;
-      
-      const { count, error } = await supabase
-        .from('chat_messages')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
-        .eq('is_ai', false);
-      
-      if (error) {
-        console.error('Error fetching message count:', error);
-        return 0;
-      }
-      
-      return count || 0;
-    },
-    enabled: !!userId
-  });
 
   const sendMessage = async (content: string, imageFile?: File, messageType: string = 'Chat') => {
     if (!userId) {
@@ -62,9 +34,8 @@ export const useMessageSender = (
     }
     
     // Check if user has reached message limit
-    if (messageCount >= allocatedMessages) {
-      navigate('/message-limit');
-      return;
+    if (checkMessageLimit()) {
+      return; // User has reached limit, redirect handled by checkMessageLimit
     }
     
     try {
