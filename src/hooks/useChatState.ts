@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { useAuth } from '../context/AuthContext';
@@ -102,7 +103,9 @@ export const useChatState = () => {
       return;
     }
 
-    if (!isAdmin && !canCreateNewChat) {
+    // Allow creating a new chat if admin or no messages for today
+    // This check was potentially causing the issue for new users
+    if (!isAdmin && hasTodayMessages) {
       toast.error("You can only create one chat per day");
       return;
     }
@@ -112,8 +115,8 @@ export const useChatState = () => {
     try {
       const todayDate = getCurrentDate();
       
-      // Modified: Don't add a welcome message, start with empty chat
-      // This creates an empty array of messages for the new session
+      // Create a new array of messages, excluding any that might exist for today
+      // For new users with no history, this will just be an empty array
       const updatedMessages = [...messages.filter(msg => 
         format(new Date(msg.timestamp), 'yyyy-MM-dd') !== todayDate
       )];
@@ -121,7 +124,10 @@ export const useChatState = () => {
       setMessages(updatedMessages);
       
       // Explicitly save to storage to ensure persistence across navigation
-      saveMessagesToStorage(updatedMessages, user.id);
+      // This is crucial - even if updatedMessages is empty, we need to save it
+      if (user.id) {
+        saveMessagesToStorage(updatedMessages, user.id);
+      }
       
       setSelectedDate(todayDate);
       

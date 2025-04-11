@@ -16,7 +16,8 @@ const PromptSuggestions = () => {
   
   const {
     clearMessages,
-    canCreateNewChat
+    canCreateNewChat,
+    loading: chatLoading
   } = useChat();
   
   const getUserFirstName = () => {
@@ -41,11 +42,13 @@ const PromptSuggestions = () => {
   );
 
   const handleStartNewSession = async () => {
-    if (isCreatingSession) return; // Prevent multiple clicks
+    if (isCreatingSession || chatLoading) return; // Prevent multiple clicks or clicks during loading
     
     setIsCreatingSession(true);
     try {
       await clearMessages();
+    } catch (error) {
+      console.error("Error in handleStartNewSession:", error);
     } finally {
       setIsCreatingSession(false);
     }
@@ -70,9 +73,9 @@ const PromptSuggestions = () => {
               variant="default" 
               size="sm"
               onClick={handleStartNewSession}
-              disabled={isCreatingSession}
+              disabled={isCreatingSession || chatLoading}
               className="flex items-center gap-2"
-              aria-disabled={isCreatingSession}
+              aria-disabled={isCreatingSession || chatLoading}
             >
               {isCreatingSession ? (
                 <>
@@ -88,7 +91,7 @@ const PromptSuggestions = () => {
             </Button>
           )}
           <Link to="/welcome">
-            <Button variant="outline" size="sm" disabled={isCreatingSession}>
+            <Button variant="outline" size="sm" disabled={isCreatingSession || chatLoading}>
               Return to Welcome Screen
             </Button>
           </Link>
