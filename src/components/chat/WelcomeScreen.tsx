@@ -1,4 +1,3 @@
-
 import React from "react";
 import { BarChart3, ArrowRight, LogOut } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
@@ -39,12 +38,23 @@ const WelcomeScreen = ({ onStartChat }: WelcomeScreenProps) => {
   );
 
   const handleStartChat = async () => {
-    // If we can create a new session, clear messages to generate the welcome message
-    if (canCreateNewChat) {
-      await clearMessages();
+    try {
+      // If we can create a new session, clear messages to generate the welcome message
+      if (canCreateNewChat) {
+        console.log("Creating new chat session");
+        await clearMessages();
+        // Navigate to chat with a query parameter indicating it's a new session
+        navigate("/chat?new=true");
+      } else {
+        // Otherwise just navigate to the chat page
+        console.log("Navigating to existing chat session");
+        navigate("/chat");
+      }
+    } catch (error) {
+      console.error("Error starting chat:", error);
+      // In case of error, still try to navigate to chat
+      navigate("/chat");
     }
-    // Always call onStartChat to navigate to the chat page
-    onStartChat();
   };
   
   return (

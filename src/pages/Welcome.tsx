@@ -31,10 +31,23 @@ const WelcomeContent = () => {
   const welcomeMessage = getWelcomeMessageContent(firstName, user?.skill_level, user?.experience_level);
   
   const handleStartChat = async () => {
-    if (canCreateNewChat) {
-      await clearMessages();
+    try {
+      // If we can create a new session, clear messages to generate the welcome message
+      if (canCreateNewChat) {
+        console.log("Creating new chat session from dashboard");
+        await clearMessages();
+        // Navigate to chat with a query parameter indicating it's a new session
+        navigate("/chat?new=true");
+      } else {
+        // Otherwise just navigate to the chat page
+        console.log("Navigating to existing chat session from dashboard");
+        navigate("/chat");
+      }
+    } catch (error) {
+      console.error("Error starting chat from dashboard:", error);
+      // In case of error, still try to navigate to chat
+      navigate("/chat");
     }
-    navigate("/chat");
   };
 
   const quickActions = [{

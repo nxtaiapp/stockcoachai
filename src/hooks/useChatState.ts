@@ -139,9 +139,19 @@ export const useChatState = () => {
       
       const welcomeMessage = createAIMessage(welcomeContent);
       
-      const updatedMessages = [...messages, welcomeMessage];
+      // Force the welcome message to have today's date
+      welcomeMessage.timestamp = new Date();
+      
+      // Create a new array with only today's welcome message
+      // This effectively clears the previous messages for today
+      const todayMessages = messages.filter(msg => 
+        format(new Date(msg.timestamp), 'yyyy-MM-dd') !== todayDate
+      );
+      
+      const updatedMessages = [...todayMessages, welcomeMessage];
       setMessages(updatedMessages);
       
+      // Force select today's date
       setSelectedDate(todayDate);
       
       toast.success("Started a new chat session");
